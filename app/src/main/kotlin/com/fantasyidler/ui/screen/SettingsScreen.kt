@@ -73,7 +73,6 @@ fun SettingsScreen(
     val snackbarHostState = remember { SnackbarHostState() }
 
     val themePreference by viewModel.themePreference.collectAsState()
-    val fontScale       by viewModel.fontScale.collectAsState()
     var notificationsEnabled by remember { mutableStateOf(false) }
     var showResetConfirm1 by remember { mutableStateOf(false) }
     var showResetConfirm2 by remember { mutableStateOf(false) }
@@ -193,26 +192,6 @@ fun SettingsScreen(
                             FilterChip(
                                 selected = themePreference == key,
                                 onClick  = { viewModel.setTheme(key) },
-                                label    = { Text(label, style = MaterialTheme.typography.labelSmall) },
-                            )
-                        }
-                    }
-                }
-            )
-
-            SettingsRow(
-                title    = stringResource(R.string.settings_font_size),
-                subtitle = null,
-                trailing = {
-                    Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                        listOf(
-                            1.0f  to stringResource(R.string.settings_font_normal),
-                            1.25f to stringResource(R.string.settings_font_large),
-                            1.5f  to stringResource(R.string.settings_font_huge),
-                        ).forEach { (scale, label) ->
-                            FilterChip(
-                                selected = fontScale == scale,
-                                onClick  = { viewModel.setFontScale(scale) },
                                 label    = { Text(label, style = MaterialTheme.typography.labelSmall) },
                             )
                         }
@@ -411,7 +390,7 @@ private fun SectionHeader(title: String) {
 @Composable
 private fun SettingsRow(
     title: String,
-    subtitle: String? = null,
+    subtitle: String,
     trailing: @Composable (() -> Unit)? = null
 ) {
     Row(
@@ -429,13 +408,11 @@ private fun SettingsRow(
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Bold
             )
-            if (subtitle != null) {
-                Text(
-                    text = subtitle,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
+            Text(
+                text = subtitle,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
         }
         if (trailing != null) {
             trailing()

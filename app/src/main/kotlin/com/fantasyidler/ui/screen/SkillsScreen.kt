@@ -65,7 +65,6 @@ import com.fantasyidler.BuildConfig
 import com.fantasyidler.R
 import com.fantasyidler.data.json.AgilityCourseData
 import com.fantasyidler.data.json.BoneData
-import com.fantasyidler.data.json.FishData
 import com.fantasyidler.data.json.LogData
 import com.fantasyidler.data.json.OreData
 import com.fantasyidler.data.json.TreeData
@@ -245,13 +244,12 @@ fun SkillsScreen(
                     sessionDurationMs = state.sessionDurationMs,
                     onSelect          = { treeKey -> viewModel.startWoodcuttingSession(treeKey) },
                 )
-                is SheetState.Fishing -> FishingSheet(
-                    fish             = sheet.fish,
+                SheetState.Fishing -> FishingSheet(
+                    state            = state,
                     isStarting       = state.startingSession,
                     hasActiveSession = state.anySessionActive,
                     isQueueFull      = state.queueSize >= 3,
-                    sessionDurationMs = state.sessionDurationMs,
-                    onSelect         = { fishKey -> viewModel.startFishingSession(fishKey) },
+                    onStart          = viewModel::startFishingSession,
                 )
                 is SheetState.Agility -> AgilitySheet(
                     courses           = sheet.courses,
@@ -640,62 +638,55 @@ private fun WoodcuttingSheet(
 
 @Composable
 private fun FishingSheet(
-    fish: Map<String, FishData>,
+    state: SkillsUiState,
     isStarting: Boolean,
     hasActiveSession: Boolean,
     isQueueFull: Boolean,
-    sessionDurationMs: Long,
-    onSelect: (String) -> Unit,
+    onStart: () -> Unit,
 ) {
-    val context = LocalContext.current
-    var selectedKey by remember { mutableStateOf<String?>(null) }
-    Column(Modifier.padding(bottom = 24.dp)) {
+    val fishLevel = state.skillLevels[Skills.FISHING] ?: 1
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+            .padding(bottom = 24.dp),
+    ) {
         Text(
-            text     = stringResource(R.string.label_choose_activity),
-            style    = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+            text  = stringResource(R.string.skill_fishing_name),
+            style = MaterialTheme.typography.titleMedium,
         )
+        Spacer(Modifier.height(4.dp))
         Text(
-            text     = stringResource(R.string.skill_fishing_desc),
-            style    = MaterialTheme.typography.bodySmall,
-            color    = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 4.dp),
+            text  = stringResource(R.string.skill_fishing_desc),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
-        if (sessionDurationMs > 0) {
+        Spacer(Modifier.height(4.dp))
+        Text(
+            text  = stringResource(R.string.skills_fishing_desc, fishLevel),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        if (state.sessionDurationMs > 0) {
+            Spacer(Modifier.height(2.dp))
             Text(
-                text     = stringResource(R.string.skills_session_duration, sessionDurationMs / 60_000),
-                style    = MaterialTheme.typography.bodySmall,
-                color    = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
+                text  = stringResource(R.string.skills_session_duration, state.sessionDurationMs / 60_000),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
-        HorizontalDivider()
-        Column(Modifier.verticalScroll(rememberScrollState())) {
-            fish.entries
-                .sortedBy { it.value.levelRequired }
-                .forEach { (key, f) ->
-                    ActivityRow(
-                        name             = GameStrings.itemName(context, key),
-                        detail           = stringResource(R.string.skills_fish_desc, f.levelRequired, f.xpPerCatch),
-                        isStarting       = isStarting,
-                        hasActiveSession = hasActiveSession,
-                        isQueueFull      = isQueueFull,
-                        onClick          = { selectedKey = key },
-                    )
-                }
+        Spacer(Modifier.height(16.dp))
+        Button(
+            onClick  = onStart,
+            enabled  = !isStarting && !(hasActiveSession && isQueueFull),
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            if (isStarting) {
+                CircularProgressIndicator(Modifier.size(20.dp))
+            } else {
+                Text(if (hasActiveSession) stringResource(R.string.skills_add_to_queue) else stringResource(R.string.btn_start_session))
+            }
         }
-    }
-    selectedKey?.let { key ->
-        val f = fish[key] ?: return@let
-        ActivityDetailDialog(
-            name             = GameStrings.itemName(context, key),
-            detail           = stringResource(R.string.skills_fish_desc, f.levelRequired, f.xpPerCatch),
-            description      = GameStrings.itemDesc(context, key),
-            hasActiveSession = hasActiveSession,
-            isQueueFull      = isQueueFull,
-            onConfirm        = { onSelect(key) },
-            onDismiss        = { selectedKey = null },
-        )
     }
 }
 
@@ -1565,13 +1556,6 @@ private fun CraftRecipeRow(
                 fontWeight = FontWeight.Medium,
                 color      = if (enabled) MaterialTheme.colorScheme.onSurface else dim,
             )
-            if (recipe.outputQty > 1) {
-                Text(
-                    text  = "×${recipe.outputQty} per craft",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = if (enabled) MaterialTheme.colorScheme.primary else dim,
-                )
-            }
             val matText = recipe.materials.entries.joinToString("  ") { (item, qty) ->
                 "${GameStrings.itemName(context, item)} ${craftState.inventory[item] ?: 0}/$qty"
             }
