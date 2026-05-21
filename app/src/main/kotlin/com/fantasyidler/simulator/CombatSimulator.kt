@@ -63,13 +63,15 @@ object CombatSimulator {
         var carryoverEnemyKey: String? = null
         var carryoverEnemyHp = 0
 
+        val rnd = Random(System.nanoTime())
+
         for (minute in 1..60) {
             val frameItems     = mutableMapOf<String, Int>()
             val frameXpBySkill = mutableMapOf<String, Long>()
             var frameXp        = 0L
             val frameFood      = mutableMapOf<String, Int>()
 
-            val enemyKey = carryoverEnemyKey ?: spawnPool[Random.nextInt(spawnPool.size)]
+            val enemyKey = carryoverEnemyKey ?: spawnPool[rnd.nextInt(spawnPool.size)]
             carryoverEnemyKey = null
             val enemy    = enemies[enemyKey] ?: continue
 
@@ -125,7 +127,7 @@ object CombatSimulator {
 
             repeat(TICKS_PER_FRAME) {
                 // Player attacks
-                val pDmg = if (Random.nextDouble() < playerHitChance) Random.nextInt(0, playerMaxHit + 1) else 0
+                val pDmg = if (rnd.nextDouble() < playerHitChance) rnd.nextInt(0, playerMaxHit + 1) else 0
                 framePlayerHits += pDmg
                 enemyHp -= pDmg
                 if (enemyHp <= 0) {
@@ -134,9 +136,9 @@ object CombatSimulator {
                         frameItems[drop.item] = (frameItems[drop.item] ?: 0) + drop.quantity
                     }
                     for (drop in enemy.dropTable) {
-                        if (Random.nextDouble() < drop.chance) {
+                        if (rnd.nextDouble() < drop.chance) {
                             val qty = if (drop.quantityMin >= drop.quantityMax) drop.quantityMin
-                                      else Random.nextInt(drop.quantityMin, drop.quantityMax + 1)
+                                      else rnd.nextInt(drop.quantityMin, drop.quantityMax + 1)
                             frameItems[drop.item] = (frameItems[drop.item] ?: 0) + qty
                         }
                     }
@@ -150,7 +152,7 @@ object CombatSimulator {
                 }
 
                 // Enemy attacks
-                val eDmg = if (Random.nextDouble() < enemyHitChance) Random.nextInt(0, enemyMaxHit + 1) else 0
+                val eDmg = if (rnd.nextDouble() < enemyHitChance) rnd.nextInt(0, enemyMaxHit + 1) else 0
                 frameEnemyHits += eDmg
                 currentHp      -= eDmg
 
@@ -277,13 +279,15 @@ object CombatSimulator {
             .sortedByDescending { it.value }
             .map { it.key }
 
+        val rnd = Random(System.nanoTime())
+
         outer@ while (frames.size < maxFrames) {
             val pHits     = mutableListOf<Int>()
             val eHits     = mutableListOf<Int>()
             val frameFood = mutableMapOf<String, Int>()
 
             for (tick in 0 until TICKS_PER_FRAME) {
-                val pDmg = if (Random.nextDouble() < playerHitChance) Random.nextInt(0, playerMax + 1) else 0
+                val pDmg = if (rnd.nextDouble() < playerHitChance) rnd.nextInt(0, playerMax + 1) else 0
                 currentBossHp -= pDmg
                 pHits.add(pDmg)
 
@@ -300,7 +304,7 @@ object CombatSimulator {
                     break@outer
                 }
 
-                val bDmg = if (Random.nextDouble() < bossHitChance) Random.nextInt(0, bossMax + 1) else 0
+                val bDmg = if (rnd.nextDouble() < bossHitChance) rnd.nextInt(0, bossMax + 1) else 0
                 currentHp = (currentHp - bDmg).coerceAtLeast(0)
                 eHits.add(bDmg)
 
@@ -365,14 +369,14 @@ object CombatSimulator {
         val items     = mutableMapOf<String, Int>()
         val xpBySkill = mutableMapOf<String, Long>()
         if (won) {
-            items["coins"] = Random.nextInt(boss.commonLoot.coinsMin, boss.commonLoot.coinsMax + 1)
+            items["coins"] = rnd.nextInt(boss.commonLoot.coinsMin, boss.commonLoot.coinsMax + 1)
             for ((item, range) in boss.commonLoot.items) {
                 items[item] = if (range.min >= range.max) range.min
-                              else Random.nextInt(range.min, range.max + 1)
+                              else rnd.nextInt(range.min, range.max + 1)
             }
             for (rare in boss.rareDrops)
-                if (Random.nextDouble() < rare.chance) items[rare.item] = (items[rare.item] ?: 0) + 1
-            boss.pet?.let { pet -> if (Random.nextDouble() < pet.chance) items[pet.id] = 1 }
+                if (rnd.nextDouble() < rare.chance) items[rare.item] = (items[rare.item] ?: 0) + 1
+            boss.pet?.let { pet -> if (rnd.nextDouble() < pet.chance) items[pet.id] = 1 }
             for ((skill, xp) in boss.xpRewards) xpBySkill[skill] = xp.toLong()
         }
 
