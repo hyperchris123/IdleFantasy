@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fantasyidler.data.json.AgilityCourseData
 import com.fantasyidler.data.json.BoneData
+import com.fantasyidler.data.json.FishData
 import com.fantasyidler.data.json.LogData
 import com.fantasyidler.data.json.OreData
 import com.fantasyidler.data.json.RuneData
@@ -70,7 +71,7 @@ data class SkillsUiState(
 sealed class SheetState {
     data class Mining(val ores: Map<String, OreData>) : SheetState()
     data class Woodcutting(val trees: Map<String, TreeData>) : SheetState()
-    data object Fishing : SheetState()
+    data class Fishing(val fish: Map<String, FishData>) : SheetState()
     data class Agility(val courses: Map<String, AgilityCourseData>) : SheetState()
     /** availableLogs = logs the player currently has in inventory */
     data class Firemaking(val availableLogs: Map<String, LogData>) : SheetState()
@@ -144,11 +145,12 @@ class SkillsViewModel @Inject constructor(
         val session = _uiState.value.activeSession
 
         val state = uiState.value
-        val miningLevel  = state.skillLevels[Skills.MINING]      ?: 1
-        val wcLevel      = state.skillLevels[Skills.WOODCUTTING]  ?: 1
-        val agilityLevel = state.skillLevels[Skills.AGILITY]      ?: 1
-        val fmLevel      = state.skillLevels[Skills.FIREMAKING]   ?: 1
-        val inventory    = state.skillLevels // placeholder — inventory resolved below
+        val miningLevel   = state.skillLevels[Skills.MINING]      ?: 1
+        val wcLevel       = state.skillLevels[Skills.WOODCUTTING]  ?: 1
+        val fishingLevel  = state.skillLevels[Skills.FISHING]      ?: 1
+        val agilityLevel  = state.skillLevels[Skills.AGILITY]      ?: 1
+        val fmLevel       = state.skillLevels[Skills.FIREMAKING]   ?: 1
+        val inventory     = state.skillLevels // placeholder — inventory resolved below
 
         val sheet: SheetState = when (skillKey) {
             Skills.MINING -> SheetState.Mining(
@@ -157,7 +159,9 @@ class SkillsViewModel @Inject constructor(
             Skills.WOODCUTTING -> SheetState.Woodcutting(
                 trees = gameData.trees.filter { (_, tree) -> tree.levelRequired <= wcLevel }
             )
-            Skills.FISHING -> SheetState.Fishing
+            Skills.FISHING -> SheetState.Fishing(
+                fish = gameData.fish.filter { (_, f) -> f.levelRequired <= fishingLevel }
+            )
             Skills.AGILITY -> SheetState.Agility(
                 courses = gameData.agilityCourses.filter { (_, c) -> c.levelRequired <= agilityLevel }
             )
@@ -342,30 +346,37 @@ class SkillsViewModel @Inject constructor(
                 val levels:  Map<String, Int>  = json.decodeFromString(player.skillLevels)
                 val agilityLevel = levels[Skills.AGILITY] ?: 1
 
-                var currentXp = xpMap[Skills.RUNECRAFTING] ?: 0L
-                val frames = mutableListOf<SessionFrame>()
+                // Compute totals without building one frame per essence — stays within
+                // Android's 2 MB CursorWindow per-row limit for large qty values.
+                val startXp = xpMap[Skills.RUNECRAFTING] ?: 0L
+                var currentXp   = startXp
+                var totalRunes  = 0
+                var totalXpGain = 0
                 for (i in 1..qty) {
-                    val levelBefore = XpTable.levelForXp(currentXp)
+                    val level = XpTable.levelForXp(currentXp)
                     val multiplier = when {
-                        levelBefore >= 75 -> 3
-                        levelBefore >= 50 -> 2
-                        else              -> 1
+                        level >= 75 -> 3
+                        level >= 50 -> 2
+                        else        -> 1
                     }
-                    val runesProduced = multiplier
-                    val xpGain = (runeData.xpPerRune * runesProduced).toInt()
-                    currentXp += xpGain
-                    val levelAfter = XpTable.levelForXp(currentXp)
-                    frames += SessionFrame(
-                        minute      = i,
-                        xpGain      = xpGain,
-                        xpBefore    = currentXp - xpGain,
-                        xpAfter     = currentXp,
-                        levelBefore = levelBefore,
-                        levelAfter  = levelAfter,
-                        items       = mapOf(runeKey to runesProduced),
-                        leveledUp   = levelAfter > levelBefore,
-                    )
+                    val xpGain = (runeData.xpPerRune * multiplier).toInt()
+                    totalRunes  += multiplier
+                    totalXpGain += xpGain
+                    currentXp   += xpGain
                 }
+                val frames = listOf(
+                    SessionFrame(
+                        minute      = 1,
+                        xpGain      = totalXpGain,
+                        xpBefore    = startXp,
+                        xpAfter     = currentXp,
+                        levelBefore = XpTable.levelForXp(startXp),
+                        levelAfter  = XpTable.levelForXp(currentXp),
+                        items       = mapOf(runeKey to totalRunes),
+                        leveledUp   = XpTable.levelForXp(currentXp) > XpTable.levelForXp(startXp),
+                        kills       = qty,
+                    )
+                )
 
                 val perEssenceMs = SkillSimulator.sessionDurationMs(agilityLevel) / 60
                 val framesJson   = json.encodeToString(
@@ -425,25 +436,24 @@ class SkillsViewModel @Inject constructor(
             try {
                 val xpMap:   Map<String, Long> = json.decodeFromString(player.skillXp)
                 val levels:  Map<String, Int>  = json.decodeFromString(player.skillLevels)
-                var currentXp = xpMap[Skills.PRAYER] ?: 0L
-                val frames = mutableListOf<SessionFrame>()
-                for (i in 1..qty) {
-                    val levelBefore = XpTable.levelForXp(currentXp)
-                    val xpGain      = bone.xpPerBone.toInt()
-                    currentXp      += xpGain
-                    val levelAfter  = XpTable.levelForXp(currentXp)
-                    frames += SessionFrame(
-                        minute      = i,
-                        xpGain      = xpGain,
-                        xpBefore    = currentXp - xpGain,
-                        xpAfter     = currentXp,
+                val currentXp  = xpMap[Skills.PRAYER] ?: 0L
+                val levelBefore = XpTable.levelForXp(currentXp)
+                val totalXpGain = (qty * bone.xpPerBone).toInt()
+                val xpAfter     = currentXp + totalXpGain
+                val levelAfter  = XpTable.levelForXp(xpAfter)
+                val frames = listOf(
+                    SessionFrame(
+                        minute      = 1,
+                        xpGain      = totalXpGain,
+                        xpBefore    = currentXp,
+                        xpAfter     = xpAfter,
                         levelBefore = levelBefore,
                         levelAfter  = levelAfter,
                         items       = emptyMap(),
                         leveledUp   = levelAfter > levelBefore,
-                        kills       = 1, // each frame = 1 bone buried (for quest tracking)
+                        kills       = qty, // total bones buried (for quest tracking + consumption)
                     )
-                }
+                )
 
                 val agilityLevel = levels[Skills.AGILITY] ?: 1
                 val perBoneMs    = SkillSimulator.sessionDurationMs(agilityLevel) / 60
@@ -466,19 +476,22 @@ class SkillsViewModel @Inject constructor(
         }
     }
 
-    fun startFishingSession() = startSession(Skills.FISHING, activityKey = "") {
+    fun startFishingSession(fishKey: String) = startSession(Skills.FISHING, activityKey = fishKey) {
+        val fishData = gameData.fish[fishKey]
+            ?: throw IllegalArgumentException("Unknown fish: $fishKey")
         val player  = playerRepo.getOrCreatePlayer()
         val levels: Map<String, Int>  = json.decodeFromString(player.skillLevels)
         val xpMap:  Map<String, Long> = json.decodeFromString(player.skillXp)
         val equipped: Map<String, String?> = json.decodeFromString(player.equipped)
         val (petKey, petChance) = petDropParams(Skills.FISHING)
 
-        SkillSimulator.simulateGathering(
-            skillData        = gameData.fishingSkillData,
+        SkillSimulator.simulateFishing(
+            fishKey          = fishKey,
+            fishData         = fishData,
             startXp          = xpMap[Skills.FISHING] ?: 0L,
             agilityLevel     = levels[Skills.AGILITY] ?: 1,
             petBoostPct      = petBoostFor(player.pets, Skills.FISHING),
-            toolEfficiency   = toolEfficiency(equipped[EquipSlot.FISHING_ROD], EquipSlot.FISHING_ROD, levels[Skills.FISHING] ?: 1),
+            rodEfficiency    = toolEfficiency(equipped[EquipSlot.FISHING_ROD], EquipSlot.FISHING_ROD, fishData.levelRequired),
             petDropKey       = petKey,
             petDropChance    = petChance,
         )

@@ -1,6 +1,7 @@
 package com.fantasyidler.simulator
 
 import com.fantasyidler.data.json.AgilityCourseData
+import com.fantasyidler.data.json.FishData
 import com.fantasyidler.data.json.GatheringSkillData
 import com.fantasyidler.data.json.GemData
 import com.fantasyidler.data.json.OreData
@@ -155,8 +156,57 @@ object SkillSimulator {
     }
 
     // ------------------------------------------------------------------
+    // Fishing — picks a specific fish target (mirrors mining)
+    // ------------------------------------------------------------------
+
+    fun simulateFishing(
+        fishKey: String,
+        fishData: FishData,
+        startXp: Long,
+        agilityLevel: Int = 1,
+        petBoostPct: Int = 0,
+        rodEfficiency: Float = 1.0f,
+        petDropKey: String? = null,
+        petDropChance: Double = 0.0,
+    ): Result {
+        var currentXp = startXp
+        val frames = mutableListOf<SessionFrame>()
+
+        for (minute in 1..60) {
+            val xpBefore    = currentXp
+            val levelBefore = XpTable.levelForXp(currentXp)
+
+            val baseXp = (fishData.xpPerCatch * rodEfficiency).toInt()
+            val xpGain = applyPetBoost(baseXp, petBoostPct)
+
+            currentXp += xpGain
+            val levelAfter = XpTable.levelForXp(currentXp)
+
+            val fishQty = max(1, rodEfficiency.roundToInt())
+            val items = mutableMapOf(fishKey to fishQty)
+            if (petDropKey != null && petDropChance > 0.0 && Random.nextDouble() < petDropChance) {
+                items[petDropKey] = 1
+            }
+
+            frames.add(
+                SessionFrame(
+                    minute      = minute,
+                    xpGain      = xpGain,
+                    xpBefore    = xpBefore,
+                    xpAfter     = currentXp,
+                    levelBefore = levelBefore,
+                    levelAfter  = levelAfter,
+                    items       = items,
+                    leveledUp   = levelAfter > levelBefore,
+                )
+            )
+        }
+
+        return Result(frames, sessionDurationMs(agilityLevel))
+    }
+
+    // ------------------------------------------------------------------
     // Generic gathering — uses xp_ranges + drop_tables from skill JSON
-    // Used by Fishing (and any future skill that doesn't pick a specific target)
     // ------------------------------------------------------------------
 
     /**

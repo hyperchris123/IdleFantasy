@@ -11,6 +11,7 @@ import com.fantasyidler.data.json.EnemyData
 import com.fantasyidler.data.json.EquipmentData
 import com.fantasyidler.data.json.FletchingRecipe
 import com.fantasyidler.data.json.AgilityCourseData
+import com.fantasyidler.data.json.FishData
 import com.fantasyidler.data.json.GatheringSkillData
 import com.fantasyidler.data.json.GemData
 import com.fantasyidler.data.json.HerbloreRecipe
@@ -18,6 +19,7 @@ import com.fantasyidler.data.json.LogData
 import com.fantasyidler.data.json.MarketplaceJson
 import com.fantasyidler.data.json.OreData
 import com.fantasyidler.data.json.PetData
+import com.fantasyidler.data.json.DailyQuestTemplate
 import com.fantasyidler.data.json.QuestData
 import com.fantasyidler.data.json.RuneData
 import com.fantasyidler.data.json.SkillData
@@ -77,6 +79,10 @@ class GameDataRepository @Inject constructor(
 
     val quests: Map<String, QuestData> by lazy {
         asset("data/quests.json")
+    }
+
+    val dailyQuestPool: List<DailyQuestTemplate> by lazy {
+        asset("data/daily_quests.json")
     }
 
     // ------------------------------------------------------------------ skills
@@ -168,6 +174,11 @@ class GameDataRepository @Inject constructor(
     /** Gem bonus drop table for mining. */
     val gems: Map<String, GemData> by lazy {
         asset("data/gems.json")
+    }
+
+    /** All catchable fish, keyed by item key (e.g. "raw_shrimp"). */
+    val fish: Map<String, FishData> by lazy {
+        asset("data/fish.json")
     }
 
     val fishingSkillData: GatheringSkillData by lazy {
