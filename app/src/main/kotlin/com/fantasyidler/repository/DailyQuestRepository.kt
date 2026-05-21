@@ -53,18 +53,34 @@ class DailyQuestRepository @Inject constructor(
         return now >= cal.timeInMillis
     }
 
-    /** Pick 3 distinct quest IDs from the pool using a date-seeded RNG (same quests all day). */
-    fun selectThreeQuests(): List<String> {
+    private val combatSkills = listOf("attack", "strength", "defense", "ranged", "magic", "hitpoints")
+
+    /** Pick 3 distinct quest IDs from the pool using a date-seeded RNG (same quests all day).
+     *  Filters to quests the player can actually do based on their skill levels. */
+    fun selectThreeQuests(skillLevels: Map<String, Int>): List<String> {
         val today = Calendar.getInstance().let {
             it.get(Calendar.YEAR) * 10000 + it.get(Calendar.MONTH) * 100 + it.get(Calendar.DAY_OF_MONTH)
         }
         val rng = Random(today.toLong())
-        val pool = gameData.dailyQuestPool.map { it.id }.shuffled(rng)
-        return pool.take(3)
+        val pool = gameData.dailyQuestPool
+        val eligible = pool.filter { quest ->
+            val playerLevel = if (quest.skill == "combat") {
+                combatSkills.maxOf { skillLevels[it] ?: 1 }
+            } else {
+                skillLevels[quest.skill] ?: 1
+            }
+            playerLevel >= quest.levelRequired
+        }.shuffled(rng).take(3).toMutableList()
+        if (eligible.size < 3) {
+            val remaining = pool.sortedBy { it.levelRequired }
+                .filter { q -> eligible.none { it.id == q.id } }
+            eligible += remaining.take(3 - eligible.size)
+        }
+        return eligible.map { it.id }
     }
 
-    fun refreshFlags(flags: PlayerFlags): PlayerFlags {
-        val ids = selectThreeQuests()
+    fun refreshFlags(flags: PlayerFlags, skillLevels: Map<String, Int>): PlayerFlags {
+        val ids = selectThreeQuests(skillLevels)
         return flags.copy(
             dailyQuestIds = ids,
             dailyQuestProgress = emptyMap(),

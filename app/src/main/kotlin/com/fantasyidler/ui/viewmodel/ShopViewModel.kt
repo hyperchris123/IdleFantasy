@@ -453,10 +453,11 @@ class ShopViewModel @Inject constructor(
         const val XP_BOOST_KEY = "xp_boost_48h"
 
         private val FISH_KEYS = setOf(
-            "shrimp", "sardine", "herring", "trout", "salmon",
-            "tuna", "lobster", "swordfish", "shark", "raw_shrimp",
-            "raw_sardine", "raw_herring", "raw_trout", "raw_salmon",
-            "raw_tuna", "raw_lobster", "raw_swordfish", "raw_shark",
+            "shrimp", "sardine", "herring", "mackerel", "trout", "salmon",
+            "tuna", "lobster", "swordfish", "monkfish", "shark", "sea_turtle", "manta_ray",
+            "raw_shrimp", "raw_sardine", "raw_herring", "raw_mackerel", "raw_trout", "raw_salmon",
+            "raw_tuna", "raw_lobster", "raw_swordfish", "raw_monkfish", "raw_shark",
+            "raw_sea_turtle", "raw_manta_ray",
         )
 
         // Base sell value by material tier; multiply by SLOT_MULTIPLIER to get final price.

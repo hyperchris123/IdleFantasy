@@ -752,7 +752,7 @@ private fun ActivityRow(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment     = Alignment.CenterVertically,
     ) {
-        Column {
+        Column(modifier = Modifier.weight(1f)) {
             Text(name, style = MaterialTheme.typography.bodyLarge)
             Text(
                 text  = detail,

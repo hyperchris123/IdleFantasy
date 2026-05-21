@@ -536,9 +536,11 @@ class PlayerRepository @Inject constructor(
 
     /** Returns current flags after refreshing daily quests if the 6am boundary has passed. */
     suspend fun getRefreshedDailyFlags(): PlayerFlags {
-        val flags = getFlags()
+        val player = getOrCreatePlayer()
+        val flags: PlayerFlags = json.decodeFromString(player.flags)
         return if (dailyQuestRepo.shouldRefresh(flags.dailyQuestGeneratedAt)) {
-            val refreshed = dailyQuestRepo.refreshFlags(flags)
+            val skillLevels: Map<String, Int> = json.decodeFromString(player.skillLevels)
+            val refreshed = dailyQuestRepo.refreshFlags(flags, skillLevels)
             updateFlags(refreshed)
             refreshed
         } else flags
