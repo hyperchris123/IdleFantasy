@@ -1,0 +1,5 @@
+• Fix: Combat sessions now carry enemy HP across minutes so kills always register regardless of player DPS
+• Fix: Large crafting/prayer sessions (fletching, smithing, cooking, crafting, herblore, runecrafting, prayer) no longer crash the app on next launch
+• Fix: Auto-trash gear now uses per-stat comparison so a ring with high defense is not sold when a ring with high attack is equipped
+• Fix: Fish cooking quests now only count cooked fish, not all cooked items
+• New: Fishing now works like mining — choose exactly which fish to catch regardless of fishing level

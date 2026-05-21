@@ -397,6 +397,7 @@
     <string name="skills_level_req_xp">Lv. %1$d  •  %2$s XP/ore</string>
     <string name="skills_tool_bonus">×%1$s tool bonus</string>
     <string name="skills_fishing_desc">Level %1$d  •  Level-appropriate catches</string>
+    <string name="skills_fish_desc">Lv. %1$d  •  %2$s XP/catch</string>
     <string name="skills_prayer_desc">Level %1$d  •  Bury bones or scatter ashes for Prayer XP</string>
     <string name="skills_no_bones">No bones or ashes in inventory</string>
     <string name="skills_bone_qty">%1$d XP each  •  %2$d in inventory</string>

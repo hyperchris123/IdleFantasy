@@ -268,20 +268,33 @@ class ShopViewModel @Inject constructor(
             val inventory = state.inventory
             val allEquip  = gameData.equipment
 
+            val toolSlots = setOf(EquipSlot.PICKAXE, EquipSlot.AXE, EquipSlot.FISHING_ROD, EquipSlot.HOE)
             val toSell = mutableMapOf<String, Int>()
             for (slot in EquipSlot.ALL) {
-                if (slot == EquipSlot.WEAPON) continue    // user: don't include weapons
+                if (slot == EquipSlot.WEAPON) continue
                 val equippedKey  = equipped[slot] ?: continue
                 val equippedItem = allEquip[equippedKey] ?: continue
-                val equippedScore = scoreFor(equippedItem, slot)
+
+                val allKeysInSlot = buildList {
+                    add(equippedKey)
+                    inventory.keys
+                        .filter { k -> k != equippedKey && allEquip[k]?.slot == slot }
+                        .forEach { add(it) }
+                }
 
                 for ((itemKey, qty) in inventory) {
-                    if (itemKey == equippedKey) continue  // keep the currently equipped copy
+                    if (itemKey == equippedKey) continue
                     val item = allEquip[itemKey] ?: continue
                     if (item.slot != slot) continue
-                    if (scoreFor(item, slot) < equippedScore) {
-                        toSell[itemKey] = (toSell[itemKey] ?: 0) + qty
+
+                    val shouldSell = if (slot in toolSlots) {
+                        scoreFor(item, slot) < scoreFor(equippedItem, slot)
+                    } else {
+                        allKeysInSlot
+                            .filter { it != itemKey }
+                            .any { k -> allEquip[k]?.let { o -> combatDominates(o, item) } == true }
                     }
+                    if (shouldSell) toSell[itemKey] = (toSell[itemKey] ?: 0) + qty
                 }
             }
 
@@ -424,6 +437,12 @@ class ShopViewModel @Inject constructor(
         EquipSlot.HOE         -> item.farmingEfficiency ?: 0f
         else                  -> (item.attackBonus + item.strengthBonus + item.defenseBonus).toFloat()
     }
+
+    private fun combatDominates(a: com.fantasyidler.data.json.EquipmentData, b: com.fantasyidler.data.json.EquipmentData): Boolean =
+        a.attackBonus   >= b.attackBonus   &&
+        a.strengthBonus >= b.strengthBonus &&
+        a.defenseBonus  >= b.defenseBonus  &&
+        (a.attackBonus > b.attackBonus || a.strengthBonus > b.strengthBonus || a.defenseBonus > b.defenseBonus)
 
     private fun Long.toCoinsString(): String =
         if (this >= 1_000_000) "${"%.1f".format(this / 1_000_000.0)}M"

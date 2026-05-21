@@ -59,6 +59,8 @@ object CombatSimulator {
             .map { it.key }
 
         var runningTotal = 0L
+        var carryoverEnemyKey: String? = null
+        var carryoverEnemyHp = 0
 
         for (minute in 1..60) {
             val frameItems     = mutableMapOf<String, Int>()
@@ -66,7 +68,8 @@ object CombatSimulator {
             var frameXp        = 0L
             val frameFood      = mutableMapOf<String, Int>()
 
-            val enemyKey = spawnPool[Random.nextInt(spawnPool.size)]
+            val enemyKey = carryoverEnemyKey ?: spawnPool[Random.nextInt(spawnPool.size)]
+            carryoverEnemyKey = null
             val enemy    = enemies[enemyKey] ?: continue
 
             // --- Player combat stats for this enemy ---
@@ -113,7 +116,8 @@ object CombatSimulator {
             }.coerceIn(0.10, 0.95)
 
             // --- Tick-by-tick combat loop ---
-            var enemyHp = enemy.hp
+            val savedCarryoverHp = carryoverEnemyHp.also { carryoverEnemyHp = 0 }
+            var enemyHp = if (savedCarryoverHp > 0) savedCarryoverHp else enemy.hp
             var kills = 0
             val framePlayerHits = mutableListOf<Int>()
             val frameEnemyHits  = mutableListOf<Int>()
@@ -167,6 +171,10 @@ object CombatSimulator {
                     }
                 }
             }
+
+            // Carry partial-damage enemy into next frame if still alive
+            carryoverEnemyKey = if (enemyHp > 0) enemyKey else null
+            carryoverEnemyHp  = if (enemyHp > 0) enemyHp  else 0
 
             val diedThisMinute = currentHp <= 0
 

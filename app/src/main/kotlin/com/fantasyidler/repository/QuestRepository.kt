@@ -59,10 +59,23 @@ class QuestRepository @Inject constructor(
                     if (count > 0) addProgress(questId, quest.amount, count, quest.requiresPrevious)
                 }
                 "craft_any" -> {
-                    if (totalCrafted > 0) addProgress(questId, quest.amount, totalCrafted, quest.requiresPrevious)
+                    val count = if (quest.target == "any_fish") {
+                        items.filterKeys { it in fishCookedItems }.values.sum()
+                    } else {
+                        totalCrafted
+                    }
+                    if (count > 0) addProgress(questId, quest.amount, count, quest.requiresPrevious)
                 }
             }
         }
+    }
+
+    private val fishCookedItems: Set<String> by lazy {
+        val fishRaw = gameData.fish.keys
+        gameData.cookingRecipes.values
+            .filter { it.rawItem in fishRaw }
+            .map { it.cookedItem }
+            .toSet()
     }
 
     /**
