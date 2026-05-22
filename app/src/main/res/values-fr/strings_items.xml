@@ -150,7 +150,7 @@
     <!-- ===== Melee weapons — bronze ===== -->
     <string name="item_bronze_sword_name">Épée de Bronze</string>
     <string name="item_bronze_sword_desc">Une épée de bronze simple à une main.</string>
-    <string name="item_bronze_scimitar_name">Scimitar de Bronze</string>
+    <string name="item_bronze_scimitar_name">Cimeterre de Bronze</string>
     <string name="item_bronze_scimitar_desc">Une épée courbée à une main en bronze avec un bon bonus de force.</string>
     <string name="item_bronze_2h_sword_name">Épée de Bronze 2Mains</string>
     <string name="item_bronze_2h_sword_desc">Une épée de bronze à deux mains. Dégâts élevés, vitesse lente.</string>
@@ -164,7 +164,7 @@
     <!-- Melee weapons — iron -->
     <string name="item_iron_sword_name">Épée de Fer</string>
     <string name="item_iron_sword_desc">Une épée en fer à une main.</string>
-    <string name="item_iron_scimitar_name">Scimitar de Fer</string>
+    <string name="item_iron_scimitar_name">Cimeterre de Fer</string>
     <string name="item_iron_scimitar_desc">Une épée courbée à une main en fer avec un bon bonus de force.</string>
     <string name="item_iron_2h_sword_name">Épée de Fer 2Mains</string>
     <string name="item_iron_2h_sword_desc">Une épée en fer à deux mains.</string>
@@ -178,7 +178,7 @@
     <!-- Melee weapons — steel -->
     <string name="item_steel_sword_name">Épée d\'Acier</string>
     <string name="item_steel_sword_desc">Une épée en acier à une main.</string>
-    <string name="item_steel_scimitar_name">Scimitar d\'Acier</string>
+    <string name="item_steel_scimitar_name">Cimeterre d\'Acier</string>
     <string name="item_steel_scimitar_desc">Une épée courbée en acier à une main avec un bon bonus de force.</string>
     <string name="item_steel_2h_sword_name">Épée d\'Acier 2Mains</string>
     <string name="item_steel_2h_sword_desc">Une épée en acier à deux mains.</string>
@@ -190,7 +190,7 @@
     <!-- Melee weapons — mithril -->
     <string name="item_mithril_sword_name">Épée de Mithril</string>
     <string name="item_mithril_sword_desc">Une épée légère et magique à une main.</string>
-    <string name="item_mithril_scimitar_name">Scimitar de Mithril</string>
+    <string name="item_mithril_scimitar_name">Cimeterre de Mithril</string>
     <string name="item_mithril_scimitar_desc">Une épée courbée en mithril, extrêmement tranchante.</string>
     <string name="item_mithril_2h_sword_name">Épée de Mithril 2Mains</string>
     <string name="item_mithril_2h_sword_desc">Une épée de mithril à deux mains.</string>
@@ -202,7 +202,7 @@
     <!-- Melee weapons — adamantite -->
     <string name="item_adamantite_sword_name">Épée d\'Adamantite</string>
     <string name="item_adamantite_sword_desc">Une épée à une main exceptionnellement dure.</string>
-    <string name="item_adamantite_scimitar_name">Scimitar d\'Adamantite</string>
+    <string name="item_adamantite_scimitar_name">Cimeterre d\'Adamantite</string>
     <string name="item_adamantite_scimitar_desc">Une épée courbée incroyablement dure avec un excellent bonus de force.</string>
     <string name="item_adamantite_2h_sword_name">Épée d\'Adamantite 2Mains</string>
     <string name="item_adamantite_2h_sword_desc">Une épée à deux mains forgée en adamantite.</string>
@@ -214,7 +214,7 @@
     <!-- Melee weapons — runite -->
     <string name="item_runite_sword_name">Épée de Runite</string>
     <string name="item_runite_sword_desc">La meilleure épée à une main disponible.</string>
-    <string name="item_runite_scimitar_name">Scimitar de Runite</string>
+    <string name="item_runite_scimitar_name">Cimeterre de Runite</string>
     <string name="item_runite_scimitar_desc">La meilleure scimitar, avec un bonus de force exceptionnel.</string>
     <string name="item_runite_2h_sword_name">Épée de Runite 2Mains</string>
     <string name="item_runite_2h_sword_desc">La meilleure épée à deux mains disponible.</string>
@@ -368,7 +368,7 @@
     <string name="item_runite_arrow_desc">Les meilleures flèches disponibles.</string>
 
     <!-- Composants de flèches -->
-    <string name="item_arrow_shaft_name">Tige d\'Arc</string>
+    <string name="item_arrow_shaft_name">Fût de flèche</string>
     <string name="item_arrow_shaft_desc">Tige en bois utilisés pour fabriquer des flèches.</string>
     <string name="item_bronze_arrow_tips_name">Pointes de Flèche en Bronze</string>
     <string name="item_bronze_arrow_tips_desc">Pointes en bronze pour fabriquer des flèches en bronze.</string>
