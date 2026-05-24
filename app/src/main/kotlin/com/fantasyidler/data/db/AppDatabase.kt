@@ -2,17 +2,8 @@ package com.fantasyidler.data.db
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import androidx.room.migration.Migration
-import androidx.sqlite.db.SupportSQLiteDatabase
 import com.fantasyidler.data.db.dao.*
 import com.fantasyidler.data.model.*
-
-val MIGRATION_1_2 = object : Migration(1, 2) {
-    override fun migrate(db: SupportSQLiteDatabase) {
-        db.execSQL("ALTER TABLE skill_sessions ADD COLUMN is_worker_session INTEGER NOT NULL DEFAULT 0")
-        db.execSQL("ALTER TABLE skill_sessions ADD COLUMN efficiency_multiplier REAL NOT NULL DEFAULT 1.0")
-    }
-}
 
 @Database(
     entities = [
@@ -23,7 +14,7 @@ val MIGRATION_1_2 = object : Migration(1, 2) {
         GlobalState::class,
         ArenaRecord::class,
     ],
-    version = 2,
+    version = 1,
     exportSchema = true,
 )
 abstract class AppDatabase : RoomDatabase() {

@@ -4,31 +4,31 @@
     <!-- Translator note: quest names are short titles; objectives are action sentences. -->
 
     <!-- Mining -->
-    <string name="quest_mining_1_name">Minage I</string>
-    <string name="quest_mining_1_objective">Miner 500 Minerais de Cuivre</string>
-    <string name="quest_mining_2_name">Minage II</string>
-    <string name="quest_mining_2_objective">Miner 750 Minerais de Fer</string>
-    <string name="quest_mining_3_name">Minage III</string>
-    <string name="quest_mining_3_objective">Miner 1100 Charbon</string>
-    <string name="quest_mining_4_name">Minage IV</string>
-    <string name="quest_mining_4_objective">Miner 1650 Minerais de Mithril</string>
-    <string name="quest_mining_5_name">Minage V</string>
-    <string name="quest_mining_5_objective">Miner 2450 Minerais d\'Adamantite</string>
-    <string name="quest_mining_6_name">Minage VI</string>
-    <string name="quest_mining_6_objective">Miner 3650 Minerais de Runite</string>
+    <string name="quest_mining_1_name">Extraction I</string>
+    <string name="quest_mining_1_objective">Miner 500 minerais de cuivre</string>
+    <string name="quest_mining_2_name">Extraction II</string>
+    <string name="quest_mining_2_objective">Miner 750 minerais de fer</string>
+    <string name="quest_mining_3_name">Extraction III</string>
+    <string name="quest_mining_3_objective">Miner 1100 charbon</string>
+    <string name="quest_mining_4_name">Extraction IV</string>
+    <string name="quest_mining_4_objective">Miner 1650 minerais de mithril</string>
+    <string name="quest_mining_5_name">Extraction V</string>
+    <string name="quest_mining_5_objective">Miner 2450 minerais d’adamantite</string>
+    <string name="quest_mining_6_name">Extraction VI</string>
+    <string name="quest_mining_6_objective">Miner 3650 minerais de runite</string>
 
     <!-- Woodcutting -->
-    <string name="quest_woodcutting_1_name">Coupe de bois I</string>
+    <string name="quest_woodcutting_1_name">Bûcheronnage I</string>
     <string name="quest_woodcutting_1_objective">Couper 500 bûches</string>
-    <string name="quest_woodcutting_2_name">Coupe de bois II</string>
+    <string name="quest_woodcutting_2_name">Bûcheronnage II</string>
     <string name="quest_woodcutting_2_objective">Couper 750 bûches de chêne</string>
-    <string name="quest_woodcutting_3_name">Coupe de bois III</string>
+    <string name="quest_woodcutting_3_name">Bûcheronnage III</string>
     <string name="quest_woodcutting_3_objective">Couper 1100 bûches de saule</string>
-    <string name="quest_woodcutting_4_name">Coupe de bois IV</string>
-    <string name="quest_woodcutting_4_objective">Couper 1650 bûches d\'érable</string>
-    <string name="quest_woodcutting_5_name">Coupe de bois V</string>
-    <string name="quest_woodcutting_5_objective">Couper 2450 de bûches de if</string>
-    <string name="quest_woodcutting_6_name">Coupe de bois VI</string>
+    <string name="quest_woodcutting_4_name">Bûcheronnage IV</string>
+    <string name="quest_woodcutting_4_objective">Couper 1650 bûches d’érable</string>
+    <string name="quest_woodcutting_5_name">Bûcheronnage V</string>
+    <string name="quest_woodcutting_5_objective">Couper 2450 de bûches d’if</string>
+    <string name="quest_woodcutting_6_name">Bûcheronnage VI</string>
     <string name="quest_woodcutting_6_objective">Couper 3650 de bûches magiques</string>
 
     <!-- Fishing -->
@@ -52,11 +52,11 @@
     <string name="quest_smithing_2_name">Forge II</string>
     <string name="quest_smithing_2_objective">Fondre 750 lingots de fer</string>
     <string name="quest_smithing_3_name">Forge III</string>
-    <string name="quest_smithing_3_objective">Fondre 1100 lingots d\'acier</string>
+    <string name="quest_smithing_3_objective">Fondre 1100 lingots d’acier</string>
     <string name="quest_smithing_4_name">Forge IV</string>
     <string name="quest_smithing_4_objective">Fondre 1650 lingots de mithril</string>
     <string name="quest_smithing_5_name">Forge V</string>
-    <string name="quest_smithing_5_objective">Fondre 2450 lingots d\'adamantite</string>
+    <string name="quest_smithing_5_objective">Fondre 2450 lingots d’adamantite</string>
     <string name="quest_smithing_6_name">Forge VI</string>
     <string name="quest_smithing_6_objective">Fondre 3650 lingots de runite</string>
 
@@ -99,66 +99,66 @@
     <string name="quest_cooking_mutton_3_objective">Cuisiner 500 morceaux de mouton</string>
 
     <!-- Fletching -->
-    <string name="quest_fletching_1_name">Fabrication de Flèches I</string>
+    <string name="quest_fletching_1_name">Fabrication de flèches I</string>
     <string name="quest_fletching_1_objective">Fabriquer 500 flèches en bronze</string>
-    <string name="quest_fletching_2_name">Fabrication de Flèches II</string>
+    <string name="quest_fletching_2_name">Fabrication de flèches II</string>
     <string name="quest_fletching_2_objective">Fabriquer 750 flèches en fer</string>
-    <string name="quest_fletching_3_name">Fabrication de Flèches III</string>
+    <string name="quest_fletching_3_name">Fabrication de flèches III</string>
     <string name="quest_fletching_3_objective">Fabriquer 1100 flèches en acier</string>
-    <string name="quest_fletching_4_name">Fabrication de Flèches IV</string>
+    <string name="quest_fletching_4_name">Fabrication de flèches IV</string>
     <string name="quest_fletching_4_objective">Fabriquer 1650 flèches en mithril</string>
-    <string name="quest_fletching_5_name">Fabrication de Flèches V</string>
+    <string name="quest_fletching_5_name">Fabrication de flèches V</string>
     <string name="quest_fletching_5_objective">Fabriquer 2450 flèches en adamantite</string>
-    <string name="quest_fletching_6_name">Fabrication de Flèches VI</string>
+    <string name="quest_fletching_6_name">Fabrication de flèches VI</string>
     <string name="quest_fletching_6_objective">Fabriquer 3650 flèches en runite</string>
 
     <!-- Prayer -->
-    <string name="quest_prayer_1_name">Prières I</string>
+    <string name="quest_prayer_1_name">Prière I</string>
     <string name="quest_prayer_1_objective">Enterrer 500 os</string>
-    <string name="quest_prayer_2_name">Prières II</string>
+    <string name="quest_prayer_2_name">Prière II</string>
     <string name="quest_prayer_2_objective">Enterrer 750 os</string>
-    <string name="quest_prayer_3_name">Prières III</string>
+    <string name="quest_prayer_3_name">Prière III</string>
     <string name="quest_prayer_3_objective">Enterrer 1100 os</string>
-    <string name="quest_prayer_4_name">Prières IV</string>
+    <string name="quest_prayer_4_name">Prière IV</string>
     <string name="quest_prayer_4_objective">Enterrer 1650 os</string>
-    <string name="quest_prayer_5_name">Prières V</string>
+    <string name="quest_prayer_5_name">Prière V</string>
     <string name="quest_prayer_5_objective">Enterrer 2450 os</string>
-    <string name="quest_prayer_6_name">Prières VI</string>
+    <string name="quest_prayer_6_name">Prière VI</string>
     <string name="quest_prayer_6_objective">Enterrer 3650 os</string>
 
     <!-- Slayer -->
-    <string name="quest_combat_kills_1_name">Tueur de Monstres I</string>
+    <string name="quest_combat_kills_1_name">Tueur de monstres I</string>
     <string name="quest_combat_kills_1_objective">Vaincre 100 ennemis</string>
-    <string name="quest_combat_kills_2_name">Tueur de Monstres II</string>
+    <string name="quest_combat_kills_2_name">Tueur de monstres II</string>
     <string name="quest_combat_kills_2_objective">Vaincre 150 ennemis</string>
-    <string name="quest_combat_kills_3_name">Tueur de Monstres III</string>
+    <string name="quest_combat_kills_3_name">Tueur de monstres III</string>
     <string name="quest_combat_kills_3_objective">Vaincre 200 ennemis</string>
-    <string name="quest_combat_kills_4_name">Tueur de Monstres IV</string>
+    <string name="quest_combat_kills_4_name">Tueur de monstres IV</string>
     <string name="quest_combat_kills_4_objective">Vaincre 300 ennemis</string>
-    <string name="quest_combat_kills_5_name">Tueur de Monstres V</string>
+    <string name="quest_combat_kills_5_name">Tueur de monstres V</string>
     <string name="quest_combat_kills_5_objective">Vaincre 450 ennemis</string>
-    <string name="quest_combat_kills_6_name">Tueur de Monstres VI</string>
+    <string name="quest_combat_kills_6_name">Tueur de monstres VI</string>
     <string name="quest_combat_kills_6_objective">Vaincre 650 ennemis</string>
 
     <!-- Dungeon exploration -->
-    <string name="quest_dungeon_farm_1_name">Explorateur de Donjon I</string>
+    <string name="quest_dungeon_farm_1_name">Explorateur de donjon I</string>
     <string name="quest_dungeon_farm_1_objective">Terminer le donjon de la Ferme 5 fois</string>
-    <string name="quest_dungeon_goblin_1_name">Explorateur de Donjon II</string>
-    <string name="quest_dungeon_goblin_1_objective">Terminer la Caverne des Gobelins 5 fois</string>
-    <string name="quest_dungeon_spider_1_name">Explorateur de Donjon III</string>
-    <string name="quest_dungeon_spider_1_objective">Terminer la Nids de Spider 5 fois</string>
-    <string name="quest_dungeon_bandit_1_name">Explorateur de Donjon IV</string>
-    <string name="quest_dungeon_bandit_1_objective">Terminer le Camp des Bandits 5 fois</string>
-    <string name="quest_dungeon_undead_1_name">Explorateur de Donjon V</string>
-    <string name="quest_dungeon_undead_1_objective">Terminer la Crypte des Mort-vivants 5 fois</string>
-    <string name="quest_dungeon_fortress_1_name">Explorateur de Donjon VI</string>
-    <string name="quest_dungeon_fortress_1_objective">Terminer les Ruines de la Forteresse 5 fois</string>
-    <string name="quest_dungeon_orc_1_name">Maître de Donjon I</string>
-    <string name="quest_dungeon_orc_1_objective">Terminer la Forteresse des Orcs 5 fois</string>
-    <string name="quest_dungeon_volcanic_1_name">Maître de Donjon II</string>
-    <string name="quest_dungeon_volcanic_1_objective">Terminer les Profondeurs Volcaniques 5 fois</string>
-    <string name="quest_dungeon_dragon_1_name">Maître de Donjon III</string>
-    <string name="quest_dungeon_dragon_1_objective">Terminer la Grotte du Dragon 5 fois</string>
+    <string name="quest_dungeon_goblin_1_name">Explorateur de donjon II</string>
+    <string name="quest_dungeon_goblin_1_objective">Terminer la Caverne des gobelins 5 fois</string>
+    <string name="quest_dungeon_spider_1_name">Explorateur de donjon III</string>
+    <string name="quest_dungeon_spider_1_objective">Terminer le Repaire des araignées 5 fois</string>
+    <string name="quest_dungeon_bandit_1_name">Explorateur de donjon IV</string>
+    <string name="quest_dungeon_bandit_1_objective">Terminer le Camp des bandits 5 fois</string>
+    <string name="quest_dungeon_undead_1_name">Explorateur de donjon V</string>
+    <string name="quest_dungeon_undead_1_objective">Terminer la Crypte des morts-vivants 5 fois</string>
+    <string name="quest_dungeon_fortress_1_name">Explorateur de donjon VI</string>
+    <string name="quest_dungeon_fortress_1_objective">Terminer les Ruines de la forteresse 5 fois</string>
+    <string name="quest_dungeon_orc_1_name">Maître de donjon I</string>
+    <string name="quest_dungeon_orc_1_objective">Terminer la Forteresse des orcs 5 fois</string>
+    <string name="quest_dungeon_volcanic_1_name">Maître de donjon II</string>
+    <string name="quest_dungeon_volcanic_1_objective">Terminer les Profondeurs volcaniques 5 fois</string>
+    <string name="quest_dungeon_dragon_1_name">Maître de donjon III</string>
+    <string name="quest_dungeon_dragon_1_objective">Terminer la Grotte du dragon 5 fois</string>
 
     <!-- Crafting -->
     <string name="quest_crafting_1_name">Artisanat I</string>
@@ -175,73 +175,73 @@
     <string name="quest_crafting_6_objective">Créer 1500 bagues en diamant en platine</string>
 
     <!-- Monster slayer chains -->
-    <string name="quest_goblin_slayer_1_name">Chasseur de Gobelins I</string>
-    <string name="quest_goblin_slayer_1_objective">Vaincre 50 Gobelins</string>
-    <string name="quest_goblin_slayer_2_name">Chasseur de Gobelins II</string>
-    <string name="quest_goblin_slayer_2_objective">Vaincre 100 Gobelins</string>
-    <string name="quest_spider_slayer_1_name">Chasseur d\'Araignées I</string>
-    <string name="quest_spider_slayer_1_objective">Vaincre 40 Araignées Géantes</string>
-    <string name="quest_spider_slayer_2_name">Chasseur d\'Araignées II</string>
-    <string name="quest_spider_slayer_2_objective">Vaincre 80 Araignées Géantes</string>
-    <string name="quest_skeleton_slayer_1_name">Chasseur d\'Ossements I</string>
-    <string name="quest_skeleton_slayer_1_objective">Vaincre 35 Squelettes</string>
-    <string name="quest_skeleton_slayer_2_name">Chasseur d\'Ossements II</string>
-    <string name="quest_skeleton_slayer_2_objective">Vaincre 70 Squelettes</string>
-    <string name="quest_bandit_hunter_1_name">Chasseur de Bandits I</string>
-    <string name="quest_bandit_hunter_1_objective">Vaincre 30 Bandits</string>
-    <string name="quest_bandit_hunter_2_name">Chasseur de Bandits II</string>
-    <string name="quest_bandit_hunter_2_objective">Vaincre 60 Bandits</string>
-    <string name="quest_orc_slayer_1_name">Chasseur d\'Orcs I</string>
-    <string name="quest_orc_slayer_1_objective">Vaincre 25 Guerriers Orcs</string>
-    <string name="quest_orc_slayer_2_name">Chasseur d\'Orcs II</string>
-    <string name="quest_orc_slayer_2_objective">Vaincre 50 Guerriers Orcs</string>
-    <string name="quest_demon_slayer_1_name">Chasseur de Démons I</string>
-    <string name="quest_demon_slayer_1_objective">Vaincre 20 Démons Mineurs</string>
-    <string name="quest_demon_slayer_2_name">Chasseur de Démons II</string>
-    <string name="quest_demon_slayer_2_objective">Vaincre 40 Démons Mineurs</string>
-    <string name="quest_dragon_slayer_1_name">Chasseur de Dragons I</string>
-    <string name="quest_dragon_slayer_1_objective">Vaincre 10 Dragons Verts</string>
-    <string name="quest_dragon_slayer_2_name">Chasseur de Dragons II</string>
-    <string name="quest_dragon_slayer_2_objective">Vaincre 25 Dragons Verts</string>
+    <string name="quest_goblin_slayer_1_name">Chasseur de gobelins I</string>
+    <string name="quest_goblin_slayer_1_objective">Vaincre 50 gobelins</string>
+    <string name="quest_goblin_slayer_2_name">Chasseur de gobelins II</string>
+    <string name="quest_goblin_slayer_2_objective">Vaincre 100 gobelins</string>
+    <string name="quest_spider_slayer_1_name">Chasseur d’araignées I</string>
+    <string name="quest_spider_slayer_1_objective">Vaincre 40 araignées géantes</string>
+    <string name="quest_spider_slayer_2_name">Chasseur d’araignées II</string>
+    <string name="quest_spider_slayer_2_objective">Vaincre 80 araignées géantes</string>
+    <string name="quest_skeleton_slayer_1_name">Chasseur d’ossements I</string>
+    <string name="quest_skeleton_slayer_1_objective">Vaincre 35 squelettes</string>
+    <string name="quest_skeleton_slayer_2_name">Chasseur d”ossements II</string>
+    <string name="quest_skeleton_slayer_2_objective">Vaincre 70 squelettes</string>
+    <string name="quest_bandit_hunter_1_name">Chasseur de bandits I</string>
+    <string name="quest_bandit_hunter_1_objective">Vaincre 30 bandits</string>
+    <string name="quest_bandit_hunter_2_name">Chasseur de bandits II</string>
+    <string name="quest_bandit_hunter_2_objective">Vaincre 60 bandits</string>
+    <string name="quest_orc_slayer_1_name">Chasseur d’orcs I</string>
+    <string name="quest_orc_slayer_1_objective">Vaincre 25 guerriers orcs</string>
+    <string name="quest_orc_slayer_2_name">Chasseur d’orcs II</string>
+    <string name="quest_orc_slayer_2_objective">Vaincre 50 guerriers orcs</string>
+    <string name="quest_demon_slayer_1_name">Chasseur de démons I</string>
+    <string name="quest_demon_slayer_1_objective">Vaincre 20 démons mineurs</string>
+    <string name="quest_demon_slayer_2_name">Chasseur de démons II</string>
+    <string name="quest_demon_slayer_2_objective">Vaincre 40 démons mineurs</string>
+    <string name="quest_dragon_slayer_1_name">Chasseur de dragons I</string>
+    <string name="quest_dragon_slayer_1_objective">Vaincre 10 dragons verts</string>
+    <string name="quest_dragon_slayer_2_name">Chasseur de dragons II</string>
+    <string name="quest_dragon_slayer_2_objective">Vaincre 25 dragons verts</string>
     
     <!-- Combat style challenges -->
-    <string name="quest_melee_warrior_1_name">Guerrier au Corps à Corps I</string>
-    <string name="quest_melee_warrior_1_objective">Terminer la Grotte des Gobelins en utilisant uniquement le combat au corps à corps</string>
-    <string name="quest_melee_warrior_2_name">Guerrier au Corps à Corps II</string>
-    <string name="quest_melee_warrior_2_objective">Terminer le Camp des Bandits en utilisant uniquement le combat au corps à corps</string>
-    <string name="quest_melee_warrior_3_name">Guerrier au Corps à Corps III</string>
-    <string name="quest_melee_warrior_3_objective">Terminer les Ruines de la Forteresse en utilisant uniquement le combat au corps à corps</string>
-    <string name="quest_ranger_elite_1_name">Ranger d\'Élite I</string>
-    <string name="quest_ranger_elite_1_objective">Terminer la Grotte des Gobelins en utilisant uniquement l\'arc</string>
-    <string name="quest_ranger_elite_2_name">Ranger d\'Élite II</string>
-    <string name="quest_ranger_elite_2_objective">Terminer le Camp des Bandits en utilisant uniquement l\'arc</string>
-    <string name="quest_ranger_elite_3_name">Ranger d\'Élite III</string>
-    <string name="quest_ranger_elite_3_objective">Terminer les Ruines de la Forteresse en utilisant uniquement l\'arc</string>
-    <string name="quest_mage_master_1_name">Maître Magicien I</string>
-    <string name="quest_mage_master_1_objective">Terminer la Grotte des Gobelins en utilisant uniquement la magie</string>
-    <string name="quest_mage_master_2_name">Maître Magicien II</string>
-    <string name="quest_mage_master_2_objective">Terminer le Camp des Bandits en utilisant uniquement la magie</string>
-    <string name="quest_mage_master_3_name">Maître Magicien III</string>
-    <string name="quest_mage_master_3_objective">Terminer les Ruines de la Forteresse en utilisant uniquement la magie</string>
+    <string name="quest_melee_warrior_1_name">Guerrier au corps à corps I</string>
+    <string name="quest_melee_warrior_1_objective">Terminer la Caverne des gobelins en utilisant uniquement le combat au corps à corps</string>
+    <string name="quest_melee_warrior_2_name">Guerrier au corps à corps II</string>
+    <string name="quest_melee_warrior_2_objective">Terminer le Camp des bandits en utilisant uniquement le combat au corps à corps</string>
+    <string name="quest_melee_warrior_3_name">Guerrier au corps à corps III</string>
+    <string name="quest_melee_warrior_3_objective">Terminer les Ruines de la forteresse en utilisant uniquement le combat au corps à corps</string>
+    <string name="quest_ranger_elite_1_name">Ranger d’élite I</string>
+    <string name="quest_ranger_elite_1_objective">Terminer la Grotte des gobelins en utilisant uniquement l’arc</string>
+    <string name="quest_ranger_elite_2_name">Ranger d’élite II</string>
+    <string name="quest_ranger_elite_2_objective">Terminer le Camp des bandits en utilisant uniquement l’arc</string>
+    <string name="quest_ranger_elite_3_name">Ranger d’élite III</string>
+    <string name="quest_ranger_elite_3_objective">Terminer les Ruines de la forteresse en utilisant uniquement l’arc</string>
+    <string name="quest_mage_master_1_name">Maître magicien I</string>
+    <string name="quest_mage_master_1_objective">Terminer la Caverne des gobelins en utilisant uniquement la magie</string>
+    <string name="quest_mage_master_2_name">Maître magicien II</string>
+    <string name="quest_mage_master_2_objective">Terminer le Camp des bandits en utilisant uniquement la magie</string>
+    <string name="quest_mage_master_3_name">Maître magicien III</string>
+    <string name="quest_mage_master_3_objective">Terminer les Ruines de la forteresse en utilisant uniquement la magie</string>
 
 
     <!-- Iron Stomach (no food) challenges -->
-    <string name="quest_iron_stomach_1_name">Estomac en Fer I</string>
-    <string name="quest_iron_stomach_1_objective">Terminer la Nids de Spider sans utiliser de nourriture</string>
-    <string name="quest_iron_stomach_2_name">Estomac en Fer II</string>
-    <string name="quest_iron_stomach_2_objective">Terminer la Crypte des Mort-vivants sans utiliser de nourriture</string>
-    <string name="quest_iron_stomach_3_name">Estomac en Fer III</string>
-    <string name="quest_iron_stomach_3_objective">Terminer la Forteresse des Orcs sans utiliser de nourriture</string>
-    <string name="quest_iron_stomach_4_name">Estomac en Fer IV</string>
-    <string name="quest_iron_stomach_4_objective">Terminer la Grotte du Dragon sans utiliser de nourriture</string>
+    <string name="quest_iron_stomach_1_name">Estomac en fer I</string>
+    <string name="quest_iron_stomach_1_objective">Terminer le Repaire des araignées sans utiliser de nourriture</string>
+    <string name="quest_iron_stomach_2_name">Estomac en fer II</string>
+    <string name="quest_iron_stomach_2_objective">Terminer la Crypte des morts-vivants sans utiliser de nourriture</string>
+    <string name="quest_iron_stomach_3_name">Estomac en fer III</string>
+    <string name="quest_iron_stomach_3_objective">Terminer la Forteresse des orcs sans utiliser de nourriture</string>
+    <string name="quest_iron_stomach_4_name">Estomac en fer IV</string>
+    <string name="quest_iron_stomach_4_objective">Terminer la Grotte du dragon sans utiliser de nourriture</string>
 
     <!-- Treasure Hunter -->
-    <string name="quest_treasure_hunter_1_name">Chasseur de Trésors I</string>
-    <string name="quest_treasure_hunter_1_objective">Collecter 20 soies d\'araignée lors de combats</string>
-    <string name="quest_treasure_hunter_2_name">Chasseur de Trésors II</string>
+    <string name="quest_treasure_hunter_1_name">Chasseur de trésors I</string>
+    <string name="quest_treasure_hunter_1_objective">Collecter 20 soies d’araignée lors de combats</string>
+    <string name="quest_treasure_hunter_2_name">Chasseur de trésors II</string>
     <string name="quest_treasure_hunter_2_objective">Collecter 10 cœurs de gobelin lors de combats</string>
-    <string name="quest_treasure_hunter_3_name">Chasseur de Trésors III</string>
+    <string name="quest_treasure_hunter_3_name">Chasseur de trésors III</string>
     <string name="quest_treasure_hunter_3_objective">Collecter 5 cornes de démon lors de combats</string>
-    <string name="quest_treasure_hunter_4_name">Chasseur de Trésors IV</string>
+    <string name="quest_treasure_hunter_4_name">Chasseur de trésors IV</string>
     <string name="quest_treasure_hunter_4_objective">Collecter 3 écailles de dragon lors de combats</string>
 </resources>
