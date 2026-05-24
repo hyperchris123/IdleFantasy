@@ -3,10 +3,8 @@ package com.fantasyidler.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fantasyidler.data.model.EquipSlot
-import com.fantasyidler.data.model.PlayerFlags
 import com.fantasyidler.data.model.QueuedAction
 import com.fantasyidler.data.model.SessionFrame
-import com.fantasyidler.data.model.SkillSession
 import com.fantasyidler.data.model.Skills
 import com.fantasyidler.data.json.HerbloreRecipe
 import com.fantasyidler.repository.GameDataRepository
@@ -128,14 +126,12 @@ class CraftingViewModel @Inject constructor(
         playerRepo.playerFlow,
         sessionRepo.activeSessionFlow,
         _extra,
-    ) { player, activeSession, extra ->
+    ) { player, _, extra ->
         if (player == null) {
             extra
         } else {
             val levels: Map<String, Int> = json.decodeFromString(player.skillLevels)
             val inventory: Map<String, Int> = json.decodeFromString(player.inventory)
-            val flags: PlayerFlags = json.decodeFromString(player.flags)
-            val allRecipes = smithingRecipes + cookingRecipes + fletchingRecipes + jewelleryRecipes + herbloreRecipes
             extra.copy(
                 smithingLevel      = levels[Skills.SMITHING]  ?: 1,
                 cookingLevel       = levels[Skills.COOKING]   ?: 1,
@@ -144,7 +140,7 @@ class CraftingViewModel @Inject constructor(
                 herbloreLevel      = levels[Skills.HERBLORE]  ?: 1,
                 skillLevels        = levels,
                 inventory          = inventory,
-                effectiveInventory = computeEffectiveInventory(inventory, activeSession, flags.sessionQueue, allRecipes),
+                effectiveInventory = computeEffectiveInventory(inventory),
                 isLoading          = false,
             )
         }
@@ -306,6 +302,7 @@ class CraftingViewModel @Inject constructor(
                     estimatedDurationMs = qty.toLong() * perItemMs,
                 )
                 val enqueued = playerRepo.enqueueAction(action)
+                if (enqueued) playerRepo.consumeItems(recipe.materials.mapValues { it.value * qty })
                 _extra.update {
                     it.copy(
                         snackbarMessage = if (enqueued) "Added to queue: ${recipe.displayName}." else "Queue is full (3/3).",
@@ -352,6 +349,7 @@ class CraftingViewModel @Inject constructor(
                 json.serializersModule.serializer<List<SessionFrame>>(),
                 frames,
             )
+            playerRepo.consumeItems(recipe.materials.mapValues { it.value * qty })
             sessionRepo.startSession(
                 skillName        = recipe.skillName,
                 activityKey      = recipe.key,
@@ -367,38 +365,9 @@ class CraftingViewModel @Inject constructor(
 
     private val craftingSkills = setOf(Skills.SMITHING, Skills.COOKING, Skills.FLETCHING, Skills.CRAFTING, Skills.HERBLORE)
 
-    private fun computeEffectiveInventory(
-        inventory: Map<String, Int>,
-        activeSession: SkillSession?,
-        queue: List<QueuedAction>,
-        allRecipes: List<CraftableRecipe>,
-    ): Map<String, Int> {
-        val eff = inventory.toMutableMap()
-
-        // Active session: count crafts from pre-computed frame output so we reserve
-        // exactly what the running session will consume, not the max possible.
-        activeSession?.let { session ->
-            if (session.skillName !in craftingSkills) return@let
-            val recipe = allRecipes.find { it.key == session.activityKey } ?: return@let
-            if (recipe.materials.isEmpty()) return@let
-            val frames = json.decodeFromString<List<SessionFrame>>(session.frames)
-            val totalOutput = frames.sumOf { it.items[recipe.outputKey] ?: 0 }
-            val qty = if (recipe.outputQty > 0) totalOutput / recipe.outputQty else 0
-            for ((item, needed) in recipe.materials) {
-                eff[item] = (eff[item] ?: 0) - qty * needed
-            }
-        }
-
-        // Queued actions: use the exact quantity the user queued.
-        for (action in queue) {
-            if (action.skillName !in craftingSkills) continue
-            val recipe = allRecipes.find { it.key == action.activityKey } ?: continue
-            if (recipe.materials.isEmpty()) continue
-            for ((item, needed) in recipe.materials) {
-                eff[item] = (eff[item] ?: 0) - action.qty * needed
-            }
-        }
-
-        return eff
+    private fun computeEffectiveInventory(inventory: Map<String, Int>): Map<String, Int> {
+        // Materials are now consumed from inventory at session start/queue time,
+        // so the actual inventory is already the ground truth.
+        return inventory
     }
 }

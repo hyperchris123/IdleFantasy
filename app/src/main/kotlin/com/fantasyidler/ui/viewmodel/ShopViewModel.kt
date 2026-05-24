@@ -167,70 +167,84 @@ class ShopViewModel @Inject constructor(
     // ------------------------------------------------------------------
 
     fun sellPriceFor(itemKey: String): Int {
-        // Prefer marketplace buy price / 3
         val marketPrice = gameData.marketplace.values
             .mapNotNull { it.items[itemKey]?.price }
             .firstOrNull()
-        if (marketPrice != null) return maxOf(1, marketPrice / 3)
 
         val equipData = gameData.equipment[itemKey]
-        if (equipData != null) {
-            // Skill capes (awarded at 99): use req-based price
-            if (itemKey.endsWith("_cape")) {
-                val maxReq = equipData.requirements.values.maxOrNull() ?: 1
-                return maxOf(5, maxReq * 3)
-            }
-            val slotMult = SLOT_MULTIPLIER[equipData.slot] ?: 2.0f
-            // Metal-tier weapons/armour
-            val metalBase = METAL_BASE[itemKey.substringBefore("_")]
-            if (metalBase != null) return maxOf(5, (metalBase * slotMult).toInt())
-            // Bow tiers
-            val bowBase = BOW_BASE.entries.firstOrNull { itemKey.startsWith(it.key) }?.value
-            if (bowBase != null) return maxOf(5, (bowBase * slotMult).toInt())
-            // Jewellery crafted from silver/gold/platinum (optionally with a gem)
-            if (equipData.slot == EquipSlot.RING || equipData.slot == EquipSlot.NECKLACE) {
-                val jewelBase = JEWEL_BASE.entries.firstOrNull { itemKey.startsWith(it.key) }?.value
-                if (jewelBase != null) {
-                    val gemBonus = GEM_BONUS.entries.firstOrNull { it.key in itemKey }?.value ?: 0
-                    return maxOf(5, (jewelBase * slotMult + gemBonus).toInt())
+        val basePrice: Int = if (equipData != null) {
+            when {
+                itemKey.endsWith("_cape") -> {
+                    val maxReq = equipData.requirements.values.maxOrNull() ?: 1
+                    maxOf(5, maxReq * 3)
+                }
+                else -> {
+                    val slotMult  = SLOT_MULTIPLIER[equipData.slot] ?: 2.0f
+                    val metalBase = METAL_BASE[itemKey.substringBefore("_")]
+                    val bowBase   = BOW_BASE.entries.firstOrNull { itemKey.startsWith(it.key) }?.value
+                    val jewelBase = if (equipData.slot == EquipSlot.RING || equipData.slot == EquipSlot.NECKLACE)
+                        JEWEL_BASE.entries.firstOrNull { itemKey.startsWith(it.key) }?.value else null
+                    when {
+                        metalBase != null -> maxOf(5, (metalBase * slotMult).toInt())
+                        bowBase   != null -> maxOf(5, (bowBase   * slotMult).toInt())
+                        jewelBase != null -> {
+                            val gemBonus = GEM_BONUS.entries.firstOrNull { it.key in itemKey }?.value ?: 0
+                            maxOf(5, (jewelBase * slotMult + gemBonus).toInt())
+                        }
+                        else -> maxOf(5, (equipData.requirements.values.maxOrNull() ?: 1) * 4)
+                    }
                 }
             }
-            // Staves, special items — fall back to level-requirement scaling
-            val maxReq = equipData.requirements.values.maxOrNull() ?: 1
-            return maxOf(5, maxReq * 4)
+        } else {
+            val gem  = gameData.gems[itemKey]
+            val crop = gameData.crops[itemKey]
+            when {
+                "_arrow" in itemKey -> when {
+                    "runite"     in itemKey -> 15
+                    "adamantite" in itemKey -> 10
+                    "mithril"    in itemKey -> 6
+                    "steel"      in itemKey -> 4
+                    "iron"       in itemKey -> 3
+                    else                   -> 2
+                }
+                "bar" in itemKey -> when {
+                    "runite"     in itemKey -> 230
+                    "adamantite" in itemKey -> 130
+                    "platinum"   in itemKey -> 140
+                    "mithril"    in itemKey -> 65
+                    "gold"       in itemKey -> 27
+                    "steel"      in itemKey -> 22
+                    "silver"     in itemKey -> 20
+                    "iron"       in itemKey -> 10
+                    else                   -> 15
+                }
+                gem != null -> when (gem.rarity) {
+                    "very_rare" -> 150
+                    "rare"      -> 100
+                    "uncommon"  -> 70
+                    else        -> 50
+                }
+                "potion" in itemKey          -> 25
+                "pearl"  in itemKey          -> 15
+                "log"    in itemKey          -> 5
+                "ore"    in itemKey          -> 5
+                "cooked" in itemKey          -> 10
+                "raw_"   in itemKey          -> 4
+                itemKey in FISH_KEYS         -> 8
+                crop != null                 -> maxOf(5, crop.seedCost / 4)
+                itemKey.endsWith("_bone") || itemKey == "bone" -> 8
+                "_scale"   in itemKey        -> 20
+                "_horn"    in itemKey || "_fang"     in itemKey -> 15
+                "_hide"    in itemKey || "_leather"  in itemKey -> 8
+                "_silk"    in itemKey        -> 10
+                "_feather" in itemKey        -> 3
+                "_wool"    in itemKey        -> 5
+                itemKey.endsWith("_rune")    -> 8
+                else                         -> 5
+            }
         }
 
-        // Category-based fallback for gathered/crafted items not in the shop
-        return when {
-            "_arrow" in itemKey -> when {
-                "runite"     in itemKey -> 15
-                "adamantite" in itemKey -> 10
-                "mithril"    in itemKey -> 6
-                "steel"      in itemKey -> 4
-                "iron"       in itemKey -> 3
-                else                   -> 2
-            }
-            "bar"    in itemKey -> when {
-                "runite"     in itemKey -> 230
-                "adamantite" in itemKey -> 130
-                "platinum"   in itemKey -> 115
-                "mithril"    in itemKey -> 65
-                "gold"       in itemKey -> 27
-                "steel"      in itemKey -> 22
-                "silver"     in itemKey -> 13
-                "iron"       in itemKey -> 5
-                else                   -> 3
-            }
-            "gem"    in itemKey -> 80
-            "potion" in itemKey -> 25
-            "pearl"  in itemKey -> 15
-            "log"    in itemKey -> 5
-            "ore"    in itemKey -> 5
-            "cooked" in itemKey -> 10
-            "raw_"   in itemKey -> 4
-            itemKey in FISH_KEYS -> 8
-            else                 -> 2
-        }
+        return if (marketPrice != null) maxOf(basePrice, maxOf(1, marketPrice / 3)) else basePrice
     }
 
     // ------------------------------------------------------------------

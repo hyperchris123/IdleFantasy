@@ -19,6 +19,7 @@
     <string name="btn_craft">Craft</string>
     <string name="btn_confirm">Confirm</string>
     <string name="btn_abandon">Abandon</string>
+    <string name="btn_repeat_action">Repeat Action</string>
     <string name="btn_collect">Collect Rewards</string>
     <string name="btn_equip">Equip</string>
     <string name="btn_unequip">Unequip</string>
@@ -82,6 +83,15 @@
     <string name="label_growth_time">Growth time</string>
     <string name="label_ready_to_harvest">Ready to harvest</string>
     <string name="label_empty">Empty</string>
+    <string name="inventory_sort_quantity">Quantity</string>
+    <string name="inventory_sort_az">A-Z</string>
+    <string name="inventory_cat_weapons">Weapons</string>
+    <string name="inventory_cat_armour">Armour</string>
+    <string name="inventory_cat_tools">Tools</string>
+    <string name="inventory_cat_food">Food</string>
+    <string name="inventory_cat_potions">Potions</string>
+    <string name="inventory_cat_materials">Materials</string>
+    <string name="inventory_cat_other">Other</string>
     <string name="label_combat_style">Combat Style</string>
     <string name="label_active_spell">Active Spell</string>
     <string name="label_drops">Drops</string>
@@ -297,6 +307,8 @@
     <string name="settings_theme_light">Light</string>
     <string name="settings_theme_system">System</string>
     <string name="settings_font_size">Font Size</string>
+    <string name="settings_font_tiny">Tiny</string>
+    <string name="settings_font_small">Small</string>
     <string name="settings_font_normal">Normal</string>
     <string name="settings_font_large">Large</string>
     <string name="settings_font_huge">Huge</string>
@@ -525,6 +537,78 @@
 
     <!-- Quantity picker quick buttons -->
     <string name="qty_max">Max</string>
+
+    <!-- ===== Inn / Worker ===== -->
+    <string-array name="worker_names">
+        <item>Aldric</item>
+        <item>Brenna</item>
+        <item>Calder</item>
+        <item>Dwyn</item>
+        <item>Elara</item>
+        <item>Finn</item>
+        <item>Gwenna</item>
+        <item>Hadwin</item>
+        <item>Isla</item>
+        <item>Jorvik</item>
+        <item>Kira</item>
+        <item>Leofwin</item>
+        <item>Maren</item>
+        <item>Nessa</item>
+        <item>Oswin</item>
+        <item>Petra</item>
+        <item>Quill</item>
+        <item>Rowena</item>
+        <item>Sven</item>
+        <item>Tilda</item>
+        <item>Urick</item>
+        <item>Veda</item>
+        <item>Wren</item>
+        <item>Xander</item>
+        <item>Yara</item>
+    </string-array>
+    <string name="inn_title">Inn</string>
+    <string name="inn_desc">Hire a worker to train skills for you, or buy food from the daily menu.</string>
+    <string name="inn_worker_already_hired">A worker is already hired.</string>
+    <string name="inn_not_enough_coins">Not enough coins.</string>
+    <string name="inn_hire">Hire</string>
+    <string name="inn_worker_active">Worker hired</string>
+    <string name="inn_hire_cost">%1$s coins</string>
+    <string name="worker_long_laborer">Long Laborer</string>
+    <string name="worker_apprentice">Apprentice</string>
+    <string name="worker_journeyman">Journeyman</string>
+    <string name="worker_master">Master</string>
+    <string name="inn_long_laborer_desc">8h gathering, 1x efficiency. No cap on crafting, prayer, or runecrafting — queue as many items as you like.</string>
+    <string name="inn_apprentice_desc">8h gathering, 1x efficiency. Crafting, prayer, and runecrafting capped at 480 items per session.</string>
+    <string name="inn_journeyman_desc">6h gathering, 1.25x efficiency. Crafting, prayer, and runecrafting capped at 360 items per session.</string>
+    <string name="inn_master_desc">4h gathering, 2x efficiency. Crafting, prayer, and runecrafting capped at 240 items per session.</string>
+    <string name="inn_gathering_note">Gathering: session hours x efficiency multiplier applied to loot and XP</string>
+    <string name="inn_crafting_note">Crafting/prayer/runecrafting: quantity capped per tier; Long Laborer has no cap</string>
+    <string name="worker_skills_title">Worker: %1$s</string>
+    <string name="worker_session_active">Worker Session Active</string>
+    <string name="worker_session_complete">Worker Session Complete</string>
+    <string name="worker_manage_from_home">Collect from the Home screen</string>
+    <string name="worker_queue_label">Worker Queue (%1$d/3)</string>
+    <string name="worker_card_title">Worker</string>
+    <string name="worker_idle">Worker is idle — queued sessions start automatically</string>
+    <string name="worker_collect_btn">Collect Worker Session</string>
+    <string name="worker_dismiss_btn">Dismiss Worker</string>
+    <string name="worker_dismiss_confirm_title">Dismiss Worker?</string>
+    <string name="worker_dismiss_confirm_body">The active session and queue will be cancelled. Materials already consumed will not be returned.</string>
+    <string name="inn_daily_menu">Daily Menu</string>
+    <string name="inn_laborers_header">Laborers</string>
+
+    <!-- ===== Quest display names (override toTitleCase fallback) ===== -->
+    <string name="quest_kbd_slayer_1_name">King Black Dragon Slayer I</string>
+    <string name="quest_kbd_slayer_2_name">King Black Dragon Slayer II</string>
+    <string name="quest_kbd_slayer_3_name">King Black Dragon Slayer III</string>
+    <string name="inn_daily_resets">Refreshes daily at 6am</string>
+    <string name="inn_food_heal">+%1$d HP</string>
+    <string name="inn_food_purchased">Food purchased.</string>
+    <string name="inn_card_desc">Workers and daily food</string>
+    <string name="worker_no_active_session">Worker is idle — no sessions queued</string>
+    <string name="worker_add_sessions">Add Sessions</string>
+    <string name="inn_worker_tier">%1$s worker</string>
+    <string name="worker_skills_title_nav">Worker Skills</string>
 
 
 </resources>

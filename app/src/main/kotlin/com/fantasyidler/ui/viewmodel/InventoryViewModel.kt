@@ -170,6 +170,27 @@ class InventoryViewModel @Inject constructor(
     val allPets: Map<String, PetData> get() = gameData.pets
     val cookingRecipes: Map<String, CookingRecipe> get() = gameData.cookingRecipes
     val foodHealValues: Map<String, Int> get() = gameData.foodHealValues
+
+    fun categoryFor(key: String): InventoryCategory {
+        val equip = gameData.equipment[key]
+        if (equip != null) return when (equip.slot) {
+            EquipSlot.WEAPON                                                         -> InventoryCategory.WEAPONS
+            EquipSlot.PICKAXE, EquipSlot.AXE, EquipSlot.FISHING_ROD, EquipSlot.HOE -> InventoryCategory.TOOLS
+            else                                                                     -> InventoryCategory.ARMOUR
+        }
+        if (key in gameData.foodHealValues) return InventoryCategory.FOOD
+        if (key in gameData.potionEffects)  return InventoryCategory.POTIONS
+        if (key in gameData.ores || key in gameData.gems || key in gameData.logs ||
+            key in gameData.bones || key in gameData.runes || key == "rune_essence" ||
+            key.endsWith("_bar") || key.endsWith("_arrow") || key.startsWith("raw_") ||
+            key.endsWith("_ashes") || key == "ashes" || key.endsWith("_herb") || key.endsWith("_seed")
+        ) return InventoryCategory.MATERIALS
+        return InventoryCategory.OTHER
+    }
+}
+
+enum class InventoryCategory {
+    WEAPONS, ARMOUR, TOOLS, FOOD, POTIONS, MATERIALS, OTHER
 }
 
 /** Ordered list of all skills for display (gathering → crafting → combat). */

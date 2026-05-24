@@ -1,0 +1,3 @@
+• Fix: Boss fight timer now ends as soon as the fight concludes (win or loss)
+• Fix: French translation corrections (scimitars, arrow shaft, woodcutting)
+• Fix: French and Spanish added to system-level per-app language settings
