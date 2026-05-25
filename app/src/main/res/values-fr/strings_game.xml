@@ -13,10 +13,10 @@
     <string name="game_session_summary_header">La session %1$s est terminée</string>
     <!-- Translator note: %1$s = formatted XP amount (e.g. "1,234") -->
     <string name="game_session_xp_total">+%1$s XP gagnés</string>
-    <string name="game_session_no_items">Aucun article n\'a été récupéré</string>
+    <string name="game_session_no_items">Aucun objet n’a été récupéré</string>
     <string name="game_session_no_level_ups">Pas de passage au niveau supérieur pour cette session</string>
     <!-- Translator note: %1$d = number of level ups -->
-    <string name="game_session_level_up_count">%1$d niveau supérieur!</string>
+    <string name="game_session_level_up_count">%1$d niveau supérieur !</string>
 
     <!-- ===== Combat messages ===== -->
     <!-- Translator note: %1$s = player or enemy name, %2$d = damage amount -->
@@ -39,25 +39,25 @@
     <string name="game_farming_harvested">Récolté %2$d %1$s.</string>
     <string name="game_farming_all_harvested">Toutes les récoltes sont terminées.</string>
     <string name="game_farming_patch_cleared">Parcelle nettoyée.</string>
-    <string name="game_farming_not_ready">Cette récolte n\'est pas encore prête.</string>
+    <string name="game_farming_not_ready">Cette récolte n’est pas encore prête.</string>
     <!-- Note : %1$s = nom de la récolte, %2$s = temps restant -->
     <string name="game_farming_ready_in">%1$s prêt dans %2$s.</string>
 
     <!-- Fabrication -->
     <!-- Note : %1$d = quantité fabriquée, %2$s = nom de l'objet -->
-    <string name="game_crafted">Crafté %1$d %2$s.</string>
+    <string name="game_crafted">%1$d %2$s fabriqués.</string>
     <!-- Note : %1$s = nom de l'objet -->
     <string name="game_missing_ingredient">Ingrédient manquant : %1$s.</string>
 
     <!-- Boutique -->
     <!-- Note : %1$d = quantité, %2$s = nom de l'objet, %3$d = coût total -->
-    <string name="game_shop_purchased">Acheté %1$d %2$s pour %3$d pièces.</string>
+    <string name="game_shop_purchased">%1$d %2$s achetés pour %3$d pièces.</string>
     <!-- Note : %1$d = quantité, %2$s = nom de l'objet, %3$d = pièces reçues -->
-    <string name="game_shop_sold">Vendu %1$d %2$s pour %3$d pièces.</string>
+    <string name="game_shop_sold">%1$d %2$s vendus pour %3$d pièces.</string>
 
     <!-- Prières / enterrement -->
     <!-- Note : %1$s = nom des os, %2$s = XP formaté -->
-    <string name="game_bones_buried">Os enterré : %1$s — +%2$s XP de Prières.</string>
+    <string name="game_bones_buried">Os enterrés : %1$s — +%2$s XP de Prière.</string>
 
     <!-- Quêtes -->
     <!-- Note : %1$s = nom de la quête -->
@@ -83,10 +83,10 @@
 
     <!-- Pioches / fouilles -->
     <string name="game_dig_you_dig">Tu creuses la terre…</string>
-    <string name="game_dig_nothing">Tu ne trouves rien d\'autre que de la saleté.</string>
+    <string name="game_dig_nothing">Tu ne trouves rien d’autre que de la saleté.</string>
     <!-- Note : %1$s = nom de l'objet -->
     <string name="game_dig_found">Tu découvres un(e) %1$s !</string>
     <!-- Note : %1$d = profondeur du trou en mètres -->
     <string name="game_dig_depth">Le trou fait %1$d mètres de profondeur.</string>
-    <string name="game_dig_cooldown">Tu as déjà fouillé aujourd\'hui. Reviens demain.</string>
+    <string name="game_dig_cooldown">Tu as déjà fouillé aujourd’hui. Reviens demain.</string>
 </resources>

@@ -307,7 +307,6 @@
     <string name="settings_import_desc">İlerlemeyi bir dosyadan geri yükle</string>
     <string name="settings_import_btn">İçe Aktar</string>
     <string name="settings_source_code">Kaynak Kodu</string>
-    <string name="settings_source_url">github.com/tristinbaker/IdleFantasy</string>
     <string name="settings_source_open">Aç</string>
     <string name="settings_exported_ok">Kayıt dosyası dışa aktarıldı</string>
     <string name="settings_imported_ok">Kayıt dosyası başarıyla içe aktarıldı</string>
