@@ -1647,9 +1647,9 @@
       "items": {}
     }
   },
-  "dragon_slayer_1": {
-    "id": "dragon_slayer_1",
-    "name": "Dragon Slayer I",
+  "kbd_slayer_1": {
+    "id": "kbd_slayer_1",
+    "name": "King Black Dragon Slayer I",
     "skill": "combat",
     "tier": 6,
     "requires_previous": null,
@@ -1663,12 +1663,12 @@
       "items": {}
     }
   },
-  "dragon_slayer_2": {
-    "id": "dragon_slayer_2",
-    "name": "Dragon Slayer II",
+  "kbd_slayer_2": {
+    "id": "kbd_slayer_2",
+    "name": "King Black Dragon Slayer II",
     "skill": "combat",
     "tier": 7,
-    "requires_previous": "dragon_slayer_1",
+    "requires_previous": "kbd_slayer_1",
     "type": "boss",
     "target": "king_black_dragon",
     "amount": 5,
@@ -1679,12 +1679,12 @@
       "items": {}
     }
   },
-  "dragon_slayer_3": {
-    "id": "dragon_slayer_3",
-    "name": "Dragon Slayer III",
+  "kbd_slayer_3": {
+    "id": "kbd_slayer_3",
+    "name": "King Black Dragon Slayer III",
     "skill": "combat",
     "tier": 8,
-    "requires_previous": "dragon_slayer_2",
+    "requires_previous": "kbd_slayer_2",
     "type": "boss",
     "target": "king_black_dragon",
     "amount": 25,

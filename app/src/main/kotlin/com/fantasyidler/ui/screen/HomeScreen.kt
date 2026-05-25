@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Icon
@@ -52,8 +53,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.fantasyidler.BuildConfig
 import com.fantasyidler.R
+import com.fantasyidler.data.model.HiredWorker
 import com.fantasyidler.data.model.QueuedAction
 import com.fantasyidler.data.model.SkillSession
+import com.fantasyidler.data.model.WorkerTier
 import com.fantasyidler.ui.theme.GoldPrimary
 import com.fantasyidler.ui.viewmodel.HomeViewModel
 import com.fantasyidler.ui.viewmodel.SessionSummary
@@ -71,6 +74,8 @@ import kotlinx.serialization.decodeFromString
 fun HomeScreen(
     onNavigateToSettings: () -> Unit = {},
     onNavigateToShop: () -> Unit = {},
+    onNavigateToInn: () -> Unit = {},
+    onNavigateToWorkerSkills: () -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val state            by viewModel.uiState.collectAsState()
@@ -147,6 +152,58 @@ fun HomeScreen(
             },
             confirmButton = {
                 Button(onClick = viewModel::summaryConsumed) {
+                    Text(stringResource(R.string.btn_close))
+                }
+            },
+        )
+    }
+
+    state.workerSummary?.let { summary ->
+        AlertDialog(
+            onDismissRequest = viewModel::workerSummaryConsumed,
+            title = {
+                Text(
+                    text       = summary.title,
+                    fontWeight = FontWeight.Bold,
+                )
+            },
+            text = {
+                Column(
+                    modifier            = Modifier.verticalScroll(rememberScrollState()),
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                ) {
+                    if (summary.boostWasActive) {
+                        Text(
+                            text       = stringResource(R.string.home_xp_boost_was_active),
+                            style      = MaterialTheme.typography.labelSmall,
+                            color      = MaterialTheme.colorScheme.primary,
+                            fontWeight = FontWeight.Bold,
+                        )
+                        Spacer(Modifier.height(4.dp))
+                    }
+                    if (summary.xpLines.isNotEmpty()) {
+                        SummarySection(stringResource(R.string.label_xp_gained))
+                        summary.xpLines.forEach { (skill, label) -> SummaryRow(skill, label) }
+                    } else if (summary.totalXpLabel.isNotEmpty()) {
+                        SummaryRow(stringResource(R.string.label_xp_gained), summary.totalXpLabel)
+                    }
+                    if (summary.killLines.isNotEmpty()) {
+                        Spacer(Modifier.height(4.dp))
+                        SummarySection(stringResource(R.string.label_kills))
+                        summary.killLines.forEach { (enemy, kills) -> SummaryRow(enemy, kills) }
+                    }
+                    if (summary.itemLines.isNotEmpty()) {
+                        Spacer(Modifier.height(4.dp))
+                        SummarySection(stringResource(R.string.home_loot))
+                        summary.itemLines.forEach { (item, qty) -> SummaryRow(item, qty) }
+                    }
+                    if (summary.coinsGained > 0) {
+                        SummaryRow("Coins", "+${summary.coinsGained.formatCoins()}")
+                    }
+                }
+            },
+            confirmButton = {
+                Button(onClick = viewModel::workerSummaryConsumed) {
                     Text(stringResource(R.string.btn_close))
                 }
             },
@@ -255,37 +312,103 @@ fun HomeScreen(
                 }
             }
 
-            // ── Shop card ───────────────────────────────────────────────
-            Surface(
-                shape    = RoundedCornerShape(16.dp),
-                color    = MaterialTheme.colorScheme.surfaceVariant,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { onNavigateToShop() },
+            // ── Shop + Inn row ──────────────────────────────────────────
+            val workerSession = state.workerSession
+            val hiredWorker   = state.hiredWorker
+            Row(
+                modifier              = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
             ) {
-                Row(
-                    modifier          = Modifier.padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
+                Surface(
+                    shape    = RoundedCornerShape(16.dp),
+                    color    = MaterialTheme.colorScheme.surfaceVariant,
+                    modifier = Modifier.weight(1f).clickable { onNavigateToShop() },
                 ) {
-                    Icon(
-                        imageVector        = Icons.Filled.ShoppingCart,
-                        contentDescription = null,
-                        tint               = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier           = Modifier.size(24.dp),
-                    )
-                    Spacer(Modifier.width(12.dp))
-                    Column {
-                        Text(
-                            text       = stringResource(R.string.label_shop),
-                            style      = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Medium,
+                    Row(
+                        modifier          = Modifier.padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Icon(
+                            imageVector        = Icons.Filled.ShoppingCart,
+                            contentDescription = null,
+                            tint               = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier           = Modifier.size(24.dp),
                         )
-                        Text(
-                            text  = stringResource(R.string.label_shop_desc),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
+                        Spacer(Modifier.width(12.dp))
+                        Column {
+                            Text(
+                                text       = stringResource(R.string.label_shop),
+                                style      = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Medium,
+                            )
+                            Text(
+                                text  = stringResource(R.string.label_shop_desc),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
                     }
+                }
+
+                Surface(
+                    shape    = RoundedCornerShape(16.dp),
+                    color    = MaterialTheme.colorScheme.surfaceVariant,
+                    modifier = Modifier.weight(1f).clickable { onNavigateToInn() },
+                ) {
+                    Row(
+                        modifier          = Modifier.padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Icon(
+                            imageVector        = Icons.Filled.Person,
+                            contentDescription = null,
+                            tint               = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier           = Modifier.size(24.dp),
+                        )
+                        Spacer(Modifier.width(12.dp))
+                        Column {
+                            Text(
+                                text       = stringResource(R.string.inn_title),
+                                style      = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Medium,
+                            )
+                            Text(
+                                text  = if (hiredWorker != null)
+                                    stringResource(R.string.inn_worker_active)
+                                else
+                                    stringResource(R.string.inn_card_desc),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                    }
+                }
+            }
+
+            // ── Worker session card ──────────────────────────────────────
+            if (hiredWorker != null) {
+                if (workerSession != null && !workerSession.completed) {
+                    LaunchedEffect(workerSession.sessionId) {
+                        val remaining = workerSession.endsAt - System.currentTimeMillis()
+                        if (remaining > 0) delay(remaining)
+                        viewModel.onWorkerSessionExpiredLocally(workerSession.sessionId)
+                    }
+                }
+                WorkerSessionCard(
+                    hiredWorker              = hiredWorker,
+                    session                  = workerSession,
+                    pendingCollect           = state.workerPendingCollect,
+                    context                  = context,
+                    onCollect                = viewModel::collectWorkerSession,
+                    onDismiss                = viewModel::dismissWorker,
+                    onDebugFinish            = viewModel::debugFinishWorkerSession,
+                    onNavigateToWorkerSkills = onNavigateToWorkerSkills,
+                )
+                if (state.workerQueue.isNotEmpty()) {
+                    WorkerQueueCard(
+                        queue   = state.workerQueue,
+                        context = context,
+                    )
                 }
             }
 
@@ -302,6 +425,7 @@ fun HomeScreen(
                 HomeSessionCard(
                     session       = session,
                     context       = context,
+                    onRepeat      = viewModel::repeatActiveSession,
                     onAbandon     = viewModel::abandonSession,
                     onDebugFinish = viewModel::debugFinishSession,
                 )
@@ -360,6 +484,7 @@ fun HomeScreen(
 private fun HomeSessionCard(
     session: SkillSession,
     context: android.content.Context,
+    onRepeat: () -> Unit,
     onAbandon: () -> Unit,
     onDebugFinish: () -> Unit,
 ) {
@@ -427,7 +552,10 @@ private fun HomeSessionCard(
             Spacer(Modifier.height(8.dp))
 
             if (!isDone) {
-                Row {
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    OutlinedButton(onClick = onRepeat) {
+                        Text(stringResource(R.string.btn_repeat_action))
+                    }
                     OutlinedButton(onClick = { showAbandonConfirm = true }) {
                         Text(stringResource(R.string.btn_abandon))
                     }
@@ -450,7 +578,6 @@ private fun HomeSessionCard(
                         )
                     }
                     if (BuildConfig.DEBUG) {
-                        Spacer(Modifier.width(8.dp))
                         TextButton(onClick = onDebugFinish) {
                             Text("[Debug] Finish Now")
                         }
@@ -528,6 +655,194 @@ private fun QueueCard(
                     text  = stringResource(R.string.home_queue_ends_in, remaining.formatDurationMs()),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Worker section
+// ---------------------------------------------------------------------------
+
+@Composable
+private fun WorkerSessionCard(
+    hiredWorker: HiredWorker,
+    session: SkillSession?,
+    pendingCollect: Boolean,
+    context: android.content.Context,
+    onCollect: () -> Unit,
+    onDismiss: () -> Unit,
+    onDebugFinish: () -> Unit,
+    onNavigateToWorkerSkills: () -> Unit,
+) {
+    var now by remember { mutableLongStateOf(System.currentTimeMillis()) }
+    var showDismissConfirm by remember { mutableStateOf(false) }
+    val endsAt = session?.endsAt ?: 0L
+    LaunchedEffect(endsAt) {
+        if (endsAt > 0) {
+            while (System.currentTimeMillis() < endsAt) {
+                now = System.currentTimeMillis()
+                delay(1_000L)
+            }
+            now = System.currentTimeMillis()
+        }
+    }
+    val isDone = pendingCollect || (session != null && (session.completed || (endsAt > 0 && now >= endsAt)))
+
+    val tierLabel = when (hiredWorker.tier) {
+        WorkerTier.LONG_LABORER -> stringResource(R.string.worker_long_laborer)
+        WorkerTier.APPRENTICE   -> stringResource(R.string.worker_apprentice)
+        WorkerTier.JOURNEYMAN   -> stringResource(R.string.worker_journeyman)
+        WorkerTier.MASTER       -> stringResource(R.string.worker_master)
+    }
+
+    if (showDismissConfirm) {
+        AlertDialog(
+            onDismissRequest = { showDismissConfirm = false },
+            title = { Text(stringResource(R.string.worker_dismiss_confirm_title)) },
+            text  = { Text(stringResource(R.string.worker_dismiss_confirm_body)) },
+            confirmButton = {
+                TextButton(onClick = { showDismissConfirm = false; onDismiss() }) {
+                    Text(stringResource(R.string.btn_confirm))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDismissConfirm = false }) {
+                    Text(stringResource(R.string.btn_cancel))
+                }
+            },
+        )
+    }
+
+    Surface(
+        shape    = RoundedCornerShape(16.dp),
+        color    = if (isDone) MaterialTheme.colorScheme.primaryContainer
+                   else MaterialTheme.colorScheme.secondaryContainer,
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Column(Modifier.padding(16.dp)) {
+            Row(
+                modifier              = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment     = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text  = stringResource(R.string.worker_card_title),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = if (isDone) MaterialTheme.colorScheme.onPrimaryContainer
+                            else MaterialTheme.colorScheme.onSecondaryContainer,
+                )
+                Text(
+                    text       = "$tierLabel · ${hiredWorker.dailyName}",
+                    style      = MaterialTheme.typography.labelMedium,
+                    color      = GoldPrimary,
+                    fontWeight = FontWeight.SemiBold,
+                )
+            }
+            Spacer(Modifier.height(4.dp))
+            if (session != null) {
+                val skillLabel = when (session.skillName) {
+                    "combat" -> context.getString(R.string.label_combat)
+                    else     -> GameStrings.skillName(context, session.skillName)
+                }
+                val skillEmoji    = GameStrings.skillEmoji(session.skillName)
+                val activityLabel = session.activityKey
+                    .replace('_', ' ')
+                    .replaceFirstChar { it.uppercase() }
+                    .takeIf { session.activityKey.isNotEmpty() }
+                Text(
+                    text       = buildString {
+                        append("$skillEmoji $skillLabel")
+                        if (activityLabel != null) append(" — $activityLabel")
+                    },
+                    style      = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color      = if (isDone) MaterialTheme.colorScheme.onPrimaryContainer
+                                 else MaterialTheme.colorScheme.onSecondaryContainer,
+                )
+                if (!isDone && endsAt > 0) {
+                    Spacer(Modifier.height(8.dp))
+                    Text(
+                        text       = remember(now) { endsAt.toCountdown() },
+                        style      = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Bold,
+                        color      = MaterialTheme.colorScheme.onSecondaryContainer,
+                    )
+                }
+            } else {
+                Text(
+                    text  = stringResource(R.string.worker_no_active_session),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSecondaryContainer,
+                )
+            }
+            if (isDone) {
+                Spacer(Modifier.height(4.dp))
+                Text(
+                    text  = stringResource(R.string.worker_session_complete),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                )
+            }
+            Spacer(Modifier.height(12.dp))
+            HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f))
+            Spacer(Modifier.height(8.dp))
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                if (isDone) {
+                    Button(onClick = onCollect) {
+                        Text(stringResource(R.string.worker_collect_btn))
+                    }
+                }
+                if (!isDone && session == null) {
+                    Button(onClick = onNavigateToWorkerSkills) {
+                        Text(stringResource(R.string.worker_add_sessions))
+                    }
+                }
+                OutlinedButton(onClick = { showDismissConfirm = true }) {
+                    Text(stringResource(R.string.worker_dismiss_btn))
+                }
+                if (BuildConfig.DEBUG && session != null && !isDone) {
+                    TextButton(onClick = onDebugFinish) {
+                        Text("[Debug] Finish Worker")
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun WorkerQueueCard(
+    queue: List<QueuedAction>,
+    context: android.content.Context,
+) {
+    Surface(
+        shape    = RoundedCornerShape(16.dp),
+        color    = MaterialTheme.colorScheme.surfaceVariant,
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Column(Modifier.padding(16.dp)) {
+            Text(
+                text  = stringResource(R.string.worker_queue_label, queue.size),
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Spacer(Modifier.height(8.dp))
+            queue.forEachIndexed { index, action ->
+                if (index > 0) HorizontalDivider(
+                    modifier = Modifier.padding(vertical = 4.dp),
+                    color    = MaterialTheme.colorScheme.outline.copy(alpha = 0.2f),
+                )
+                val emoji         = GameStrings.skillEmoji(action.skillName)
+                val activityLabel = action.activityKey
+                    .replace('_', ' ')
+                    .replaceFirstChar { it.uppercase() }
+                    .takeIf { action.activityKey.isNotEmpty() }
+                Text(
+                    text  = "$emoji ${action.skillDisplayName}${if (activityLabel != null) " — $activityLabel" else ""}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Medium,
                 )
             }
         }

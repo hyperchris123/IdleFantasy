@@ -74,6 +74,18 @@ sealed class Screen(
         icon     = Icons.Filled.ShoppingCart,
     )
 
+    object Inn : Screen(
+        route    = "inn",
+        labelRes = R.string.inn_title,
+        icon     = Icons.Filled.ShoppingCart,
+    )
+
+    object WorkerSkills : Screen(
+        route    = "worker_skills",
+        labelRes = R.string.worker_skills_title_nav,
+        icon     = Icons.Filled.ShowChart,
+    )
+
     companion object {
         val bottomNavItems = listOf(Skills, Combat, Home, Quests, Profile)
     }

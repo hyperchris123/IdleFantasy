@@ -136,7 +136,6 @@ class QueuedSessionStarter @Inject constructor(
                 val runeKey  = action.activityKey
                 val runeData = gameData.runes[runeKey] ?: return
                 val qty      = action.qty.takeIf { it > 0 } ?: return
-                if ((inventory["rune_essence"] ?: 0) < runeData.essenceCost * qty) return
                 val currentXp = xpMap[Skills.RUNECRAFTING] ?: 0L
                 val frames = buildList {
                     var xp = currentXp
@@ -158,6 +157,7 @@ class QueuedSessionStarter @Inject constructor(
                             levelBefore = before,
                             levelAfter  = XpTable.levelForXp(xp),
                             items       = mapOf(runeKey to runesProduced),
+                            kills       = 1,
                         ))
                     }
                 }
@@ -168,7 +168,6 @@ class QueuedSessionStarter @Inject constructor(
                 val boneKey = action.activityKey
                 val bone    = gameData.bones[boneKey] ?: return
                 val qty     = action.qty.takeIf { it > 0 } ?: return
-                if ((inventory[boneKey] ?: 0) < qty) return
                 val currentXp = xpMap[Skills.PRAYER] ?: 0L
                 val frames = buildList {
                     var xp = currentXp
@@ -199,7 +198,6 @@ class QueuedSessionStarter @Inject constructor(
             Skills.SMITHING -> {
                 val r   = gameData.smithingRecipes[action.activityKey] ?: return
                 val qty = action.qty.takeIf { it > 0 } ?: return
-                if (!r.materials.all { (item, needed) -> (inventory[item] ?: 0) >= needed * qty }) return
                 val frames = buildCraftFrames(xpMap[Skills.SMITHING] ?: 0L, qty, r.xpPerItem, r.outputQuantity, action.activityKey)
                 val perItemMs = SkillSimulator.sessionDurationMs(agilityLevel) / 60
                 sessionRepo.startSession(Skills.SMITHING, action.activityKey, encodeFrames(frames), qty * perItemMs, action.skillDisplayName)
@@ -207,7 +205,6 @@ class QueuedSessionStarter @Inject constructor(
             Skills.COOKING -> {
                 val r: CookingRecipe = gameData.cookingRecipes[action.activityKey] ?: return
                 val qty = action.qty.takeIf { it > 0 } ?: return
-                if ((inventory[r.rawItem] ?: 0) < qty) return
                 val frames = buildCraftFrames(xpMap[Skills.COOKING] ?: 0L, qty, r.xpPerItem, 1, r.cookedItem)
                 val perItemMs = SkillSimulator.sessionDurationMs(agilityLevel) / 60
                 sessionRepo.startSession(Skills.COOKING, action.activityKey, encodeFrames(frames), qty * perItemMs, action.skillDisplayName)
@@ -215,7 +212,6 @@ class QueuedSessionStarter @Inject constructor(
             Skills.FLETCHING -> {
                 val r   = gameData.fletchingRecipes[action.activityKey] ?: return
                 val qty = action.qty.takeIf { it > 0 } ?: return
-                if (!r.materials.all { (item, needed) -> (inventory[item] ?: 0) >= needed * qty }) return
                 val frames = buildCraftFrames(xpMap[Skills.FLETCHING] ?: 0L, qty, r.xpPerItem, r.outputQuantity, r.itemName)
                 val perItemMs = SkillSimulator.sessionDurationMs(agilityLevel) / 60
                 sessionRepo.startSession(Skills.FLETCHING, action.activityKey, encodeFrames(frames), qty * perItemMs, action.skillDisplayName)
@@ -223,7 +219,6 @@ class QueuedSessionStarter @Inject constructor(
             Skills.CRAFTING -> {
                 val r   = gameData.craftingRecipes[action.activityKey] ?: return
                 val qty = action.qty.takeIf { it > 0 } ?: return
-                if (!r.materials.all { (item, needed) -> (inventory[item] ?: 0) >= needed * qty }) return
                 val frames = buildCraftFrames(xpMap[Skills.CRAFTING] ?: 0L, qty, r.xpPerItem, r.outputQuantity, action.activityKey)
                 val perItemMs = SkillSimulator.sessionDurationMs(agilityLevel) / 60
                 sessionRepo.startSession(Skills.CRAFTING, action.activityKey, encodeFrames(frames), qty * perItemMs, action.skillDisplayName)
@@ -231,7 +226,6 @@ class QueuedSessionStarter @Inject constructor(
             Skills.HERBLORE -> {
                 val r   = gameData.herbloreRecipes[action.activityKey] ?: return
                 val qty = action.qty.takeIf { it > 0 } ?: return
-                if (!r.materials.all { (item, needed) -> (inventory[item] ?: 0) >= needed * qty }) return
                 val frames    = buildCraftFrames(xpMap[Skills.HERBLORE] ?: 0L, qty, r.xpPerItem, r.outputQuantity, action.activityKey)
                 val perItemMs = SkillSimulator.sessionDurationMs(agilityLevel) / 60
                 sessionRepo.startSession(Skills.HERBLORE, action.activityKey, encodeFrames(frames), qty * perItemMs, action.skillDisplayName)
@@ -256,12 +250,17 @@ class QueuedSessionStarter @Inject constructor(
                     equippedFood      = availableFood,
                     foodHealValues    = gameData.foodHealValues,
                 )
+                val frameMs        = SkillSimulator.sessionDurationMs(agilityLevel) / 60L
+                val bossDurationMs = boss.durationMinutes * frameMs
+                val animPerFrameMs = bossDurationMs / 60L
                 sessionRepo.startSession(
                     skillName        = "boss",
                     activityKey      = bossKey,
                     frames           = encodeFrames(bossFrames),
-                    durationMs       = bossFrames.size * 60_000L,
+                    durationMs       = bossDurationMs,
                     skillDisplayName = action.skillDisplayName,
+                    alarmOffsetMs    = if (bossFrames.size < boss.durationMinutes)
+                        (bossFrames.size - 1) * animPerFrameMs + 5_000L else null,
                 )
             }
             "combat" -> {
@@ -384,6 +383,7 @@ class QueuedSessionStarter @Inject constructor(
                     levelBefore = levelBefore, levelAfter = levelAfter,
                     items = mapOf(outputKey to outputQty),
                     leveledUp = levelAfter > levelBefore,
+                    kills = 1,
                 ))
             }
         }

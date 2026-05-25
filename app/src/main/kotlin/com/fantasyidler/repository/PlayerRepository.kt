@@ -4,6 +4,7 @@ import com.fantasyidler.data.db.dao.PlayerDao
 import com.fantasyidler.data.db.dao.QuestProgressDao
 import com.fantasyidler.data.model.*
 import com.fantasyidler.simulator.XpTable
+import kotlin.math.roundToInt
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
@@ -76,11 +77,15 @@ class PlayerRepository @Inject constructor(
         skillName: String,
         xpGained: Long,
         itemsGained: Map<String, Int>,
+        efficiencyMultiplier: Float = 1.0f,
     ): List<String> {
         val player    = getOrCreatePlayer()
         val flags: PlayerFlags = json.decodeFromString(player.flags)
         val boostActive = flags.xpBoostExpiresAt > System.currentTimeMillis()
-        val boostedXp = if (boostActive) xpGained * 2 else xpGained
+        val scaledXp = if (efficiencyMultiplier == 1.0f) xpGained else (xpGained * efficiencyMultiplier).toLong()
+        val boostedXp = if (boostActive) scaledXp * 2 else scaledXp
+        val scaledItems = if (efficiencyMultiplier == 1.0f) itemsGained
+            else itemsGained.mapValues { (_, v) -> (v * efficiencyMultiplier).roundToInt().coerceAtLeast(1) }
 
         val levels: MutableMap<String, Int>  = json.decodeFromString(player.skillLevels)
         val xpMap: MutableMap<String, Long>  = json.decodeFromString(player.skillXp)
@@ -100,7 +105,7 @@ class PlayerRepository @Inject constructor(
             }
         }
 
-        for ((item, qty) in itemsGained) {
+        for ((item, qty) in scaledItems) {
             inventory[item] = (inventory[item] ?: 0) + qty
         }
 
@@ -207,6 +212,36 @@ class PlayerRepository @Inject constructor(
         updateFlags(flags.copy(sessionQueue = listOf(action) + flags.sessionQueue))
     }
 
+    /** Appends an action to the worker's queue. Returns false if already full (3 items) or no worker hired. */
+    suspend fun enqueueWorkerAction(action: QueuedAction): Boolean {
+        val flags = getFlags()
+        val worker = flags.hiredWorker ?: return false
+        if (worker.sessionQueue.size >= 3) return false
+        updateFlags(flags.copy(hiredWorker = worker.copy(sessionQueue = worker.sessionQueue + action)))
+        return true
+    }
+
+    /** Removes and returns the first item in the worker's queue, or null if empty/no worker. */
+    suspend fun dequeueNextWorkerAction(): QueuedAction? {
+        val flags = getFlags()
+        val worker = flags.hiredWorker ?: return null
+        val queue = worker.sessionQueue
+        if (queue.isEmpty()) return null
+        updateFlags(flags.copy(hiredWorker = worker.copy(sessionQueue = queue.drop(1))))
+        return queue.first()
+    }
+
+    suspend fun requeueWorkerActionAtFront(action: QueuedAction) {
+        val flags = getFlags()
+        val worker = flags.hiredWorker ?: return
+        updateFlags(flags.copy(hiredWorker = worker.copy(sessionQueue = listOf(action) + worker.sessionQueue)))
+    }
+
+    suspend fun clearHiredWorker() {
+        val flags = getFlags()
+        updateFlags(flags.copy(hiredWorker = null))
+    }
+
     /** Removes the queued item at [index]. No-op if out of range. */
     suspend fun removeFromQueue(index: Int) {
         val flags = getFlags()
@@ -302,11 +337,14 @@ class PlayerRepository @Inject constructor(
         xpPerSkill: Map<String, Long>,
         itemsGained: Map<String, Int>,
         coinsGained: Long = 0L,
+        efficiencyMultiplier: Float = 1.0f,
     ): List<String> {
         val player    = getOrCreatePlayer()
         val flags: PlayerFlags = json.decodeFromString(player.flags)
         val boostActive = flags.xpBoostExpiresAt > System.currentTimeMillis()
         val boostMult = if (boostActive) 2L else 1L
+        val scaledItems = if (efficiencyMultiplier == 1.0f) itemsGained
+            else itemsGained.mapValues { (_, v) -> (v * efficiencyMultiplier).roundToInt().coerceAtLeast(1) }
 
         val levels:    MutableMap<String, Int>  = json.decodeFromString(player.skillLevels)
         val xpMap:     MutableMap<String, Long> = json.decodeFromString(player.skillXp)
@@ -315,7 +353,8 @@ class PlayerRepository @Inject constructor(
         val awardedCapes = mutableListOf<String>()
         for ((skill, xp) in xpPerSkill) {
             val oldLevel = XpTable.levelForXp(xpMap[skill] ?: 0L)
-            val newXp = (xpMap[skill] ?: 0L) + xp * boostMult
+            val scaledXp = if (efficiencyMultiplier == 1.0f) xp else (xp * efficiencyMultiplier).toLong()
+            val newXp = (xpMap[skill] ?: 0L) + scaledXp * boostMult
             xpMap[skill]  = newXp
             levels[skill] = XpTable.levelForXp(newXp)
             if (oldLevel < 99 && levels[skill]!! >= 99) {
@@ -326,7 +365,7 @@ class PlayerRepository @Inject constructor(
                 }
             }
         }
-        for ((item, qty) in itemsGained) {
+        for ((item, qty) in scaledItems) {
             inventory[item] = (inventory[item] ?: 0) + qty
         }
 
@@ -553,6 +592,16 @@ class PlayerRepository @Inject constructor(
         inventory[itemKey] = (inventory[itemKey] ?: 0) + qty
         playerDao.upsert(player.copy(inventory = json.encode<Map<String, Int>>(inventory)))
     }
+
+    /** Adds multiple items to inventory in a single DB write. */
+    suspend fun addItems(items: Map<String, Int>) {
+        if (items.isEmpty()) return
+        val player = getOrCreatePlayer()
+        val inventory: MutableMap<String, Int> = json.decodeFromString(player.inventory)
+        for ((key, qty) in items) inventory[key] = (inventory[key] ?: 0) + qty
+        playerDao.upsert(player.copy(inventory = json.encode<Map<String, Int>>(inventory)))
+    }
+
 
     // ------------------------------------------------------------------
     // Helpers

@@ -406,12 +406,19 @@ class CombatViewModel @Inject constructor(
                     json.serializersModule.serializer<List<SessionFrame>>(),
                     bossFrames,
                 )
+                val agilityLevel   = levels[Skills.AGILITY] ?: 1
+                val frameMs        = SkillSimulator.sessionDurationMs(agilityLevel) / 60L
+                val bossDurationMs = boss.durationMinutes * frameMs
+                val animPerFrameMs = bossDurationMs / 60L
+                val bossAlarmMs    = if (bossFrames.size < boss.durationMinutes)
+                    (bossFrames.size - 1) * animPerFrameMs + 5_000L else null
                 sessionRepo.startSession(
                     skillName        = "boss",
                     activityKey      = bossKey,
                     frames           = framesJson,
-                    durationMs       = bossFrames.size * 60_000L,
+                    durationMs       = bossDurationMs,
                     skillDisplayName = boss.displayName,
+                    alarmOffsetMs    = bossAlarmMs,
                 )
             } catch (e: Exception) {
                 _extra.update { it.copy(snackbarMessage = "Could not start boss fight: ${e.message}") }

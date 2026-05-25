@@ -175,9 +175,13 @@ object CombatSimulator {
                 }
             }
 
-            // Carry partial-damage enemy into next frame if still alive
-            carryoverEnemyKey = if (enemyHp > 0) enemyKey else null
-            carryoverEnemyHp  = if (enemyHp > 0) enemyHp  else 0
+            // Carry partial-damage enemy into next frame if still alive.
+            // A kill resets enemyHp to enemy.hp, so guard against carrying over
+            // a freshly-reset (full-HP) enemy — that would lock the session onto
+            // one enemy type for all 60 frames.
+            val freshlyKilled = kills > 0 && enemyHp == enemy.hp
+            carryoverEnemyKey = if (enemyHp > 0 && !freshlyKilled) enemyKey else null
+            carryoverEnemyHp  = if (enemyHp > 0 && !freshlyKilled) enemyHp  else 0
 
             val diedThisMinute = currentHp <= 0
 
@@ -382,7 +386,6 @@ object CombatSimulator {
 
         if (!won) {
             for ((skill, xp) in boss.xpRewards) xpBySkill[skill] = maxOf(1L, (xp * 0.1).toLong())
-            items["coins"] = maxOf(1, ((boss.commonLoot.coinsMin + boss.commonLoot.coinsMax) / 2 * 0.1).toInt())
         }
 
         val totalXp = xpBySkill.values.sum()
