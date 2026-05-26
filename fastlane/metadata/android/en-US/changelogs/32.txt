@@ -1,0 +1,3 @@
+• New: App launcher icon
+• Fix: Combat difficulty ratings and achievement names/descriptions are now translatable
+• Improvement: Player-friendly README with screenshots

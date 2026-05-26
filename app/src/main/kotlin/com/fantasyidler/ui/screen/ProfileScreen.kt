@@ -484,7 +484,16 @@ private fun AchievementsTab(
             }
         }
         byGroup.forEach { (group, achievements) ->
-            item(key = "hdr_$group") { SlotSectionHeader(group) }
+            item(key = "hdr_$group") {
+                val groupLabel = when (group) {
+                    "Levelling"  -> stringResource(R.string.achievement_group_levelling)
+                    "Combat"     -> stringResource(R.string.achievement_group_combat)
+                    "Quests"     -> stringResource(R.string.achievement_group_quests)
+                    "Collection" -> stringResource(R.string.achievement_group_collection)
+                    else         -> group
+                }
+                SlotSectionHeader(groupLabel)
+            }
             items(achievements, key = { it.id }) { ach ->
                 AchievementRow(ach)
             }

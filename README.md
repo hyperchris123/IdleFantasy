@@ -1,39 +1,77 @@
 # Idle Fantasy
 
-A free and open source offline idle RPG for Android. Train skills, fight in dungeons, craft gear, and complete quests. No internet connection, account, or ads required.
+**Set your hero to work. Close the app. Come back to loot.**
 
-## Features
+A free, open-source offline idle RPG for Android. No internet connection, no account, no ads.
 
-- **20 trainable skills**: Mining, Fishing, Farming, Woodcutting, Firemaking, Agility, Runecrafting, Smithing, Cooking, Fletching, Herblore, Crafting, Prayer, Attack, Strength, Defence, Ranged, Magic, Hitpoints
-- **Session-based training**: Start a session and close the app. Come back up to an hour later to collect your loot and XP
-- **12 dungeons**: Fight solo bosses and enemies to earn combat XP, coins, and rare drops. Melee, Ranged, and Magic combat styles supported
-- **Crafting system**: Smelt bars, cook fish, fletch bows and arrows, craft jewellery
-- **Prayer**: Bury bones from combat to earn Prayer XP
-- **Equipment system**: Equip weapons, armour, tools, and jewellery to boost stats and efficiency
-- **100+ quests** spanning all skills with XP rewards
-- **Pet system**: Rare pet drops provide permanent XP boosts
-- **Achievements**: Track milestones across levelling, combat, quests, and collections
-- **NPC Shop**: Buy supplies and sell gathered resources for coins
+<p align="center">
+  <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/1.png" width="170" alt="Home screen">
+  <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/4.png" width="170" alt="Dungeons">
+  <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/6.png" width="170" alt="Combat session">
+  <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/12.png" width="170" alt="Profile">
+</p>
 
-## Tech Stack
+## How it works
 
-| Concern | Choice |
-|---|---|
-| Language | Kotlin |
-| UI | Jetpack Compose + Material 3 |
-| Database | Room (SQLite) |
-| Background work | WorkManager |
-| JSON parsing | kotlinx.serialization |
-| Architecture | MVVM + Repository |
-| DI | Hilt |
-| Notifications | NotificationCompat |
-| Localization | Android string resources (Weblate-compatible) |
+Pick a skill or dungeon, start a session, then put your phone down. Your hero keeps training for up to an hour while the app is closed. Come back whenever you want to collect your XP and loot, then send them back out. There is no stamina bar, no energy system, and nothing that pressures you to stay in the app.
+
+## Skills
+
+Train **20 skills** at your own pace:
+
+- **Gathering** — Mine ores, catch fish, chop logs, tend crops, run agility courses
+- **Crafting** — Smelt bars, cook food, fletch bows and arrows, craft jewellery, burn logs for Prayer XP
+- **Combat** — Fight in 12 dungeons with Melee, Ranged, or Magic. Each style levels its own skill tree
+
+Better equipment means faster gathering and surviving tougher dungeons. Craft your own gear or buy it from the Shop.
+
+## Combat and dungeons
+
+Explore 12 dungeons from the starter Farm all the way to late-game Fortress Ruins and beyond. Each dungeon has its own enemy roster, difficulty rating, and potential drops. Before you go in, the game tells you how your current gear stacks up.
+
+## Quests
+
+Over **100 quests** span all skills. Daily quests reset every morning for a quick goal to aim at. Long-term Combat and Gathering quests track cumulative progress over many sessions. Completing quests earns XP rewards.
+
+## Pets and the Inn
+
+Rare enemies drop **collectible pets** that grant permanent passive XP bonuses. The **Inn** lets you hire workers who can queue up sessions on your behalf, and buy food to keep your fighter alive longer in tougher dungeons.
+
+## Getting the app
+
+[Download on F-Droid](https://f-droid.org/packages/com.fantasyidler/)
+
+Or grab the latest APK from the [Releases page](https://github.com/tristinbaker/IdleFantasy/releases).
+
+## Translating
+
+The game is available in English, German, French, Spanish, and Turkish. Translations live in standard Android string resource files and are Weblate-compatible. See [TRANSLATING.md](TRANSLATING.md) to add a new language or improve an existing one.
+
+## Contributing
+
+Bug reports and pull requests are welcome. Open an issue before starting large changes so the approach can be discussed first.
+
+See [CONTRIBUTORS.md](CONTRIBUTORS.md) for a full list of contributors.
+
+---
+
+## For developers
+
+**Language:** Kotlin  
+**UI:** Jetpack Compose + Material 3  
+**Database:** Room (SQLite)  
+**Background work:** WorkManager  
+**JSON parsing:** kotlinx.serialization  
+**Architecture:** MVVM + Repository  
+**Dependency injection:** Hilt  
+**Notifications:** NotificationCompat  
+**Localization:** Android string resources (Weblate-compatible)  
 
 No Google Play Services dependency. F-Droid compatible.
 
-## Building from Source
+### Building from source
 
-**Requirements:** Android Studio Hedgehog or newer, JDK 17+, Android SDK 34
+Requirements: Android Studio Hedgehog or newer, JDK 17+, Android SDK 34
 
 ```bash
 git clone https://github.com/tristinbaker/IdleFantasy.git
@@ -42,16 +80,6 @@ cd IdleFantasy
 ```
 
 The debug APK will be at `app/build/outputs/apk/debug/app-debug.apk`.
-
-## Translating
-
-See [TRANSLATING.md](TRANSLATING.md) for instructions on adding or improving translations. The project uses standard Android string resources (`res/values/strings.xml`) for easy contribution via Weblate.
-
-## Contributing
-
-Bug reports and pull requests are welcome. I especially welcome PRs for bug fixes that you may find. Please open an issue before starting large changes so we can discuss the approach. I appreciate any and all suggestions for improving this app so more people can enjoy it to the fullest extent.
-
-See [CONTRIBUTORS.md](CONTRIBUTORS.md) for a list of contributors.
 
 ## License
 

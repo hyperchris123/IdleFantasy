@@ -1,12 +1,15 @@
 package com.fantasyidler.ui.viewmodel
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.fantasyidler.R
 import com.fantasyidler.data.model.OwnedPet
 import com.fantasyidler.data.model.Skills
 import com.fantasyidler.repository.PlayerRepository
 import com.fantasyidler.repository.QuestRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -31,6 +34,7 @@ data class AchievementsUiState(
 
 @HiltViewModel
 class AchievementsViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val playerRepo: PlayerRepository,
     private val questRepo: QuestRepository,
     private val json: Json,
@@ -53,36 +57,36 @@ class AchievementsViewModel @Inject constructor(
         val groups = linkedMapOf<String, List<Achievement>>()
 
         groups["Levelling"] = listOf(
-            ach("total_50",   "Adventurer",     "Reach total level 50",         "⚔️",  totalLevel >= 50),
-            ach("total_100",  "Journeyman",     "Reach total level 100",        "🗺️",  totalLevel >= 100),
-            ach("total_250",  "Seasoned",       "Reach total level 250",        "📈",  totalLevel >= 250),
-            ach("total_500",  "Veteran",        "Reach total level 500",        "🏅",  totalLevel >= 500),
-            ach("total_750",  "Master",         "Reach total level 750",        "🥇",  totalLevel >= 750),
-            ach("total_1000", "Legend",         "Reach total level 1000",       "🌟",  totalLevel >= 1000),
-            ach("total_1500", "Champion",       "Reach total level 1500",       "👑",  totalLevel >= 1500),
-            ach("skill_99",   "First Mastery",  "Max any skill to level 99",    "💯",  levels.values.any { it >= 99 }),
-            ach("all_99",     "Completionist",  "Max all skills to level 99",   "🏆",  levels.values.all { it >= 99 }),
+            ach("total_50",   R.string.achievement_total_50_name,   R.string.achievement_total_50_desc,   "⚔️",  totalLevel >= 50),
+            ach("total_100",  R.string.achievement_total_100_name,  R.string.achievement_total_100_desc,  "🗺️",  totalLevel >= 100),
+            ach("total_250",  R.string.achievement_total_250_name,  R.string.achievement_total_250_desc,  "📈",  totalLevel >= 250),
+            ach("total_500",  R.string.achievement_total_500_name,  R.string.achievement_total_500_desc,  "🏅",  totalLevel >= 500),
+            ach("total_750",  R.string.achievement_total_750_name,  R.string.achievement_total_750_desc,  "🥇",  totalLevel >= 750),
+            ach("total_1000", R.string.achievement_total_1000_name, R.string.achievement_total_1000_desc, "🌟",  totalLevel >= 1000),
+            ach("total_1500", R.string.achievement_total_1500_name, R.string.achievement_total_1500_desc, "👑",  totalLevel >= 1500),
+            ach("skill_99",   R.string.achievement_skill_99_name,   R.string.achievement_skill_99_desc,   "💯",  levels.values.any { it >= 99 }),
+            ach("all_99",     R.string.achievement_all_99_name,     R.string.achievement_all_99_desc,     "🏆",  levels.values.all { it >= 99 }),
         )
 
         groups["Combat"] = listOf(
-            ach("combat_10", "Fighter",    "Reach combat level 10",  "🗡️", combatLevel >= 10),
-            ach("combat_30", "Warrior",    "Reach combat level 30",  "⚔️", combatLevel >= 30),
-            ach("combat_50", "Champion",   "Reach combat level 50",  "🛡️", combatLevel >= 50),
-            ach("combat_75", "Elite",      "Reach combat level 75",  "💀", combatLevel >= 75),
-            ach("combat_99", "Max Combat", "Reach combat level 99",  "👹", combatLevel >= 99),
+            ach("combat_10", R.string.achievement_combat_10_name, R.string.achievement_combat_10_desc, "🗡️", combatLevel >= 10),
+            ach("combat_30", R.string.achievement_combat_30_name, R.string.achievement_combat_30_desc, "⚔️", combatLevel >= 30),
+            ach("combat_50", R.string.achievement_combat_50_name, R.string.achievement_combat_50_desc, "🛡️", combatLevel >= 50),
+            ach("combat_75", R.string.achievement_combat_75_name, R.string.achievement_combat_75_desc, "💀", combatLevel >= 75),
+            ach("combat_99", R.string.achievement_combat_99_name, R.string.achievement_combat_99_desc, "👹", combatLevel >= 99),
         )
 
         groups["Quests"] = listOf(
-            ach("quest_1",   "Quester",        "Complete 1 quest",    "📜",  completedQuests >= 1),
-            ach("quest_5",   "Dedicated",      "Complete 5 quests",   "📜",  completedQuests >= 5),
-            ach("quest_25",  "Quest Hound",    "Complete 25 quests",  "📚",  completedQuests >= 25),
-            ach("quest_50",  "Quest Master",   "Complete 50 quests",  "🏅",  completedQuests >= 50),
-            ach("quest_all", "Quest Champion", "Complete all quests", "🏆",  completedQuests >= 103),
+            ach("quest_1",   R.string.achievement_quest_1_name,   R.string.achievement_quest_1_desc,   "📜",  completedQuests >= 1),
+            ach("quest_5",   R.string.achievement_quest_5_name,   R.string.achievement_quest_5_desc,   "📜",  completedQuests >= 5),
+            ach("quest_25",  R.string.achievement_quest_25_name,  R.string.achievement_quest_25_desc,  "📚",  completedQuests >= 25),
+            ach("quest_50",  R.string.achievement_quest_50_name,  R.string.achievement_quest_50_desc,  "🏅",  completedQuests >= 50),
+            ach("quest_all", R.string.achievement_quest_all_name, R.string.achievement_quest_all_desc, "🏆",  completedQuests >= 103),
         )
 
         groups["Collection"] = listOf(
-            ach("pet_first", "Animal Friend", "Collect your first pet", "🐾", pets.isNotEmpty()),
-            ach("pet_all",   "Menagerie",     "Collect all 7 pets",     "🦁", pets.size >= 7),
+            ach("pet_first", R.string.achievement_pet_first_name, R.string.achievement_pet_first_desc, "🐾", pets.isNotEmpty()),
+            ach("pet_all",   R.string.achievement_pet_all_name,   R.string.achievement_pet_all_desc,   "🦁", pets.size >= 7),
         )
 
         val all = groups.values.flatten()
@@ -94,6 +98,6 @@ class AchievementsViewModel @Inject constructor(
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), AchievementsUiState())
 
-    private fun ach(id: String, name: String, desc: String, emoji: String, unlocked: Boolean) =
-        Achievement(id = id, name = name, description = desc, emoji = emoji, isUnlocked = unlocked)
+    private fun ach(id: String, nameRes: Int, descRes: Int, emoji: String, unlocked: Boolean) =
+        Achievement(id = id, name = context.getString(nameRes), description = context.getString(descRes), emoji = emoji, isUnlocked = unlocked)
 }

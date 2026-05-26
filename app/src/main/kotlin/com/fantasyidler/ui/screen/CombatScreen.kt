@@ -556,9 +556,9 @@ private fun DungeonRow(
             )
             if (unlocked && survivalRating != null) {
                 val (ratingText, ratingColor) = when (survivalRating) {
-                    CombatSimulator.SurvivalRating.LIKELY   -> "Looks manageable" to MaterialTheme.colorScheme.primary
-                    CombatSimulator.SurvivalRating.RISKY    -> "Risky with current setup" to MaterialTheme.colorScheme.tertiary
-                    CombatSimulator.SurvivalRating.UNLIKELY -> "Likely to die" to MaterialTheme.colorScheme.error
+                    CombatSimulator.SurvivalRating.LIKELY   -> stringResource(R.string.combat_difficulty_likely)   to MaterialTheme.colorScheme.primary
+                    CombatSimulator.SurvivalRating.RISKY    -> stringResource(R.string.combat_difficulty_risky)    to MaterialTheme.colorScheme.tertiary
+                    CombatSimulator.SurvivalRating.UNLIKELY -> stringResource(R.string.combat_difficulty_unlikely) to MaterialTheme.colorScheme.error
                 }
                 Text(
                     text  = ratingText,
