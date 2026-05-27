@@ -325,6 +325,20 @@ object SkillSimulator {
     }
 
     // ------------------------------------------------------------------
+    // Session XP estimation — used for pre-session preview in the UI
+    // ------------------------------------------------------------------
+
+    /** Estimated total XP for a 60-frame gathering session (mining/woodcutting/fishing). */
+    fun estimateGatheringXp(xpPerAction: Int, efficiency: Float = 1f): Long =
+        (xpPerAction * efficiency).toLong() * 60L
+
+    /** Estimated total XP for a 60-frame agility session. */
+    fun estimateAgilityXp(xpPerSuccess: Int, levelRequired: Int, currentAgilityLevel: Int): Long {
+        val successRate = (0.60 + (currentAgilityLevel - levelRequired) * 0.02).coerceIn(0.40, 0.95)
+        return (2.0 * successRate * xpPerSuccess).toLong() * 60L
+    }
+
+    // ------------------------------------------------------------------
     // Shared helpers
     // ------------------------------------------------------------------
 

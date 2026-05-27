@@ -47,8 +47,8 @@ data class SessionSummary(
     val killLines: List<Pair<String, String>> = emptyList(),
     /** Food display name → "×qty" label — combat only */
     val foodConsumedLines: List<Pair<String, String>> = emptyList(),
-    /** Bone type display name + count — prayer only */
-    val boneBuriedLabel: String = "",
+    /** Bone type display name + count per type — prayer only */
+    val boneBuriedLines: List<Pair<String, String>> = emptyList(),
     /** Whether the 2× XP boost was active during this session. */
     val boostWasActive: Boolean = false,
 )
@@ -318,7 +318,7 @@ class HomeViewModel @Inject constructor(
             // For single-skill non-combat sessions use the compact totalXpLabel
             val useTotalLabel = n == 1 && combinedXpBySkill.size == 1 && combinedKills.isEmpty()
             val singleXp = combinedXpBySkill.values.firstOrNull() ?: 0L
-            val boneBuriedLabel = combinedBones.entries.joinToString(", ") { (name, count) -> "$count $name buried" }
+            val boneBuriedLines = combinedBones.entries.map { (name, count) -> Pair("$name buried", "×$count") }
 
             val summary = SessionSummary(
                 title          = title,
@@ -334,7 +334,7 @@ class HomeViewModel @Inject constructor(
                                      .map { (enemy, kills) -> Pair(gameData.enemies[enemy]?.displayName ?: enemy.toTitleCase(), "×$kills") },
                 foodConsumedLines = combinedFood.entries.sortedByDescending { it.value }
                                      .map { (food, qty) -> Pair(gameData.itemDisplayName(food), "×$qty") },
-                boneBuriedLabel = boneBuriedLabel,
+                boneBuriedLines = boneBuriedLines,
                 boostWasActive  = boostActive,
             )
 

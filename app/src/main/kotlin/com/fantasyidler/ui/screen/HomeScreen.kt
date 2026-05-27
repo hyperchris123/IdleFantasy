@@ -145,8 +145,8 @@ fun HomeScreen(
                         SummarySection(stringResource(R.string.home_food_consumed))
                         summary.foodConsumedLines.forEach { (food, qty) -> SummaryRow(food, qty) }
                     }
-                    if (summary.boneBuriedLabel.isNotEmpty()) {
-                        SummaryRow(stringResource(R.string.home_bones_buried), summary.boneBuriedLabel)
+                    if (summary.boneBuriedLines.isNotEmpty()) {
+                        summary.boneBuriedLines.forEach { (label, qty) -> SummaryRow(label, qty) }
                     }
                 }
             },

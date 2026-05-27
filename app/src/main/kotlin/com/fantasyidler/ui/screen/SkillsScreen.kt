@@ -88,6 +88,8 @@ import com.fantasyidler.ui.viewmodel.SkillsViewModel
 import com.fantasyidler.ui.viewmodel.xpProgressFraction
 import com.fantasyidler.ui.viewmodel.nextLevelThreshold
 import com.fantasyidler.ui.viewmodel.xpToNextLevel
+import com.fantasyidler.simulator.SkillSimulator
+import com.fantasyidler.simulator.XpTable
 import com.fantasyidler.util.GameStrings
 import com.fantasyidler.util.formatDurationMs
 import com.fantasyidler.util.formatXp
@@ -235,6 +237,8 @@ fun SkillsScreen(
                     hasActiveSession  = state.anySessionActive,
                     isQueueFull       = state.queueSize >= 3,
                     sessionDurationMs = state.sessionDurationMs,
+                    currentXp         = state.skillXp[Skills.MINING] ?: 0L,
+                    efficiency        = state.miningEfficiency,
                     onSelect          = { oreKey -> viewModel.startMiningSession(oreKey) },
                 )
                 is SheetState.Woodcutting -> WoodcuttingSheet(
@@ -243,15 +247,19 @@ fun SkillsScreen(
                     hasActiveSession  = state.anySessionActive,
                     isQueueFull       = state.queueSize >= 3,
                     sessionDurationMs = state.sessionDurationMs,
+                    currentXp         = state.skillXp[Skills.WOODCUTTING] ?: 0L,
+                    efficiency        = state.woodcuttingEfficiency,
                     onSelect          = { treeKey -> viewModel.startWoodcuttingSession(treeKey) },
                 )
                 is SheetState.Fishing -> FishingSheet(
-                    fish             = sheet.fish,
-                    isStarting       = state.startingSession,
-                    hasActiveSession = state.anySessionActive,
-                    isQueueFull      = state.queueSize >= 3,
+                    fish              = sheet.fish,
+                    isStarting        = state.startingSession,
+                    hasActiveSession  = state.anySessionActive,
+                    isQueueFull       = state.queueSize >= 3,
                     sessionDurationMs = state.sessionDurationMs,
-                    onSelect         = { fishKey -> viewModel.startFishingSession(fishKey) },
+                    currentXp         = state.skillXp[Skills.FISHING] ?: 0L,
+                    efficiency        = state.fishingEfficiency,
+                    onSelect          = { fishKey -> viewModel.startFishingSession(fishKey) },
                 )
                 is SheetState.Agility -> AgilitySheet(
                     courses           = sheet.courses,
@@ -259,6 +267,7 @@ fun SkillsScreen(
                     hasActiveSession  = state.anySessionActive,
                     isQueueFull       = state.queueSize >= 3,
                     sessionDurationMs = state.sessionDurationMs,
+                    currentXp         = state.skillXp[Skills.AGILITY] ?: 0L,
                     onSelect          = { courseKey -> viewModel.startAgilitySession(courseKey) },
                 )
                 is SheetState.Firemaking -> FiremakingSheet(
@@ -542,6 +551,8 @@ internal fun MiningSheet(
     hasActiveSession: Boolean,
     isQueueFull: Boolean,
     sessionDurationMs: Long,
+    currentXp: Long = 0L,
+    efficiency: Float = 1f,
     onSelect: (String) -> Unit,
 ) {
     val context = LocalContext.current
@@ -571,9 +582,11 @@ internal fun MiningSheet(
             ores.entries
                 .sortedBy { it.value.levelRequired }
                 .forEach { (key, ore) ->
+                    val xpGain = SkillSimulator.estimateGatheringXp(ore.xpPerOre, efficiency)
                     ActivityRow(
                         name             = GameStrings.itemName(context, key),
                         detail           = stringResource(R.string.skills_level_req_xp, ore.levelRequired, ore.xpPerOre),
+                        projectedLabel   = projectedXpLabel(currentXp, xpGain),
                         isStarting       = isStarting,
                         hasActiveSession = hasActiveSession,
                         isQueueFull      = isQueueFull,
@@ -603,6 +616,8 @@ internal fun WoodcuttingSheet(
     hasActiveSession: Boolean,
     isQueueFull: Boolean,
     sessionDurationMs: Long,
+    currentXp: Long = 0L,
+    efficiency: Float = 1f,
     onSelect: (String) -> Unit,
 ) {
     val context = LocalContext.current
@@ -632,9 +647,11 @@ internal fun WoodcuttingSheet(
             trees.entries
                 .sortedBy { it.value.levelRequired }
                 .forEach { (key, tree) ->
+                    val xpGain = SkillSimulator.estimateGatheringXp(tree.xpPerLog, efficiency)
                     ActivityRow(
                         name             = GameStrings.itemName(context, tree.logName),
                         detail           = stringResource(R.string.skills_log_desc, tree.levelRequired, tree.xpPerLog),
+                        projectedLabel   = projectedXpLabel(currentXp, xpGain),
                         isStarting       = isStarting,
                         hasActiveSession = hasActiveSession,
                         isQueueFull      = isQueueFull,
@@ -664,6 +681,8 @@ internal fun FishingSheet(
     hasActiveSession: Boolean,
     isQueueFull: Boolean,
     sessionDurationMs: Long,
+    currentXp: Long = 0L,
+    efficiency: Float = 1f,
     onSelect: (String) -> Unit,
 ) {
     val context = LocalContext.current
@@ -693,9 +712,11 @@ internal fun FishingSheet(
             fish.entries
                 .sortedBy { it.value.levelRequired }
                 .forEach { (key, f) ->
+                    val xpGain = SkillSimulator.estimateGatheringXp(f.xpPerCatch, efficiency)
                     ActivityRow(
                         name             = GameStrings.itemName(context, key),
                         detail           = stringResource(R.string.skills_fish_desc, f.levelRequired, f.xpPerCatch),
+                        projectedLabel   = projectedXpLabel(currentXp, xpGain),
                         isStarting       = isStarting,
                         hasActiveSession = hasActiveSession,
                         isQueueFull      = isQueueFull,
@@ -734,10 +755,20 @@ internal fun ComingSoonSheet() {
     }
 }
 
+private fun projectedXpLabel(currentXp: Long, xpGain: Long): String {
+    val currentLevel  = XpTable.levelForXp(currentXp)
+    val projectedLevel = XpTable.levelForXp(currentXp + xpGain)
+    return if (projectedLevel > currentLevel)
+        "+${xpGain.formatXp()} XP → Level $projectedLevel"
+    else
+        "+${xpGain.formatXp()} XP"
+}
+
 @Composable
 internal fun ActivityRow(
     name: String,
     detail: String,
+    projectedLabel: String? = null,
     isStarting: Boolean,
     hasActiveSession: Boolean,
     isQueueFull: Boolean,
@@ -759,6 +790,13 @@ internal fun ActivityRow(
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
+            if (projectedLabel != null) {
+                Text(
+                    text  = projectedLabel,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.primary,
+                )
+            }
         }
         if (isStarting) {
             CircularProgressIndicator(modifier = Modifier.size(20.dp))
@@ -821,10 +859,12 @@ internal fun AgilitySheet(
     hasActiveSession: Boolean,
     isQueueFull: Boolean,
     sessionDurationMs: Long,
+    currentXp: Long = 0L,
     onSelect: (String) -> Unit,
 ) {
     val context = LocalContext.current
     var selectedKey by remember { mutableStateOf<String?>(null) }
+    val currentAgilityLevel = XpTable.levelForXp(currentXp)
     Column(Modifier.padding(bottom = 24.dp)) {
         Text(
             text     = stringResource(R.string.label_choose_activity),
@@ -850,9 +890,11 @@ internal fun AgilitySheet(
             courses.entries
                 .sortedBy { it.value.levelRequired }
                 .forEach { (key, course) ->
+                    val xpGain = SkillSimulator.estimateAgilityXp(course.xpPerSuccess, course.levelRequired, currentAgilityLevel)
                     ActivityRow(
                         name             = course.displayName,
                         detail           = "Lv. ${course.levelRequired}  •  ${course.xpPerSuccess} XP/lap",
+                        projectedLabel   = projectedXpLabel(currentXp, xpGain),
                         isStarting       = isStarting,
                         hasActiveSession = hasActiveSession,
                         isQueueFull      = isQueueFull,

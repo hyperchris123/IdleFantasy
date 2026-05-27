@@ -664,15 +664,21 @@ private fun EquipmentTab(
                 Text(stringResource(R.string.profile_equip_best))
             }
         }
-        item { SlotSectionHeader(stringResource(R.string.profile_combat_gear)) }
-        items(EquipSlot.COMBAT_SLOTS) { slot ->
-            val xpLabel = if (slot == EquipSlot.WEAPON)
-                weaponXpLabel(allEquipment[equipped[slot]]?.combatStyle, context)
-            else null
+        item { SlotSectionHeader(stringResource(R.string.profile_weapons)) }
+        items(EquipSlot.WEAPON_SLOTS) { slot ->
             EquipSlotRow(
                 slotName   = slotDisplayName(slot),
                 itemKey    = equipped[slot],
-                xpLabel    = xpLabel,
+                xpLabel    = weaponXpLabel(allEquipment[equipped[slot]]?.combatStyle, context),
+                onTap      = { onSlotTap(slot) },
+                onUnequip  = { onUnequip(slot) },
+            )
+        }
+        item { SlotSectionHeader(stringResource(R.string.profile_combat_gear)) }
+        items(EquipSlot.ARMOR_SLOTS) { slot ->
+            EquipSlotRow(
+                slotName   = slotDisplayName(slot),
+                itemKey    = equipped[slot],
                 onTap      = { onSlotTap(slot) },
                 onUnequip  = { onUnequip(slot) },
             )
@@ -867,7 +873,7 @@ private fun EquipPickerSheet(
                     compareBy({ it.requirements.values.maxOrNull() ?: 0 }, { it.name })
                 )
             ) { item ->
-                val xpLabel = weaponXpLabel(item.combatStyle, context).takeIf { item.slot == EquipSlot.WEAPON }
+                val xpLabel = weaponXpLabel(item.combatStyle, context).takeIf { item.slot == EquipSlot.WEAPON || EquipSlot.combatStyleForSlot(item.slot) != null }
                 val displayName = buildString {
                     append(GameStrings.itemName(context, item.name))
                     if (xpLabel != null) append(" ($xpLabel)")
