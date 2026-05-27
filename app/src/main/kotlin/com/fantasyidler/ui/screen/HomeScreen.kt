@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Group
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.ShoppingCart
@@ -66,6 +67,7 @@ import com.fantasyidler.util.GameStrings
 import com.fantasyidler.util.formatCoins
 import com.fantasyidler.util.formatDurationMs
 import com.fantasyidler.util.toCountdown
+import androidx.compose.ui.text.style.TextOverflow
 import kotlinx.coroutines.delay
 import kotlinx.serialization.decodeFromString
 
@@ -76,6 +78,7 @@ fun HomeScreen(
     onNavigateToShop: () -> Unit = {},
     onNavigateToInn: () -> Unit = {},
     onNavigateToWorkerSkills: () -> Unit = {},
+    onNavigateToGuildHall: () -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val state            by viewModel.uiState.collectAsState()
@@ -411,6 +414,38 @@ fun HomeScreen(
                 }
             }
 
+            // ── Guild Hall row ───────────────────────────────────────────
+            Surface(
+                shape    = RoundedCornerShape(16.dp),
+                color    = MaterialTheme.colorScheme.surfaceVariant,
+                modifier = Modifier.fillMaxWidth().clickable { onNavigateToGuildHall() },
+            ) {
+                Row(
+                    modifier          = Modifier.padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Icon(
+                        imageVector        = Icons.Filled.Group,
+                        contentDescription = null,
+                        tint               = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier           = Modifier.size(24.dp),
+                    )
+                    Spacer(Modifier.width(12.dp))
+                    Column {
+                        Text(
+                            text       = stringResource(R.string.guild_hall_title),
+                            style      = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Medium,
+                        )
+                        Text(
+                            text  = stringResource(R.string.guild_hall_desc),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                }
+            }
+
             // ── Worker session card ──────────────────────────────────────
             if (hiredWorker != null) {
                 if (workerSession != null && !workerSession.completed) {
@@ -430,12 +465,6 @@ fun HomeScreen(
                     onDebugFinish            = viewModel::debugFinishWorkerSession,
                     onNavigateToWorkerSkills = onNavigateToWorkerSkills,
                 )
-                if (state.workerQueue.isNotEmpty()) {
-                    WorkerQueueCard(
-                        queue   = state.workerQueue,
-                        context = context,
-                    )
-                }
             }
 
             // ── Active session card ──────────────────────────────────────
@@ -833,43 +862,6 @@ private fun WorkerSessionCard(
                         Text("[Debug] Finish Worker")
                     }
                 }
-            }
-        }
-    }
-}
-
-@Composable
-private fun WorkerQueueCard(
-    queue: List<QueuedAction>,
-    context: android.content.Context,
-) {
-    Surface(
-        shape    = RoundedCornerShape(16.dp),
-        color    = MaterialTheme.colorScheme.surfaceVariant,
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        Column(Modifier.padding(16.dp)) {
-            Text(
-                text  = stringResource(R.string.worker_queue_label, queue.size),
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-            Spacer(Modifier.height(8.dp))
-            queue.forEachIndexed { index, action ->
-                if (index > 0) HorizontalDivider(
-                    modifier = Modifier.padding(vertical = 4.dp),
-                    color    = MaterialTheme.colorScheme.outline.copy(alpha = 0.2f),
-                )
-                val emoji         = GameStrings.skillEmoji(action.skillName)
-                val activityLabel = action.activityKey
-                    .replace('_', ' ')
-                    .replaceFirstChar { it.uppercase() }
-                    .takeIf { action.activityKey.isNotEmpty() }
-                Text(
-                    text  = "$emoji ${action.skillDisplayName}${if (activityLabel != null) " — $activityLabel" else ""}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Medium,
-                )
             }
         }
     }

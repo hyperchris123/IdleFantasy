@@ -3,6 +3,7 @@ package com.fantasyidler.ui.navigation
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Group
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material.icons.filled.Settings
@@ -85,6 +86,20 @@ sealed class Screen(
         labelRes = R.string.worker_skills_title_nav,
         icon     = Icons.Filled.ShowChart,
     )
+
+    object GuildHall : Screen(
+        route    = "guild_hall",
+        labelRes = R.string.guild_hall_title,
+        icon     = Icons.Filled.Group,
+    )
+
+    object GuildDetail : Screen(
+        route    = "guild_detail/{guild}",
+        labelRes = R.string.guild_hall_title,
+        icon     = Icons.Filled.Group,
+    ) {
+        fun createRoute(guild: String) = "guild_detail/$guild"
+    }
 
     companion object {
         val bottomNavItems = listOf(Skills, Combat, Home, Quests, Profile)

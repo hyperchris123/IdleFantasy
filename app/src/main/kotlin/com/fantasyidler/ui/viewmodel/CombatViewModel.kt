@@ -15,6 +15,7 @@ import com.fantasyidler.data.model.SessionFrame
 import com.fantasyidler.data.model.SkillSession
 import com.fantasyidler.data.model.Skills
 import com.fantasyidler.repository.GameDataRepository
+import com.fantasyidler.repository.GuildRepository
 import com.fantasyidler.repository.PlayerRepository
 import com.fantasyidler.repository.QuestRepository
 import com.fantasyidler.repository.QueuedSessionStarter
@@ -87,6 +88,7 @@ class CombatViewModel @Inject constructor(
     private val sessionRepo: SessionRepository,
     private val gameData: GameDataRepository,
     private val questRepo: QuestRepository,
+    private val guildRepo: GuildRepository,
     private val queuedSessionStarter: QueuedSessionStarter,
     private val json: Json,
 ) : ViewModel() {
@@ -532,6 +534,7 @@ class CombatViewModel @Inject constructor(
                 loot         = loot,
             )
             playerRepo.recordDailyKills(mapOf(session.activityKey to 1))
+            guildRepo.recordGuildCombat(mapOf(session.activityKey to 1), detectCombatStyle(last.xpBySkill))
         }
         val itemsDisplay = last.items.toMutableMap().also { it.remove("coins") }
         sessionRepo.deleteSession(session.sessionId)
@@ -591,7 +594,10 @@ class CombatViewModel @Inject constructor(
                 combatStyle        = combatStyle,
                 foodConsumedTotal  = allFoodConsumed.values.sum(),
             )
-            if (allKillsByEnemy.isNotEmpty()) playerRepo.recordDailyKills(allKillsByEnemy)
+            if (allKillsByEnemy.isNotEmpty()) {
+                playerRepo.recordDailyKills(allKillsByEnemy)
+                guildRepo.recordGuildCombat(allKillsByEnemy, combatStyle)
+            }
             playerRepo.incrementDungeonRun(session.activityKey)
         }
         sessionRepo.deleteSession(session.sessionId)

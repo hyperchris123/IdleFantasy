@@ -52,7 +52,7 @@ data class WorkerSkillsUiState(
     val selectedRecipe: CraftableRecipe? = null,
     val craftQuantity: Int = 1,
 ) {
-    val workerQueueFull: Boolean get() = workerQueue.size >= 3
+    val workerQueueFull: Boolean get() = activeSession != null && !activeSession.completed
 
     fun maxCraftable(recipe: CraftableRecipe): Int {
         if (recipe.materials.isEmpty()) return 0

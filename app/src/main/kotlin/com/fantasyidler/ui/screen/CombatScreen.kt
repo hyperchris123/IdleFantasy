@@ -595,7 +595,12 @@ private fun DungeonRow(
 // Active session banner
 // ---------------------------------------------------------------------------
 
-private data class CombatLogEntry(val isPlayer: Boolean, val damage: Int, val enemyName: String)
+private data class CombatLogEntry(
+    val isPlayer: Boolean,
+    val damage: Int,
+    val enemyName: String,
+    val isKill: Boolean = false,
+)
 
 @Composable
 private fun CombatSessionBanner(
@@ -652,11 +657,31 @@ private fun CombatSessionBanner(
     }
     val currentEnemy = currentEnemyKey?.let { enemies[it] }
 
-    val killsSoFar: Map<String, Int> = remember(currentFrameIdx) {
-        frames.take(currentFrameIdx).fold(mutableMapOf()) { acc, f ->
-            f.killsByEnemy.forEach { (k, v) -> acc[k] = (acc[k] ?: 0) + v }
-            acc
+    val isBoss = session.skillName == "boss"
+    val attackSpeedMs = 2_400L
+    val frameStartMs  = session.startedAt + currentFrameIdx.toLong() * perFrameMs
+    val maxTick = (currentFrame?.playerHits?.size?.minus(1) ?: 0).coerceAtLeast(0)
+    val tickInFrame = if (!isDone) ((now - frameStartMs) / attackSpeedMs).toInt().coerceIn(0, maxTick) else maxTick
+
+    val killsSoFar: Map<String, Int> = remember(currentFrameIdx, tickInFrame) {
+        val acc = frames.take(currentFrameIdx).fold(mutableMapOf<String, Int>()) { a, f ->
+            f.killsByEnemy.forEach { (k, v) -> a[k] = (a[k] ?: 0) + v }
+            a
         }
+        val f = frames.getOrNull(currentFrameIdx)
+        if (f != null && !isBoss) {
+            val enemy = enemies[f.enemyKey]
+            if (enemy != null && f.playerHits.isNotEmpty()) {
+                var hp = enemy.hp
+                var kills = 0
+                for (dmg in f.playerHits.take(tickInFrame + 1)) {
+                    hp -= dmg
+                    if (hp <= 0) { kills++; hp = enemy.hp }
+                }
+                if (kills > 0) acc[f.enemyKey] = (acc[f.enemyKey] ?: 0) + kills
+            }
+        }
+        acc
     }
 
     val foodConsumedSoFar: Map<String, Int> = remember(currentFrameIdx) {
@@ -699,16 +724,8 @@ private fun CombatSessionBanner(
 
             if (session.skillName == "combat" || session.skillName == "boss") {
                 val context = LocalContext.current
-                val isBoss = session.skillName == "boss"
                 val currentBoss = if (isBoss) bosses.firstOrNull { it.id == session.activityKey } else null
                 val divColor = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.2f)
-
-                // Per-tick state
-                val attackSpeedMs = 2_400L
-                val frameStartMs  = session.startedAt + currentFrameIdx.toLong() * perFrameMs
-                val maxTick = (currentFrame?.playerHits?.size?.minus(1) ?: 0).coerceAtLeast(0)
-                val tickInFrame = ((now - frameStartMs) / attackSpeedMs)
-                    .toInt().coerceIn(0, maxTick)
 
                 // Live player HP (per-tick if hit data exists, else per-frame fallback)
                 val maxHp = (skillLevels[Skills.HITPOINTS] ?: 1) * 10
@@ -744,16 +761,28 @@ private fun CombatSessionBanner(
                             val f = frames.getOrNull(i) ?: break
                             val eName = bosses.firstOrNull { it.id == f.enemyKey }?.displayName
                                 ?: enemies[f.enemyKey]?.displayName ?: f.enemyKey
+                            val enemyHp = if (!isBoss) enemies[f.enemyKey]?.hp ?: Int.MAX_VALUE else Int.MAX_VALUE
+                            var hp = enemyHp
                             for (t in 0 until maxOf(f.playerHits.size, f.enemyHits.size)) {
-                                f.playerHits.getOrNull(t)?.let { add(CombatLogEntry(true, it, eName)) }
+                                f.playerHits.getOrNull(t)?.let { dmg ->
+                                    add(CombatLogEntry(true, dmg, eName))
+                                    hp -= dmg
+                                    if (hp <= 0) { add(CombatLogEntry(false, 0, eName, isKill = true)); hp = enemyHp }
+                                }
                                 f.enemyHits.getOrNull(t)?.let { add(CombatLogEntry(false, it, eName)) }
                             }
                         }
                         val f = frames.getOrNull(currentFrameIdx) ?: return@buildList
                         val eName = bosses.firstOrNull { it.id == f.enemyKey }?.displayName
                             ?: enemies[f.enemyKey]?.displayName ?: f.enemyKey
+                        val enemyHp = if (!isBoss) enemies[f.enemyKey]?.hp ?: Int.MAX_VALUE else Int.MAX_VALUE
+                        var hp = enemyHp
                         for (t in 0..tickInFrame) {
-                            f.playerHits.getOrNull(t)?.let { add(CombatLogEntry(true, it, eName)) }
+                            f.playerHits.getOrNull(t)?.let { dmg ->
+                                add(CombatLogEntry(true, dmg, eName))
+                                hp -= dmg
+                                if (hp <= 0) { add(CombatLogEntry(false, 0, eName, isKill = true)); hp = enemyHp }
+                            }
                             f.enemyHits.getOrNull(t)?.let { add(CombatLogEntry(false, it, eName)) }
                         }
                     }.takeLast(8)
@@ -979,30 +1008,38 @@ private fun CombatSessionBanner(
                                 val hitYou    = stringResource(R.string.combat_log_hit_you)
                                 val missed    = stringResource(R.string.combat_log_missed)
                                 for (entry in combatLog) {
-                                    val (arrow, dmgText, color) = if (entry.isPlayer) {
-                                        val c = if (entry.damage > 0) Color(0xFF4CAF50)
-                                                else MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.45f)
-                                        Triple(
-                                            "→",
-                                            if (entry.damage > 0) "$youHit ${entry.enemyName}: ${entry.damage} $dmgLabel"
-                                            else "$youMissed ${entry.enemyName}",
-                                            c,
+                                    if (entry.isKill) {
+                                        Text(
+                                            text  = "☠ ${entry.enemyName} defeated",
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = GoldPrimary,
                                         )
                                     } else {
-                                        val c = if (entry.damage > 0) MaterialTheme.colorScheme.error
-                                                else MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.45f)
-                                        Triple(
-                                            "←",
-                                            if (entry.damage > 0) "${entry.enemyName} $hitYou: ${entry.damage} $dmgLabel"
-                                            else "${entry.enemyName} $missed",
-                                            c,
+                                        val (arrow, dmgText, color) = if (entry.isPlayer) {
+                                            val c = if (entry.damage > 0) Color(0xFF4CAF50)
+                                                    else MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.45f)
+                                            Triple(
+                                                "→",
+                                                if (entry.damage > 0) "$youHit ${entry.enemyName}: ${entry.damage} $dmgLabel"
+                                                else "$youMissed ${entry.enemyName}",
+                                                c,
+                                            )
+                                        } else {
+                                            val c = if (entry.damage > 0) MaterialTheme.colorScheme.error
+                                                    else MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.45f)
+                                            Triple(
+                                                "←",
+                                                if (entry.damage > 0) "${entry.enemyName} $hitYou: ${entry.damage} $dmgLabel"
+                                                else "${entry.enemyName} $missed",
+                                                c,
+                                            )
+                                        }
+                                        Text(
+                                            text  = "$arrow $dmgText",
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = color,
                                         )
                                     }
-                                    Text(
-                                        text  = "$arrow $dmgText",
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = color,
-                                    )
                                 }
                             }
                         }

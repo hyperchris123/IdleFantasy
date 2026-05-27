@@ -31,6 +31,8 @@ import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.fantasyidler.ui.screen.CombatScreen
 import com.fantasyidler.ui.screen.FarmingScreen
+import com.fantasyidler.ui.screen.GuildDetailScreen
+import com.fantasyidler.ui.screen.GuildHallScreen
 import com.fantasyidler.ui.screen.HomeScreen
 import com.fantasyidler.ui.screen.InnScreen
 import com.fantasyidler.ui.screen.OnboardingScreen
@@ -59,7 +61,7 @@ fun AppNavigation() {
     val currentDestination = backStackEntry?.destination
 
     val tabSubScreens: Map<String, Set<String>> = mapOf(
-        "home"   to setOf("shop", "settings", "inn", "worker_skills"),
+        "home"   to setOf("shop", "settings", "inn", "worker_skills", "guild_hall", "guild_detail/{guild}"),
         "skills" to setOf("farming"),
     )
 
@@ -140,6 +142,7 @@ fun AppNavigation() {
                     onNavigateToShop         = { navController.navigate(Screen.Shop.route) },
                     onNavigateToInn          = { navController.navigate(Screen.Inn.route) },
                     onNavigateToWorkerSkills = { navController.navigate(Screen.WorkerSkills.route) },
+                    onNavigateToGuildHall    = { navController.navigate(Screen.GuildHall.route) },
                 )
             }
             composable(Screen.Quests.route)   { QuestsScreen() }
@@ -164,6 +167,17 @@ fun AppNavigation() {
             }
             composable(Screen.WorkerSkills.route) { entry ->
                 WorkerSkillsScreen(onBack = { if (navController.currentBackStackEntry == entry) navController.popBackStack() })
+            }
+            composable(Screen.GuildHall.route) { entry ->
+                GuildHallScreen(
+                    onBack             = { if (navController.currentBackStackEntry == entry) navController.popBackStack() },
+                    onNavigateToGuild  = { guild -> navController.navigate(Screen.GuildDetail.createRoute(guild)) },
+                )
+            }
+            composable(Screen.GuildDetail.route) { entry ->
+                GuildDetailScreen(
+                    onBack = { if (navController.currentBackStackEntry == entry) navController.popBackStack() },
+                )
             }
         }
     }

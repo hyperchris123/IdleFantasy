@@ -10,6 +10,7 @@ import com.fantasyidler.data.model.SessionFrame
 import com.fantasyidler.data.model.SkillSession
 import com.fantasyidler.data.model.Skills
 import com.fantasyidler.repository.GameDataRepository
+import com.fantasyidler.repository.GuildRepository
 import com.fantasyidler.repository.PlayerRepository
 import com.fantasyidler.repository.QuestRepository
 import com.fantasyidler.repository.QueuedSessionStarter
@@ -81,6 +82,7 @@ class HomeViewModel @Inject constructor(
     private val sessionRepo: SessionRepository,
     private val gameData: GameDataRepository,
     private val questRepo: QuestRepository,
+    private val guildRepo: GuildRepository,
     private val queuedSessionStarter: QueuedSessionStarter,
     private val workerStarter: WorkerQueuedSessionStarter,
     private val json: Json,
@@ -200,6 +202,7 @@ class HomeViewModel @Inject constructor(
                                 loot         = loot,
                             )
                             playerRepo.recordDailyKills(mapOf(session.activityKey to 1))
+                            guildRepo.recordGuildCombat(mapOf(session.activityKey to 1), detectCombatStyle(frame.xpBySkill))
                             for ((item, qty) in loot) combinedItems[item] = (combinedItems[item] ?: 0) + qty
                             combinedCoins += coins
                         }
@@ -235,15 +238,19 @@ class HomeViewModel @Inject constructor(
                                 petMessage = "You found a pet: ${pd.displayName}!"
                         }
                         if (!died) {
+                            val style = detectCombatStyle(xpPerSkill)
                             questRepo.recordCombat(
                                 dungeonKey         = session.activityKey,
                                 killsByEnemy       = kills,
                                 loot               = loot,
-                                combatStyle        = detectCombatStyle(xpPerSkill),
+                                combatStyle        = style,
                                 foodConsumedTotal  = food.values.sum(),
                             )
                             playerRepo.incrementDungeonRun(session.activityKey)
-                            if (kills.isNotEmpty()) playerRepo.recordDailyKills(kills)
+                            if (kills.isNotEmpty()) {
+                                playerRepo.recordDailyKills(kills)
+                                guildRepo.recordGuildCombat(kills, style)
+                            }
                         }
                         if (food.isNotEmpty())   playerRepo.consumeItems(food)
                         if (arrows.isNotEmpty()) playerRepo.consumeItems(arrows)
@@ -264,16 +271,24 @@ class HomeViewModel @Inject constructor(
                             in gatheringSkills -> {
                                 questRepo.recordGathering(session.skillName, regular)
                                 playerRepo.recordDailyGathering(regular)
+                                when (session.skillName) {
+                                    Skills.AGILITY      -> guildRepo.recordGuildSessions()
+                                    Skills.RUNECRAFTING -> guildRepo.recordGuildCrafting(session.skillName, regular)
+                                    else                -> guildRepo.recordGuildGathering(session.skillName, regular)
+                                }
                             }
                             in craftingSkills  -> {
                                 questRepo.recordCrafting(session.skillName, regular)
                                 playerRepo.recordDailyCrafting(regular)
+                                guildRepo.recordGuildCrafting(session.skillName, regular)
                             }
                             Skills.PRAYER      -> {
                                 val buried = frames.sumOf { it.kills }
                                 questRepo.recordBuried(buried)
                                 playerRepo.recordDailyPrayer(buried)
+                                guildRepo.recordGuildPrayer(buried)
                             }
+                            Skills.FARMING     -> guildRepo.recordGuildGathering(Skills.FARMING, regular)
                         }
                         // Firemaking logs consumed at collect time; all other input materials consumed at session start.
                         if (session.skillName == Skills.FIREMAKING) {

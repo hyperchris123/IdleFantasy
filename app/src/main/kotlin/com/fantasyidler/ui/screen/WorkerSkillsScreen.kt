@@ -154,16 +154,6 @@ fun WorkerSkillsScreen(
                 }
             }
 
-            // Worker queue
-            if (state.workerQueue.isNotEmpty()) {
-                item {
-                    WorkerQueueBanner(
-                        queue   = state.workerQueue,
-                        context = context,
-                    )
-                }
-            }
-
             // Gathering skills (no farming)
             item { SectionHeader(stringResource(R.string.label_gathering_skills)) }
             items(Skills.GATHERING.filter { it != Skills.FARMING }) { key ->
@@ -378,44 +368,6 @@ private fun WorkerActiveSessionBanner(
 // ---------------------------------------------------------------------------
 // Worker queue banner
 // ---------------------------------------------------------------------------
-
-@Composable
-private fun WorkerQueueBanner(
-    queue: List<com.fantasyidler.data.model.QueuedAction>,
-    context: android.content.Context,
-) {
-    Surface(
-        color    = MaterialTheme.colorScheme.surfaceVariant,
-        shape    = RoundedCornerShape(12.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 12.dp, vertical = 8.dp),
-    ) {
-        Column(Modifier.padding(16.dp)) {
-            Text(
-                text  = stringResource(R.string.worker_queue_label, queue.size),
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-            Spacer(Modifier.height(8.dp))
-            queue.forEachIndexed { index, action ->
-                if (index > 0) HorizontalDivider(
-                    modifier = Modifier.padding(vertical = 4.dp),
-                    color    = MaterialTheme.colorScheme.outline.copy(alpha = 0.2f),
-                )
-                val emoji = GameStrings.skillEmoji(action.skillName)
-                val activityLabel = action.activityKey
-                    .replace('_', ' ')
-                    .replaceFirstChar { it.uppercase() }
-                    .takeIf { action.activityKey.isNotEmpty() }
-                Text(
-                    text  = "$emoji ${action.skillDisplayName}${if (activityLabel != null) " — $activityLabel" else ""}${if (action.qty > 0) " ×${action.qty}" else ""}",
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-            }
-        }
-    }
-}
 
 // ---------------------------------------------------------------------------
 // Worker craft skill sheet

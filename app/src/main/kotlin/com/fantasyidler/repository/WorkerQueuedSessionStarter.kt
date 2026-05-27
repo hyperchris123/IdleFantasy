@@ -64,7 +64,7 @@ class WorkerQueuedSessionStarter @Inject constructor(
 
         val isGathering = action.skillName in GATHERING_SKILLS
         val efficiencyMultiplier = if (isGathering) tier.combinedGatheringMultiplier
-                                   else tier.efficiencyMultiplier
+                                   else 1.0f
         val durationMs = if (isGathering) tier.durationMs
                          else action.estimatedDurationMs.takeIf { it > 0 } ?: tier.durationMs
 
