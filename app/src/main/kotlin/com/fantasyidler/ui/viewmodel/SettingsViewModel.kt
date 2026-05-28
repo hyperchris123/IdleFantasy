@@ -4,8 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fantasyidler.data.model.PlayerFlags
 import com.fantasyidler.repository.PlayerRepository
+import com.fantasyidler.repository.QueuedSessionStarter
 import com.fantasyidler.repository.QuestRepository
 import com.fantasyidler.repository.SessionRepository
+import com.fantasyidler.repository.WorkerQueuedSessionStarter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -20,6 +22,8 @@ class SettingsViewModel @Inject constructor(
     private val playerRepo: PlayerRepository,
     private val sessionRepo: SessionRepository,
     private val questRepo: QuestRepository,
+    private val queuedSessionStarter: QueuedSessionStarter,
+    private val workerStarter: WorkerQueuedSessionStarter,
     private val json: Json,
 ) : ViewModel() {
 
@@ -71,6 +75,10 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 playerRepo.importSave(jsonString)
+                sessionRepo.deleteAllSessions()
+                sessionRepo.deleteAllWorkerSessions()
+                sessionRepo.recoverActiveSession(queuedSessionStarter)
+                sessionRepo.recoverActiveWorkerSession(workerStarter)
                 onDone(true)
             } catch (_: Exception) {
                 onDone(false)

@@ -67,8 +67,10 @@ class QuestsViewModel @Inject constructor(
     private val _extra = MutableStateFlow(QuestsUiState())
 
     init {
-        // Trigger a DB refresh if daily quests have rolled over, and seed nextDailyReset.
         viewModelScope.launch {
+            val flags = playerRepo.getFlags()
+            _extra.update { it.copy(hideCompleted = flags.hideCompletedQuests) }
+            // Trigger a DB refresh if daily quests have rolled over, and seed nextDailyReset.
             playerRepo.getRefreshedDailyFlags()
             _extra.update { it.copy(nextDailyReset = dailyQuestRepo.nextResetMs()) }
         }
@@ -177,7 +179,14 @@ class QuestsViewModel @Inject constructor(
 
     fun snackbarConsumed() = _extra.update { it.copy(snackbarMessage = null) }
 
-    fun toggleHideCompleted() = _extra.update { it.copy(hideCompleted = !it.hideCompleted) }
+    fun toggleHideCompleted() {
+        val newValue = !_extra.value.hideCompleted
+        _extra.update { it.copy(hideCompleted = newValue) }
+        viewModelScope.launch {
+            val flags = playerRepo.getFlags()
+            playerRepo.updateFlags(flags.copy(hideCompletedQuests = newValue))
+        }
+    }
 
     fun claimDailyQuest(templateId: String) {
         viewModelScope.launch {

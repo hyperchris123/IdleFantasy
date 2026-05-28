@@ -157,9 +157,10 @@ fun QuestsScreen(
 
             if (currentGroup == "Daily") {
                 DailyQuestsContent(
-                    quests      = state.dailyQuests,
-                    nextReset   = state.nextDailyReset,
-                    onClaimQuest = { viewModel.claimDailyQuest(it) },
+                    quests        = state.dailyQuests,
+                    nextReset     = state.nextDailyReset,
+                    hideCompleted = state.hideCompleted,
+                    onClaimQuest  = { viewModel.claimDailyQuest(it) },
                 )
             } else {
                 val quests = state.questsByGroup[currentGroup] ?: emptyList()
@@ -201,10 +202,12 @@ fun QuestsScreen(
 private fun DailyQuestsContent(
     quests: List<DailyQuestWithProgress>,
     nextReset: Long,
+    hideCompleted: Boolean = false,
     onClaimQuest: (String) -> Unit,
 ) {
+    val visibleQuests = if (hideCompleted) quests.filter { !it.claimed } else quests
     LazyColumn(Modifier.fillMaxSize()) {
-        if (quests.isEmpty()) {
+        if (visibleQuests.isEmpty()) {
             item {
                 Box(
                     Modifier
@@ -220,7 +223,7 @@ private fun DailyQuestsContent(
                 }
             }
         } else {
-            items(quests, key = { it.template.id }) { q ->
+            items(visibleQuests, key = { it.template.id }) { q ->
                 DailyQuestCard(quest = q, onClaim = { onClaimQuest(q.template.id) })
                 HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
             }

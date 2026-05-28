@@ -1,0 +1,5 @@
+• Fix: Font size setting is now a dropdown instead of overflowing buttons
+• Fix: Hide completed quests toggle now also hides claimed daily quests
+• Fix: Hide completed quests toggle is now saved and restored across app restarts
+• Fix: Restoring a save now auto-starts any queued sessions
+• Fix: Farming patch state is now included in save exports and restored on import
