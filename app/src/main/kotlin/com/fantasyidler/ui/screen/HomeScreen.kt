@@ -151,6 +151,26 @@ fun HomeScreen(
                     if (summary.boneBuriedLines.isNotEmpty()) {
                         summary.boneBuriedLines.forEach { (label, qty) -> SummaryRow(label, qty) }
                     }
+                    if (summary.noteLines.isNotEmpty()) {
+                        Spacer(Modifier.height(4.dp))
+                        summary.noteLines.forEach { note ->
+                            Text(
+                                text = note,
+                                style = MaterialTheme.typography.bodySmall.copy(fontStyle = androidx.compose.ui.text.font.FontStyle.Italic),
+                                color = GoldPrimary,
+                                modifier = Modifier.padding(vertical = 2.dp),
+                            )
+                        }
+                    }
+                    summary.unlockMessage?.let { msg ->
+                        Spacer(Modifier.height(8.dp))
+                        Text(
+                            text = msg,
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.primary,
+                        )
+                    }
                 }
             },
             confirmButton = {

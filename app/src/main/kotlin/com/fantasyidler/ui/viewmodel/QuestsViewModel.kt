@@ -83,6 +83,9 @@ class QuestsViewModel @Inject constructor(
     ) { progressList, player, extra ->
         val progressMap = progressList.associateBy { it.questId }
 
+        val flags: PlayerFlags = if (player != null)
+            json.decodeFromString(player.flags) else PlayerFlags()
+
         val questsWithProgress = gameData.quests.values.map { quest ->
             val prog = progressMap[quest.id]
             val prereq = quest.requiresPrevious
@@ -93,6 +96,9 @@ class QuestsViewModel @Inject constructor(
                 completed       = prog?.completed ?: false,
                 prereqCompleted = prereqCompleted,
             )
+        }.filter { qwp ->
+            val requiredDungeon = qwp.quest.requiresDungeonUnlock
+            requiredDungeon == null || flags.unlockedDungeons.contains(requiredDungeon)
         }
 
         val visibleQuests = questsWithProgress.filter { it.prereqCompleted || it.completed }
@@ -102,7 +108,6 @@ class QuestsViewModel @Inject constructor(
         val completed = visibleQuests.count { it.completed }
 
         val dailyQuests = if (player != null) {
-            val flags: PlayerFlags = json.decodeFromString(player.flags)
             dailyQuestRepo.getActiveDailyQuests(flags)
         } else {
             extra.dailyQuests

@@ -76,6 +76,7 @@ data class CombatUiState(
     val selectedPotionKey: String? = null,
     val availablePotions: Map<String, Int> = emptyMap(),
     val dungeonRuns: Map<String, Int> = emptyMap(),
+    val unlockedDungeons: List<String> = emptyList(),
 )
 
 // ---------------------------------------------------------------------------
@@ -157,6 +158,7 @@ class CombatViewModel @Inject constructor(
                 availablePotions        = inventory.filterKeys { it in gameData.potionEffects }
                     .filter { (_, qty) -> qty > 0 },
                 dungeonRuns             = flags.dungeonRuns,
+                unlockedDungeons        = flags.unlockedDungeons,
             )
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), CombatUiState())

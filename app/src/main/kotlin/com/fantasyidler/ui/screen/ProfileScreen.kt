@@ -45,10 +45,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import kotlinx.coroutines.launch
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -60,6 +64,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.fantasyidler.R
 import com.fantasyidler.data.json.CookingRecipe
+import com.fantasyidler.data.json.SkillingDungeonData
 import com.fantasyidler.data.model.EquipSlot
 import com.fantasyidler.ui.theme.GoldPrimary
 import com.fantasyidler.ui.viewmodel.Achievement
@@ -89,15 +94,17 @@ fun ProfileScreen(
             viewModel.snackbarConsumed()
         }
     }
-    var selectedTab  by remember { mutableIntStateOf(0) }
-    var showEditSheet by remember { mutableStateOf(false) }
     val tabs = listOf(
         stringResource(R.string.label_skills),
         stringResource(R.string.label_inventory),
         stringResource(R.string.label_equipment),
         stringResource(R.string.label_pets),
         stringResource(R.string.label_achievements),
+        stringResource(R.string.label_notes),
     )
+    val pagerState   = rememberPagerState(pageCount = { tabs.size })
+    val scope        = rememberCoroutineScope()
+    var showEditSheet by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar       = { TopAppBar(title = { Text(stringResource(R.string.nav_profile)) }) },
@@ -177,38 +184,45 @@ fun ProfileScreen(
                 }
             }
 
-            ScrollableTabRow(selectedTabIndex = selectedTab) {
+            ScrollableTabRow(selectedTabIndex = pagerState.currentPage) {
                 tabs.forEachIndexed { index, title ->
                     Tab(
-                        selected = selectedTab == index,
-                        onClick  = { selectedTab = index },
+                        selected = pagerState.currentPage == index,
+                        onClick  = { scope.launch { pagerState.animateScrollToPage(index) } },
                         text     = { Text(title) },
                     )
                 }
             }
 
-            when (selectedTab) {
-                0 -> SkillsTab(state.skillLevels, state.skillXp, context)
-                1 -> InventoryTab(state.inventory, context, viewModel::categoryFor)
-                2 -> EquipmentTab(
-                    equipped       = state.equipped,
-                    inventory      = state.inventory,
-                    equippedFood   = state.equippedFood,
-                    foodHealValues = viewModel.foodHealValues,
-                    cookingRecipes = viewModel.cookingRecipes,
-                    allEquipment   = viewModel.allEquipment,
-                    context        = context,
-                    onSlotTap      = viewModel::openSlotPicker,
-                    onUnequip      = viewModel::unequip,
-                    onEquipBest    = viewModel::equipBestGear,
-                    onEquipFood    = viewModel::equipFood,
-                    onUnequipFood  = viewModel::unequipFood,
-                )
-                3 -> PetsTab(
-                    allPets     = viewModel.allPets,
-                    ownedPetIds = state.ownedPetIds,
-                )
-                4 -> AchievementsTab(achState.byGroup, achState.unlockedCount, achState.totalCount)
+            HorizontalPager(state = pagerState, modifier = Modifier.weight(1f)) { page ->
+                when (page) {
+                    0 -> SkillsTab(state.skillLevels, state.skillXp, context)
+                    1 -> InventoryTab(state.inventory, context, viewModel::categoryFor)
+                    2 -> EquipmentTab(
+                        equipped       = state.equipped,
+                        inventory      = state.inventory,
+                        equippedFood   = state.equippedFood,
+                        foodHealValues = viewModel.foodHealValues,
+                        cookingRecipes = viewModel.cookingRecipes,
+                        allEquipment   = viewModel.allEquipment,
+                        context        = context,
+                        onSlotTap      = viewModel::openSlotPicker,
+                        onUnequip      = viewModel::unequip,
+                        onEquipBest    = viewModel::equipBestGear,
+                        onEquipFood    = viewModel::equipFood,
+                        onUnequipFood  = viewModel::unequipFood,
+                    )
+                    3 -> PetsTab(
+                        allPets     = viewModel.allPets,
+                        ownedPetIds = state.ownedPetIds,
+                    )
+                    4 -> AchievementsTab(achState.byGroup, achState.unlockedCount, achState.totalCount)
+                    else -> NotesTab(
+                        skillingDungeons     = viewModel.allSkillingDungeons,
+                        skillingDungeonNotes = state.skillingDungeonNotes,
+                        unlockedDungeons     = state.unlockedDungeons,
+                    )
+                }
             }
         }
     }
@@ -934,5 +948,119 @@ private fun buildEquipDetail(item: com.fantasyidler.data.json.EquipmentData, con
     val req = item.requirements.entries.firstOrNull()
     if (req != null) parts.add("${context.getString(R.string.profile_req_lv)}${req.value} ${req.key}")
     return parts.joinToString("  •  ")
+}
+
+// ---------------------------------------------------------------------------
+// Notes tab
+// ---------------------------------------------------------------------------
+
+@Composable
+private fun NotesTab(
+    skillingDungeons: Map<String, SkillingDungeonData>,
+    skillingDungeonNotes: Map<String, Int>,
+    unlockedDungeons: List<String>,
+) {
+    val SKILL_ORDER = listOf("mining", "woodcutting", "fishing")
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        item { Spacer(Modifier.height(8.dp)) }
+        SKILL_ORDER.forEach { skill ->
+            val dungeons = skillingDungeons.entries
+                .filter { (_, d) -> d.skill == skill }
+                .sortedBy { (_, d) -> d.levelRequired }
+            if (dungeons.isNotEmpty()) {
+                item {
+                    Text(
+                        text = skill.replaceFirstChar { it.uppercase() },
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(top = 8.dp, bottom = 4.dp),
+                    )
+                }
+                dungeons.forEach { (key, dungeon) ->
+                    val notesFound = skillingDungeonNotes[key] ?: 0
+                    if (notesFound > 0) {
+                        item(key = key) {
+                            DungeonNotesCard(
+                                dungeon = dungeon,
+                                notesFound = notesFound,
+                                combatDungeonUnlocked = unlockedDungeons.contains(dungeon.unlockDungeon),
+                            )
+                        }
+                    } else {
+                        item(key = "$key-locked") {
+                            Text(
+                                text = "${dungeon.displayName}: ???",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f),
+                                modifier = Modifier.padding(vertical = 4.dp),
+                            )
+                        }
+                    }
+                }
+            }
+        }
+        item { Spacer(Modifier.height(16.dp)) }
+    }
+}
+
+@Composable
+private fun DungeonNotesCard(
+    dungeon: SkillingDungeonData,
+    notesFound: Int,
+    combatDungeonUnlocked: Boolean,
+) {
+    androidx.compose.material3.ElevatedCard(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(12.dp)) {
+            Text(
+                text = dungeon.displayName,
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.SemiBold,
+            )
+            val revealedNotes = dungeon.noteTexts.take(notesFound.coerceAtMost(dungeon.noteTexts.size))
+            revealedNotes.forEachIndexed { index, text ->
+                Spacer(Modifier.height(4.dp))
+                Row(verticalAlignment = Alignment.Top) {
+                    Text(
+                        text = "${index + 1}.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = GoldPrimary,
+                        modifier = Modifier.width(20.dp),
+                    )
+                    Text(
+                        text = text,
+                        style = MaterialTheme.typography.bodySmall.copy(
+                            fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
+                        ),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
+            val remaining = dungeon.noteThreshold - notesFound
+            if (remaining > 0) {
+                repeat(remaining) {
+                    Spacer(Modifier.height(4.dp))
+                    Text(
+                        text = "???",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f),
+                    )
+                }
+            }
+            if (combatDungeonUnlocked) {
+                Spacer(Modifier.height(6.dp))
+                Text(
+                    text = stringResource(R.string.expedition_dungeon_unlocked),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.SemiBold,
+                )
+            }
+        }
+    }
 }
 

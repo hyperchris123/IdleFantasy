@@ -44,17 +44,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import kotlinx.coroutines.launch
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -129,79 +134,87 @@ fun CombatScreen(
 
         val combatSession = state.combatSession
         if (combatSession != null) {
-            var activeTab by remember { mutableIntStateOf(0) }
+            val pagerState = rememberPagerState(pageCount = { 2 })
+            val scope = rememberCoroutineScope()
             Column(Modifier.padding(padding).fillMaxSize()) {
-                TabRow(selectedTabIndex = activeTab) {
+                TabRow(selectedTabIndex = pagerState.currentPage) {
                     Tab(
-                        selected = activeTab == 0,
-                        onClick  = { activeTab = 0 },
+                        selected = pagerState.currentPage == 0,
+                        onClick  = { scope.launch { pagerState.animateScrollToPage(0) } },
                         text     = { Text(stringResource(R.string.combat_log_label)) },
                     )
                     Tab(
-                        selected = activeTab == 1,
-                        onClick  = { activeTab = 1 },
+                        selected = pagerState.currentPage == 1,
+                        onClick  = { scope.launch { pagerState.animateScrollToPage(1) } },
                         text     = { Text(stringResource(R.string.label_dungeons_tab)) },
                     )
                 }
-                when (activeTab) {
-                    0 -> CombatSessionBanner(
-                        session        = combatSession,
-                        dungeons       = viewModel.dungeonList,
-                        bosses         = viewModel.bossList,
-                        enemies        = viewModel.enemyMap,
-                        skillLevels    = state.skillLevels,
-                        attackBonus    = state.totalAttackBonus,
-                        strengthBonus  = state.totalStrengthBonus,
-                        defenseBonus   = state.totalDefenseBonus,
-                        equippedFood   = state.equippedFood,
-                        foodHealValues = viewModel.foodHealValues,
-                        onCollect      = viewModel::collectSession,
-                        onAbandon      = viewModel::abandonSession,
-                        onDebugFinish  = viewModel::debugFinishSession,
-                    )
-                    1 -> CombatSelectionList(
-                        dungeons        = viewModel.dungeonList,
-                        bosses          = viewModel.bossList,
-                        skillLevels     = state.skillLevels,
-                        survivalRatings = state.dungeonSurvivalRatings,
-                        dungeonRuns     = state.dungeonRuns,
-                        onDungeon       = viewModel::selectDungeon,
-                        onBoss          = viewModel::selectBoss,
-                    )
+                HorizontalPager(state = pagerState, modifier = Modifier.weight(1f)) { page ->
+                    when (page) {
+                        0 -> CombatSessionBanner(
+                            session        = combatSession,
+                            dungeons       = viewModel.dungeonList,
+                            bosses         = viewModel.bossList,
+                            enemies        = viewModel.enemyMap,
+                            skillLevels    = state.skillLevels,
+                            attackBonus    = state.totalAttackBonus,
+                            strengthBonus  = state.totalStrengthBonus,
+                            defenseBonus   = state.totalDefenseBonus,
+                            equippedFood   = state.equippedFood,
+                            foodHealValues = viewModel.foodHealValues,
+                            onCollect      = viewModel::collectSession,
+                            onAbandon      = viewModel::abandonSession,
+                            onDebugFinish  = viewModel::debugFinishSession,
+                        )
+                        else -> CombatSelectionList(
+                            dungeons         = viewModel.dungeonList,
+                            bosses           = viewModel.bossList,
+                            skillLevels      = state.skillLevels,
+                            survivalRatings  = state.dungeonSurvivalRatings,
+                            dungeonRuns      = state.dungeonRuns,
+                            unlockedDungeons = state.unlockedDungeons,
+                            onDungeon        = viewModel::selectDungeon,
+                            onBoss           = viewModel::selectBoss,
+                        )
+                    }
                 }
             }
         } else {
-            var selectedTab by remember { mutableIntStateOf(0) }
-            Column(Modifier.padding(padding)) {
-                TabRow(selectedTabIndex = selectedTab) {
+            val pagerState = rememberPagerState(pageCount = { 2 })
+            val scope = rememberCoroutineScope()
+            Column(Modifier.padding(padding).fillMaxSize()) {
+                TabRow(selectedTabIndex = pagerState.currentPage) {
                     Tab(
-                        selected = selectedTab == 0,
-                        onClick  = { selectedTab = 0 },
+                        selected = pagerState.currentPage == 0,
+                        onClick  = { scope.launch { pagerState.animateScrollToPage(0) } },
                         text     = { Text(stringResource(R.string.label_dungeons_tab)) },
                     )
                     Tab(
-                        selected = selectedTab == 1,
-                        onClick  = { selectedTab = 1 },
+                        selected = pagerState.currentPage == 1,
+                        onClick  = { scope.launch { pagerState.animateScrollToPage(1) } },
                         text     = { Text(stringResource(R.string.label_skills)) },
                     )
                 }
-                when (selectedTab) {
-                    0 -> CombatSelectionList(
-                        dungeons         = viewModel.dungeonList,
-                        bosses           = viewModel.bossList,
-                        skillLevels      = state.skillLevels,
-                        survivalRatings  = state.dungeonSurvivalRatings,
-                        dungeonRuns      = state.dungeonRuns,
-                        onDungeon        = viewModel::selectDungeon,
-                        onBoss           = viewModel::selectBoss,
-                    )
-                    1 -> CombatSkillsTab(
-                        skillLevels        = state.skillLevels,
-                        skillXp            = state.skillXp,
-                        totalAttackBonus   = state.totalAttackBonus,
-                        totalStrengthBonus = state.totalStrengthBonus,
-                        totalDefenseBonus  = state.totalDefenseBonus,
-                    )
+                HorizontalPager(state = pagerState, modifier = Modifier.weight(1f)) { page ->
+                    when (page) {
+                        0 -> CombatSelectionList(
+                            dungeons         = viewModel.dungeonList,
+                            bosses           = viewModel.bossList,
+                            skillLevels      = state.skillLevels,
+                            survivalRatings  = state.dungeonSurvivalRatings,
+                            dungeonRuns      = state.dungeonRuns,
+                            unlockedDungeons = state.unlockedDungeons,
+                            onDungeon        = viewModel::selectDungeon,
+                            onBoss           = viewModel::selectBoss,
+                        )
+                        else -> CombatSkillsTab(
+                            skillLevels        = state.skillLevels,
+                            skillXp            = state.skillXp,
+                            totalAttackBonus   = state.totalAttackBonus,
+                            totalStrengthBonus = state.totalStrengthBonus,
+                            totalDefenseBonus  = state.totalDefenseBonus,
+                        )
+                    }
                 }
             }
         }
@@ -303,6 +316,7 @@ private fun CombatSelectionList(
     skillLevels: Map<String, Int>,
     survivalRatings: Map<String, CombatSimulator.SurvivalRating> = emptyMap(),
     dungeonRuns: Map<String, Int> = emptyMap(),
+    unlockedDungeons: List<String> = emptyList(),
     modifier: Modifier = Modifier,
     onDungeon: (DungeonData) -> Unit,
     onBoss: (BossData) -> Unit,
@@ -312,12 +326,19 @@ private fun CombatSelectionList(
     LazyColumn(modifier.fillMaxSize()) {
         item { CombatSectionHeader(stringResource(R.string.label_dungeons_tab)) }
         items(dungeons) { dungeon ->
+            val unlocked = if (dungeon.loreUnlockOnly) {
+                unlockedDungeons.contains(dungeon.name)
+            } else {
+                combatLvl >= dungeon.recommendedLevel - UNLOCK_TOLERANCE
+            }
             DungeonRow(
                 dungeon        = dungeon,
-                unlocked       = combatLvl >= dungeon.recommendedLevel - UNLOCK_TOLERANCE,
+                unlocked       = unlocked,
                 survivalRating = survivalRatings[dungeon.name],
                 runCount       = dungeonRuns[dungeon.name] ?: 0,
                 onTap          = { onDungeon(dungeon) },
+                loreLockedHint = if (dungeon.loreUnlockOnly && !unlocked)
+                    stringResource(R.string.expedition_discover_hint) else null,
             )
         }
         item { CombatSectionHeader(stringResource(R.string.combat_solo_bosses)) }
@@ -533,6 +554,7 @@ private fun DungeonRow(
     unlocked: Boolean,
     survivalRating: CombatSimulator.SurvivalRating? = null,
     runCount: Int = 0,
+    loreLockedHint: String? = null,
     onTap: () -> Unit,
 ) {
     val context  = LocalContext.current
@@ -577,6 +599,14 @@ private fun DungeonRow(
                     text  = stringResource(R.string.combat_dungeon_runs, runCount),
                     style = MaterialTheme.typography.labelSmall,
                     color = if (unlocked) MaterialTheme.colorScheme.onSurfaceVariant else dimColor,
+                )
+            }
+            if (!unlocked && loreLockedHint != null) {
+                Text(
+                    text  = loreLockedHint,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = dimColor,
+                    fontStyle = FontStyle.Italic,
                 )
             }
         }

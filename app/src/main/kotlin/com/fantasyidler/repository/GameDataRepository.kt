@@ -8,6 +8,7 @@ import com.fantasyidler.data.json.CookingRecipe
 import com.fantasyidler.data.json.CraftingRecipe
 import com.fantasyidler.data.json.DungeonData
 import com.fantasyidler.data.json.EnemyData
+import com.fantasyidler.data.json.SkillingDungeonData
 import com.fantasyidler.data.json.EquipmentData
 import com.fantasyidler.data.json.FletchingRecipe
 import com.fantasyidler.data.json.AgilityCourseData
@@ -73,6 +74,17 @@ class GameDataRepository @Inject constructor(
             .filter { it.endsWith(".json") }
             .associate { filename ->
                 val data = asset<DungeonData>("data/dungeons/$filename")
+                data.name to data
+            }
+    }
+
+    /** All skilling dungeon files in assets/data/skilling_dungeons/, keyed by dungeon name. */
+    val skillingDungeons: Map<String, SkillingDungeonData> by lazy {
+        context.assets.list("data/skilling_dungeons")
+            .orEmpty()
+            .filter { it.endsWith(".json") }
+            .associate { filename ->
+                val data = asset<SkillingDungeonData>("data/skilling_dungeons/$filename")
                 data.name to data
             }
     }

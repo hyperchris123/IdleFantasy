@@ -8,6 +8,7 @@ import com.fantasyidler.data.model.QueuedAction
 import com.fantasyidler.data.model.SessionFrame
 import com.fantasyidler.data.model.Skills
 import com.fantasyidler.simulator.CombatSimulator
+import com.fantasyidler.simulator.SkillingDungeonSimulator
 import com.fantasyidler.simulator.SkillSimulator
 import com.fantasyidler.simulator.XpTable
 import kotlinx.coroutines.sync.Mutex
@@ -273,6 +274,24 @@ class QueuedSessionStarter @Inject constructor(
                     alarmOffsetMs    = if (bossFrames.size < boss.durationMinutes)
                         (bossFrames.size - 1) * animPerFrameMs + 5_000L else null,
                 )
+            }
+            "expedition" -> {
+                val dungeonKey = action.activityKey
+                val dungeon    = gameData.skillingDungeons[dungeonKey] ?: return
+                val toolEfficiency: Float = when (dungeon.skill) {
+                    Skills.MINING      -> toolEfficiency(equipped[EquipSlot.PICKAXE],     EquipSlot.PICKAXE,     dungeon.levelRequired)
+                    Skills.WOODCUTTING -> toolEfficiency(equipped[EquipSlot.AXE],         EquipSlot.AXE,         dungeon.levelRequired)
+                    Skills.FISHING     -> toolEfficiency(equipped[EquipSlot.FISHING_ROD], EquipSlot.FISHING_ROD, dungeon.levelRequired)
+                    else               -> 1.0f
+                }
+                val result = SkillingDungeonSimulator.simulate(
+                    dungeonKey     = dungeonKey,
+                    dungeon        = dungeon,
+                    startXp        = xpMap[dungeon.skill] ?: 0L,
+                    agilityLevel   = agilityLevel,
+                    toolEfficiency = toolEfficiency,
+                )
+                startSession(action, result)
             }
             "combat" -> {
                 val dungeonKey = action.activityKey
