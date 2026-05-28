@@ -584,7 +584,7 @@ class SkillsViewModel @Inject constructor(
             // Record quest progress
             val gatheringSkills = setOf(Skills.MINING, Skills.WOODCUTTING, Skills.FISHING,
                 Skills.AGILITY, Skills.FIREMAKING, Skills.RUNECRAFTING)
-            val craftingSkills = setOf(Skills.SMITHING, Skills.COOKING, Skills.FLETCHING, Skills.CRAFTING)
+            val craftingSkills = setOf(Skills.SMITHING, Skills.COOKING, Skills.FLETCHING, Skills.CRAFTING, Skills.HERBLORE)
             when (session.skillName) {
                 in gatheringSkills -> questRepo.recordGathering(session.skillName, regularItems)
                 in craftingSkills  -> questRepo.recordCrafting(session.skillName, regularItems)

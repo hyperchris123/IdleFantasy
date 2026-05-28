@@ -37,21 +37,22 @@ class QueuedSessionStarter @Inject constructor(
      * session couldn't be started (e.g. missing materials).
      */
     suspend fun startNextQueued(): Boolean {
-        // Mutex ensures concurrent callers (alarm receiver + UI) don't both dequeue the
-        // same item and start duplicate sessions.
-        val next = mutex.withLock {
+        // Mutex covers the full dequeue + session-start so concurrent callers (alarm
+        // receiver, recoverActiveSession, collectSession) can't both pass the "no running
+        // session" check and dequeue separate actions before either inserts a DB row.
+        mutex.withLock {
             val current = sessionRepo.getActiveSession()
             if (current != null && !current.completed) return false
-            playerRepo.dequeueNextAction()
-        } ?: return false
-
-        return try {
-            startQueuedAction(next)
-            true
-        } catch (_: Exception) {
-            playerRepo.requeueActionAtFront(next)
-            false
+            val next = playerRepo.dequeueNextAction() ?: return false
+            return try {
+                startQueuedAction(next)
+                true
+            } catch (_: Exception) {
+                playerRepo.requeueActionAtFront(next)
+                false
+            }
         }
+        return false
     }
 
     private suspend fun startQueuedAction(action: QueuedAction) {

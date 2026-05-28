@@ -48,6 +48,7 @@ data class QuestsUiState(
     val dailyQuests: List<DailyQuestWithProgress> = emptyList(),
     val nextDailyReset: Long = 0L,
     val snackbarMessage: String? = null,
+    val hideCompleted: Boolean = false,
 )
 
 // ---------------------------------------------------------------------------
@@ -93,6 +94,7 @@ class QuestsViewModel @Inject constructor(
         }
 
         val visibleQuests = questsWithProgress.filter { it.prereqCompleted || it.completed }
+            .let { if (extra.hideCompleted) it.filter { qwp -> !qwp.completed } else it }
         val questsByGroup = buildGroupedMap(visibleQuests)
         val claimable = visibleQuests.count { it.isClaimable }
         val completed = visibleQuests.count { it.completed }
@@ -175,6 +177,8 @@ class QuestsViewModel @Inject constructor(
 
     fun snackbarConsumed() = _extra.update { it.copy(snackbarMessage = null) }
 
+    fun toggleHideCompleted() = _extra.update { it.copy(hideCompleted = !it.hideCompleted) }
+
     fun claimDailyQuest(templateId: String) {
         viewModelScope.launch {
             val flags = playerRepo.getFlags()
@@ -206,7 +210,7 @@ class QuestsViewModel @Inject constructor(
         Skills.AGILITY, Skills.FIREMAKING, Skills.RUNECRAFTING,
     )
     private val craftingSkills = setOf(
-        Skills.SMITHING, Skills.COOKING, Skills.FLETCHING, Skills.CRAFTING, Skills.PRAYER,
+        Skills.SMITHING, Skills.COOKING, Skills.FLETCHING, Skills.CRAFTING, Skills.HERBLORE, Skills.PRAYER,
     )
     private val combatTypes = setOf("kill", "kill_enemy", "dungeon", "boss")
     private val specialTypes = setOf(

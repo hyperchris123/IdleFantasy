@@ -2,6 +2,7 @@ package com.fantasyidler.ui.screen
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Switch
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -79,7 +81,29 @@ fun QuestsScreen(
     }
 
     Scaffold(
-        topBar       = { TopAppBar(title = { Text(stringResource(R.string.nav_quests)) }) },
+        topBar = {
+            TopAppBar(
+                title = { Text(stringResource(R.string.nav_quests)) },
+                actions = {
+                    Row(
+                        modifier = Modifier
+                            .clickable { viewModel.toggleHideCompleted() }
+                            .padding(end = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            text  = stringResource(R.string.label_hide_completed),
+                            style = MaterialTheme.typography.labelSmall,
+                        )
+                        Spacer(Modifier.width(4.dp))
+                        Switch(
+                            checked = state.hideCompleted,
+                            onCheckedChange = { viewModel.toggleHideCompleted() },
+                        )
+                    }
+                },
+            )
+        },
         snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { padding ->
         if (state.isLoading) {
