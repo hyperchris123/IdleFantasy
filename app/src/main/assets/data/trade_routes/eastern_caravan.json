@@ -1,0 +1,17 @@
+{
+  "id": "eastern_caravan",
+  "display_name": "Eastern Caravan",
+  "description": "Join a merchant caravan heading east. The long journey pays well when the deal goes through.",
+  "level_required": 40,
+  "coin_cost": 40000,
+  "xp_ranges": {
+    "40": {"min": 550, "max": 850},
+    "50": {"min": 660, "max": 980},
+    "60": {"min": 780, "max": 1120}
+  },
+  "coin_ranges": {
+    "40": {"min": 470, "max": 820},
+    "50": {"min": 530, "max": 890},
+    "60": {"min": 590, "max": 960}
+  }
+}

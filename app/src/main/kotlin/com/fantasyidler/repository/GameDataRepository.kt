@@ -28,6 +28,7 @@ import com.fantasyidler.data.json.RuneData
 import com.fantasyidler.data.json.SkillData
 import com.fantasyidler.data.json.SmithingRecipe
 import com.fantasyidler.data.json.SpellData
+import com.fantasyidler.data.json.TradeRouteData
 import com.fantasyidler.data.json.TreeData
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.serialization.json.Json
@@ -245,6 +246,16 @@ class GameDataRepository @Inject constructor(
     /** Maps cooked-item key → HP healed per eat (from cooking recipes). */
     val foodHealValues: Map<String, Int> by lazy {
         cookingRecipes.values.associate { it.cookedItem to it.healingValue }
+    }
+
+    // ------------------------------------------------------------------ trade routes (mercantile)
+
+    val tradeRoutes: List<TradeRouteData> by lazy {
+        context.assets.list("data/trade_routes")
+            .orEmpty()
+            .filter { it.endsWith(".json") }
+            .map { filename -> asset<TradeRouteData>("data/trade_routes/$filename") }
+            .sortedBy { it.levelRequired }
     }
 
     // ------------------------------------------------------------------ sell helpers

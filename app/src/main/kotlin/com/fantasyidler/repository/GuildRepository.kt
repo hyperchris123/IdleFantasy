@@ -46,7 +46,7 @@ class GuildRepository @Inject constructor(
         val ALL_GUILDS = listOf(
             "mining", "fishing", "woodcutting", "farming", "firemaking", "agility",
             "smithing", "cooking", "fletching", "crafting", "runecrafting", "herblore",
-            "warriors", "archers", "mages", "prayer",
+            "warriors", "archers", "mages", "prayer", "mercantile",
         )
 
         fun guildLevelFromRep(rep: Long): Int = REP_THRESHOLDS.count { rep >= it }
@@ -138,6 +138,17 @@ class GuildRepository @Inject constructor(
         playerRepo.updateFlags(flags)
     }
 
+    /** Called when a mercantile trade route session is collected. */
+    suspend fun recordGuildTrade() {
+        for ((questId, quest) in gameData.guildQuests) {
+            if (quest.guild != "mercantile" || quest.type != "trade") continue
+            addQuestProgress(questId, 1)
+        }
+        var flags = getRefreshedGuildDailyFlags()
+        flags = applyDailyTrade(flags)
+        playerRepo.updateFlags(flags)
+    }
+
     /** Called when an agility session is collected (counts completed sessions, not items). */
     suspend fun recordGuildSessions() {
         for ((questId, quest) in gameData.guildQuests) {
@@ -168,6 +179,22 @@ class GuildRepository @Inject constructor(
         )
 
         return GuildQuestClaimResult.Success(quest.rewards)
+    }
+
+    // -------------------------------------------------------------------------
+    // Two-gate level: rep threshold AND all current-tier quests completed
+    // -------------------------------------------------------------------------
+
+    fun guildLevel(guild: String, rep: Long, completedQuestIds: Set<String>): Int {
+        var level = 0
+        for (threshold in REP_THRESHOLDS) {
+            if (rep < threshold) break
+            val tierQuests = gameData.guildQuests.values
+                .filter { it.guild == guild && it.guildLevelRequired == level }
+            if (tierQuests.any { it.id !in completedQuestIds }) break
+            level++
+        }
+        return level
     }
 
     // -------------------------------------------------------------------------
@@ -233,7 +260,7 @@ class GuildRepository @Inject constructor(
 
     /** Selects up to 2 daily templates per guild for today, filtered by current guild level.
      *  Uses a date-seeded RNG so the same dailies are shown all day. */
-    fun buildRefreshedGuildDailyFlags(flags: PlayerFlags): PlayerFlags {
+    fun buildRefreshedGuildDailyFlags(flags: PlayerFlags, completedQuestIds: Set<String>): PlayerFlags {
         val today = Calendar.getInstance().let {
             it.get(Calendar.YEAR) * 10000 + it.get(Calendar.MONTH) * 100 + it.get(Calendar.DAY_OF_MONTH)
         }
@@ -241,7 +268,7 @@ class GuildRepository @Inject constructor(
         val selectedIds = mutableListOf<String>()
 
         for (guild in ALL_GUILDS) {
-            val guildLevel = guildLevelFromRep(flags.guildReputation[guild] ?: 0L)
+            val guildLevel = guildLevel(guild, flags.guildReputation[guild] ?: 0L, completedQuestIds)
             if (guildLevel == 0) continue
             val eligible = gameData.guildDailyPool
                 .filter { it.guild == guild && guildLevel >= it.guildLevelMin && guildLevel <= it.guildLevelMax }
@@ -268,17 +295,21 @@ class GuildRepository @Inject constructor(
 
     private suspend fun getRefreshedGuildDailyFlags(): PlayerFlags {
         val flags = playerRepo.getFlags()
-        return if (shouldRefreshGuildDailies(flags.guildDailyGeneratedAt) || hasNewlyUnlockedGuild(flags)) {
-            val refreshed = buildRefreshedGuildDailyFlags(flags)
+        val completedQuestIds = questProgressDao.getAllProgress()
+            .filter { it.completed }
+            .map { it.questId }
+            .toSet()
+        return if (shouldRefreshGuildDailies(flags.guildDailyGeneratedAt) || hasNewlyUnlockedGuild(flags, completedQuestIds)) {
+            val refreshed = buildRefreshedGuildDailyFlags(flags, completedQuestIds)
             playerRepo.updateFlags(refreshed)
             refreshed
         } else flags
     }
 
-    private fun hasNewlyUnlockedGuild(flags: PlayerFlags): Boolean {
+    private fun hasNewlyUnlockedGuild(flags: PlayerFlags, completedQuestIds: Set<String>): Boolean {
         val pool = gameData.guildDailyPool.associateBy { it.id }
         return ALL_GUILDS.any { guild ->
-            guildLevelFromRep(flags.guildReputation[guild] ?: 0L) >= 1 &&
+            guildLevel(guild, flags.guildReputation[guild] ?: 0L, completedQuestIds) >= 1 &&
                 flags.guildDailyIds.none { pool[it]?.guild == guild }
         }
     }
@@ -358,6 +389,23 @@ class GuildRepository @Inject constructor(
             val cur = updated[id] ?: 0
             if (cur >= t.amount) continue
             updated[id] = minOf(cur + totalBuried, t.amount)
+            changed = true
+        }
+        return if (changed) flags.copy(guildDailyProgress = updated) else flags
+    }
+
+    private fun applyDailyTrade(flags: PlayerFlags): PlayerFlags {
+        val unclaimed = flags.guildDailyIds.filter { it !in flags.guildDailyClaimed }
+        if (unclaimed.isEmpty()) return flags
+        val pool = gameData.guildDailyPool.associateBy { it.id }
+        val updated = flags.guildDailyProgress.toMutableMap()
+        var changed = false
+        for (id in unclaimed) {
+            val t = pool[id] ?: continue
+            if (t.guild != "mercantile" || t.type != "trade") continue
+            val cur = updated[id] ?: 0
+            if (cur >= t.amount) continue
+            updated[id] = minOf(cur + 1, t.amount)
             changed = true
         }
         return if (changed) flags.copy(guildDailyProgress = updated) else flags

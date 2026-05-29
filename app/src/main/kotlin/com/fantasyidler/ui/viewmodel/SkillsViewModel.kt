@@ -86,6 +86,7 @@ sealed class SheetState {
     ) : SheetState()
     /** Opens the inline craft sheet for one of the instant-craft skills. */
     data class Crafting(val skillName: String) : SheetState()
+    data object Mercantile : SheetState()
     data object ComingSoon : SheetState()
 }
 
@@ -211,6 +212,7 @@ class SkillsViewModel @Inject constructor(
             Skills.FLETCHING,
             Skills.CRAFTING,
             Skills.HERBLORE  -> SheetState.Crafting(skillKey)
+            Skills.MERCANTILE -> SheetState.Mercantile
             else             -> SheetState.ComingSoon
         }
         _uiState.update { it.copy(sheetSkill = sheet) }
@@ -625,8 +627,13 @@ class SkillsViewModel @Inject constructor(
         viewModelScope.launch {
             val session = sessionRepo.getActiveSession() ?: return@launch
             val frames: List<com.fantasyidler.data.model.SessionFrame> = json.decodeFromString(session.frames)
-            playerSessionMaterials(session.skillName, session.activityKey, frames.sumOf { it.kills }, gameData)
-                ?.let { playerRepo.addItems(it) }
+            if (session.skillName == Skills.MERCANTILE) {
+                val coinCost = gameData.tradeRoutes.firstOrNull { it.id == session.activityKey }?.coinCost?.toLong() ?: 0L
+                if (coinCost > 0) playerRepo.addCoins(coinCost)
+            } else {
+                playerSessionMaterials(session.skillName, session.activityKey, frames.sumOf { it.kills }, gameData)
+                    ?.let { playerRepo.addItems(it) }
+            }
             sessionRepo.abandonSession(session.sessionId)
             queuedSessionStarter.startNextQueued()
         }

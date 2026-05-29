@@ -140,7 +140,7 @@ fun ShopScreen(
 
             when (subTab) {
                 0 -> BuyList(
-                    entries       = viewModel.buyEntries,
+                    entries       = viewModel.buyEntries.filter { it.mercantileLevelRequired <= state.mercantileLevel },
                     coins         = state.coins,
                     xpBoostActive = state.xpBoostActive,
                     inventory     = state.inventory,

@@ -1,0 +1,17 @@
+{
+  "id": "river_trading_post",
+  "display_name": "River Trading Post",
+  "description": "Move goods along the river trade route. Profits are unpredictable but often worthwhile.",
+  "level_required": 20,
+  "coin_cost": 10000,
+  "xp_ranges": {
+    "20": {"min": 200, "max": 320},
+    "30": {"min": 240, "max": 380},
+    "40": {"min": 280, "max": 430}
+  },
+  "coin_ranges": {
+    "20": {"min": 120, "max": 210},
+    "30": {"min": 135, "max": 230},
+    "40": {"min": 150, "max": 250}
+  }
+}

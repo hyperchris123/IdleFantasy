@@ -54,7 +54,11 @@ private val GUILD_GROUPS = listOf(
     ),
     GuildGroup(
         headerRes = R.string.label_combat,
-        keys = listOf("warriors", "archers", "mages", "prayer"),
+        keys = listOf("warriors", "archers", "mages"),
+    ),
+    GuildGroup(
+        headerRes = R.string.label_support_skills,
+        keys = listOf("prayer", "mercantile"),
     ),
 )
 
@@ -76,6 +80,7 @@ fun guildDisplayName(guildKey: String): String = when (guildKey) {
     "archers"     -> stringResource(R.string.guild_name_archers)
     "mages"       -> stringResource(R.string.guild_name_mages)
     "prayer"      -> stringResource(R.string.guild_name_prayer)
+    "mercantile"  -> stringResource(R.string.guild_name_mercantile)
     else          -> guildKey
 }
 
@@ -175,6 +180,13 @@ private fun GuildCard(
                     fontWeight = FontWeight.SemiBold,
                 )
                 LevelBadge(level = summary.level)
+            }
+            if (summary.hasDailiesAvailable) {
+                Text(
+                    text  = stringResource(R.string.guild_dailies_available),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = GoldPrimary,
+                )
             }
             if (summary.level < 10) {
                 Spacer(Modifier.height(6.dp))

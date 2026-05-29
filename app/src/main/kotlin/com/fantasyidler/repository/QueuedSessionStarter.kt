@@ -8,6 +8,7 @@ import com.fantasyidler.data.model.QueuedAction
 import com.fantasyidler.data.model.SessionFrame
 import com.fantasyidler.data.model.Skills
 import com.fantasyidler.simulator.CombatSimulator
+import com.fantasyidler.simulator.MercantileSimulator
 import com.fantasyidler.simulator.SkillingDungeonSimulator
 import com.fantasyidler.simulator.SkillSimulator
 import com.fantasyidler.simulator.XpTable
@@ -63,7 +64,10 @@ class QueuedSessionStarter @Inject constructor(
         val equipped: Map<String, String?> = json.decodeFromString(player.equipped)
         val inventory: Map<String, Int>    = json.decodeFromString(player.inventory)
         val flags: PlayerFlags             = json.decodeFromString(player.flags)
-        val agilityLevel = levels[Skills.AGILITY] ?: 1
+        val agilityLevel     = levels[Skills.AGILITY] ?: 1
+        val equippedCapeData = equipped[EquipSlot.CAPE]?.let { gameData.equipment[it] }
+        val combatCapeMult   = if (equippedCapeData?.capeSkill in COMBAT_CAPE_SKILLS) 1f + (equippedCapeData?.capeBonus ?: 0f) else 1f
+        val prayerCapeMult   = if (equippedCapeData?.capeSkill == "prayer") 1f + (equippedCapeData?.capeBonus ?: 0f) else 1f
 
         when (action.skillName) {
             Skills.MINING -> {
@@ -243,6 +247,21 @@ class QueuedSessionStarter @Inject constructor(
                 val perItemMs = SkillSimulator.sessionDurationMs(agilityLevel) / 60
                 sessionRepo.startSession(Skills.HERBLORE, action.activityKey, encodeFrames(frames), qty * perItemMs, action.skillDisplayName)
             }
+            Skills.MERCANTILE -> {
+                val route = gameData.tradeRoutes.firstOrNull { it.id == action.activityKey } ?: return
+                val result = MercantileSimulator.simulate(
+                    route        = route,
+                    startXp      = xpMap[Skills.MERCANTILE] ?: 0L,
+                    agilityLevel = agilityLevel,
+                )
+                sessionRepo.startSession(
+                    skillName        = action.skillName,
+                    activityKey      = action.activityKey,
+                    frames           = encodeFrames(result.frames),
+                    durationMs       = result.durationMs,
+                    skillDisplayName = action.skillDisplayName,
+                )
+            }
             "boss" -> {
                 val bossKey = action.activityKey
                 val boss    = gameData.bosses[bossKey] ?: return
@@ -257,14 +276,15 @@ class QueuedSessionStarter @Inject constructor(
                 val bossFrames = CombatSimulator.simulateBoss(
                     boss              = boss,
                     bossKey           = bossKey,
-                    playerAttack      = levels[Skills.ATTACK]    ?: 1,
-                    playerStrength    = levels[Skills.STRENGTH]  ?: 1,
-                    playerDefence     = (levels[Skills.DEFENSE]  ?: 1) + totalDefBonus,
+                    playerAttack      = ((levels[Skills.ATTACK]   ?: 1) * combatCapeMult).toInt(),
+                    playerStrength    = ((levels[Skills.STRENGTH] ?: 1) * combatCapeMult).toInt(),
+                    playerDefence     = ((levels[Skills.DEFENSE]  ?: 1) * combatCapeMult).toInt() + totalDefBonus,
                     playerHp          = levels[Skills.HITPOINTS] ?: 1,
                     weaponAttackBonus = totalAtkBonus,
                     weaponStrBonus    = totalStrBonus,
                     equippedFood      = availableFood,
                     foodHealValues    = gameData.foodHealValues,
+                    blessingDefBonus  = (ChurchRepository.defBonus(flags) * prayerCapeMult).toInt(),
                 )
                 val frameMs        = SkillSimulator.sessionDurationMs(agilityLevel) / 60L
                 val bossDurationMs = boss.durationMinutes * frameMs
@@ -323,15 +343,16 @@ class QueuedSessionStarter @Inject constructor(
                 val result = CombatSimulator.simulateDungeon(
                     dungeon             = dungeon,
                     enemies             = gameData.enemies,
-                    playerAttack        = levels[Skills.ATTACK]    ?: 1,
-                    playerStrength      = levels[Skills.STRENGTH]  ?: 1,
-                    playerDefence       = (levels[Skills.DEFENSE]  ?: 1) + totalDefBonus,
+                    playerAttack        = ((levels[Skills.ATTACK]   ?: 1) * combatCapeMult).toInt(),
+                    playerStrength      = ((levels[Skills.STRENGTH] ?: 1) * combatCapeMult).toInt(),
+                    playerDefence       = ((levels[Skills.DEFENSE]  ?: 1) * combatCapeMult).toInt() + totalDefBonus,
                     playerHp            = levels[Skills.HITPOINTS] ?: 1,
+                    blessingDefBonus    = (ChurchRepository.defBonus(flags) * prayerCapeMult).toInt(),
                     weaponAttackBonus   = totalAtkBonus,
                     weaponStrengthBonus = totalStrBonus,
                     combatStyle         = combatStyle,
-                    playerRanged        = levels[Skills.RANGED]    ?: 1,
-                    playerMagic         = levels[Skills.MAGIC]     ?: 1,
+                    playerRanged        = ((levels[Skills.RANGED] ?: 1) * combatCapeMult).toInt(),
+                    playerMagic         = ((levels[Skills.MAGIC]  ?: 1) * combatCapeMult).toInt(),
                     arrowStrengthBonus  = arrowBonus,
                     spellMaxHit         = spell?.maxHit             ?: 0,
                     agilityLevel        = agilityLevel,
@@ -429,6 +450,11 @@ class QueuedSessionStarter @Inject constructor(
     private val ARROW_TIERS = listOf(
         "runite_arrow", "adamantite_arrow", "mithril_arrow",
         "steel_arrow", "iron_arrow", "bronze_arrow",
+    )
+
+    private val COMBAT_CAPE_SKILLS = setOf(
+        "attack", "strength", "defense", "ranged", "magic", "hp",
+        "warriors", "archers", "mages",
     )
 
     private val ARROW_STRENGTH_BONUS = mapOf(

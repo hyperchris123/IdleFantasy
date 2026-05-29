@@ -85,7 +85,7 @@ class PlayerRepository @Inject constructor(
         val flags: PlayerFlags = json.decodeFromString(player.flags)
         val boostActive = flags.xpBoostExpiresAt > System.currentTimeMillis()
         val scaledXp = if (efficiencyMultiplier == 1.0f) xpGained else (xpGained * efficiencyMultiplier).toLong()
-        val boostedXp = if (boostActive) scaledXp * 2 else scaledXp
+        val boostedXp = ((if (boostActive) scaledXp * 2 else scaledXp) * ChurchRepository.xpMultiplier(flags)).toLong()
         val scaledItems = if (efficiencyMultiplier == 1.0f) itemsGained
             else itemsGained.mapValues { (_, v) -> (v * efficiencyMultiplier).roundToInt().coerceAtLeast(1) }
 
@@ -345,6 +345,8 @@ class PlayerRepository @Inject constructor(
         val flags: PlayerFlags = json.decodeFromString(player.flags)
         val boostActive = flags.xpBoostExpiresAt > System.currentTimeMillis()
         val boostMult = if (boostActive) 2L else 1L
+        val xpBlessingMult = ChurchRepository.xpMultiplier(flags)
+        val coinBlessingMult = ChurchRepository.coinMultiplier(flags)
         val scaledItems = if (efficiencyMultiplier == 1.0f) itemsGained
             else itemsGained.mapValues { (_, v) -> (v * efficiencyMultiplier).roundToInt().coerceAtLeast(1) }
 
@@ -356,7 +358,7 @@ class PlayerRepository @Inject constructor(
         for ((skill, xp) in xpPerSkill) {
             val oldLevel = XpTable.levelForXp(xpMap[skill] ?: 0L)
             val scaledXp = if (efficiencyMultiplier == 1.0f) xp else (xp * efficiencyMultiplier).toLong()
-            val newXp = (xpMap[skill] ?: 0L) + scaledXp * boostMult
+            val newXp = (xpMap[skill] ?: 0L) + (scaledXp * boostMult * xpBlessingMult).toLong()
             xpMap[skill]  = newXp
             levels[skill] = XpTable.levelForXp(newXp)
             if (oldLevel < 99 && levels[skill]!! >= 99) {
@@ -376,7 +378,7 @@ class PlayerRepository @Inject constructor(
                 skillLevels = json.encode<Map<String, Int>>(levels),
                 skillXp     = json.encode<Map<String, Long>>(xpMap),
                 inventory   = json.encode<Map<String, Int>>(inventory),
-                coins       = player.coins + coinsGained,
+                coins       = player.coins + (coinsGained * coinBlessingMult).toLong(),
             )
         )
         return awardedCapes

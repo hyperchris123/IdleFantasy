@@ -3,6 +3,7 @@ package com.fantasyidler.ui.screen
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.provider.DocumentsContract
 import android.provider.Settings
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
@@ -72,11 +73,23 @@ fun SettingsScreen(
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
 
-    val themePreference by viewModel.themePreference.collectAsState()
-    val fontScale       by viewModel.fontScale.collectAsState()
+    val themePreference  by viewModel.themePreference.collectAsState()
+    val fontScale        by viewModel.fontScale.collectAsState()
+    val backupFolderUri  by viewModel.backupFolderUri.collectAsState()
+    val backupFrequency  by viewModel.backupFrequency.collectAsState()
     var notificationsEnabled by remember { mutableStateOf(false) }
     var showResetConfirm1 by remember { mutableStateOf(false) }
     var showResetConfirm2 by remember { mutableStateOf(false) }
+
+    val folderLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.OpenDocumentTree()
+    ) { uri ->
+        uri ?: return@rememberLauncherForActivityResult
+        val permFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+        context.contentResolver.takePersistableUriPermission(uri, permFlags)
+        viewModel.setBackupFolder(uri.toString())
+        scope.launch { snackbarHostState.showSnackbar(context.getString(R.string.settings_backup_folder_set)) }
+    }
 
     val exportLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.CreateDocument("application/json")
@@ -329,6 +342,74 @@ fun SettingsScreen(
                     }
                 }
             )
+
+            // Automatic Backup section
+            HorizontalDivider()
+
+            SectionHeader(title = stringResource(R.string.settings_backup_title))
+
+            val noFolderStr = stringResource(R.string.settings_backup_no_folder)
+            val folderLabel = if (backupFolderUri.isEmpty()) {
+                noFolderStr
+            } else {
+                try {
+                    val docId = DocumentsContract.getTreeDocumentId(Uri.parse(backupFolderUri))
+                    docId.substringAfterLast(':').substringAfterLast('/').ifEmpty { noFolderStr }
+                } catch (_: Exception) {
+                    noFolderStr
+                }
+            }
+
+            SettingsRow(
+                title    = stringResource(R.string.settings_backup_folder),
+                subtitle = folderLabel,
+                trailing = {
+                    OutlinedButton(onClick = { folderLauncher.launch(null) }) {
+                        Text(stringResource(R.string.settings_backup_choose))
+                    }
+                }
+            )
+
+            val freqTitle = stringResource(R.string.settings_backup_frequency) +
+                if (backupFrequency == "daily" || backupFrequency == "weekly")
+                    " (${stringResource(R.string.settings_backup_at_5am)})" else ""
+            SettingsRow(
+                title    = freqTitle,
+                subtitle = null,
+                trailing = {
+                    Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                        listOf(
+                            ""       to stringResource(R.string.settings_backup_off),
+                            "hourly" to stringResource(R.string.settings_backup_hourly),
+                            "daily"  to stringResource(R.string.settings_backup_daily),
+                            "weekly" to stringResource(R.string.settings_backup_weekly),
+                        ).forEach { (key, label) ->
+                            FilterChip(
+                                selected = backupFrequency == key,
+                                onClick  = { viewModel.setBackupFrequency(key) },
+                                label    = { Text(label, style = MaterialTheme.typography.labelSmall) },
+                            )
+                        }
+                    }
+                }
+            )
+
+            OutlinedButton(
+                onClick = {
+                    viewModel.backupNow { success ->
+                        scope.launch {
+                            snackbarHostState.showSnackbar(
+                                if (success) context.getString(R.string.settings_backup_success)
+                                else context.getString(R.string.settings_backup_failed)
+                            )
+                        }
+                    }
+                },
+                enabled  = backupFolderUri.isNotEmpty(),
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text(stringResource(R.string.settings_backup_now))
+            }
 
             // About section
             HorizontalDivider()

@@ -15,6 +15,8 @@ data class DungeonData(
     @SerialName("lore_unlock_only") val loreUnlockOnly: Boolean = false,
     /** Rolled once per completed dungeon run (not per kill). Uses same type as BossRareDrop. */
     @SerialName("rare_drops") val rareDrops: List<DungeonRareDrop> = emptyList(),
+    /** When true the player cannot die here; HP is clamped to 1 minimum. */
+    @SerialName("safe_zone") val safeZone: Boolean = false,
 )
 
 @Serializable

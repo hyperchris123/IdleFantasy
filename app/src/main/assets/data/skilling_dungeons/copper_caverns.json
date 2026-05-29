@@ -49,7 +49,7 @@
       {"item": "mithril_ore", "chance": 0.30}
     ]
   },
-  "note_chance_per_frame": 0.015,
+  "note_chance_per_frame": 0.003,
   "note_threshold": 5,
   "note_texts": [
     "Scratches mark the tunnel walls, too deep and wide for any pickaxe.",

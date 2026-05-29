@@ -14,6 +14,7 @@ import com.fantasyidler.data.model.QueuedAction
 import com.fantasyidler.data.model.SessionFrame
 import com.fantasyidler.data.model.SkillSession
 import com.fantasyidler.data.model.Skills
+import com.fantasyidler.repository.ChurchRepository
 import com.fantasyidler.repository.GameDataRepository
 import com.fantasyidler.repository.GuildRepository
 import com.fantasyidler.repository.PlayerRepository
@@ -46,6 +47,8 @@ data class CombatSessionResult(
     val won: Boolean = true,
     val killsByEnemy: Map<String, Int> = emptyMap(),
     val foodConsumed: Map<String, Int> = emptyMap(),
+    val xpBlessingBonusBySkill: Map<String, Long> = emptyMap(),
+    val coinBlessingBonus: Long = 0L,
 )
 
 data class CombatUiState(
@@ -347,6 +350,7 @@ class CombatViewModel @Inject constructor(
                     playerAttack        = levels[Skills.ATTACK]    ?: 1,
                     playerStrength      = levels[Skills.STRENGTH]  ?: 1,
                     playerDefence       = (levels[Skills.DEFENSE]  ?: 1) + totalDefenseBonus,
+                    blessingDefBonus    = ChurchRepository.defBonus(flags),
                     playerHp            = levels[Skills.HITPOINTS] ?: 1,
                     weaponAttackBonus   = totalAttackBonus,
                     weaponStrengthBonus = totalStrengthBonus,
@@ -463,6 +467,7 @@ class CombatViewModel @Inject constructor(
                     weaponStrBonus    = totalStrBonus,
                     equippedFood      = availableFood,
                     foodHealValues    = gameData.foodHealValues,
+                    blessingDefBonus  = ChurchRepository.defBonus(flags),
                 )
                 val framesJson = json.encodeToString(
                     json.serializersModule.serializer<List<SessionFrame>>(),
@@ -523,6 +528,9 @@ class CombatViewModel @Inject constructor(
         val allFoodConsumed = mutableMapOf<String, Int>()
         for (frame in frames) frame.foodConsumed.forEach { (k, v) -> allFoodConsumed[k] = (allFoodConsumed[k] ?: 0) + v }
 
+        val bossFlags         = playerRepo.getFlags()
+        val blessingXpMult    = ChurchRepository.xpMultiplier(bossFlags)
+        val blessingCoinMult  = ChurchRepository.coinMultiplier(bossFlags)
         val capes = playerRepo.applyMultiSkillResults(last.xpBySkill, loot, coinsGained)
         if (allFoodConsumed.isNotEmpty()) playerRepo.consumeItems(allFoodConsumed)
         for ((petId, _) in petDrops) {
@@ -538,17 +546,23 @@ class CombatViewModel @Inject constructor(
             playerRepo.recordDailyKills(mapOf(session.activityKey to 1))
             guildRepo.recordGuildCombat(mapOf(session.activityKey to 1), detectCombatStyle(last.xpBySkill))
         }
+        val xpBlessingBonusBySkill = last.xpBySkill
+            .mapValues { (_, xp) -> (xp.toDouble() * (blessingXpMult - 1)).toLong() }
+            .filter { (_, bonus) -> bonus > 0 }
+        val coinBlessingBonus = (coinsGained.toDouble() * (blessingCoinMult - 1)).toLong()
         val itemsDisplay = last.items.toMutableMap().also { it.remove("coins") }
         sessionRepo.deleteSession(session.sessionId)
         _extra.update {
             it.copy(
                 combatResult = CombatSessionResult(
-                    dungeonDisplayName = boss?.let { b -> "${b.emoji} ${b.displayName}" } ?: session.activityKey,
-                    xpPerSkill   = last.xpBySkill,
-                    itemsGained  = itemsDisplay,
-                    coinsGained  = coinsGained,
-                    won          = won,
-                    killsByEnemy = if (won) mapOf(session.activityKey to 1) else emptyMap(),
+                    dungeonDisplayName     = boss?.let { b -> "${b.emoji} ${b.displayName}" } ?: session.activityKey,
+                    xpPerSkill             = last.xpBySkill,
+                    itemsGained            = itemsDisplay,
+                    coinsGained            = coinsGained,
+                    won                    = won,
+                    killsByEnemy           = if (won) mapOf(session.activityKey to 1) else emptyMap(),
+                    xpBlessingBonusBySkill = xpBlessingBonusBySkill,
+                    coinBlessingBonus      = coinBlessingBonus,
                 ),
                 snackbarMessage = buildCapeMessage(capes),
             )
@@ -584,6 +598,9 @@ class CombatViewModel @Inject constructor(
         }
         val dungeon = gameData.dungeons[session.activityKey]
 
+        val dungeonFlags      = playerRepo.getFlags()
+        val blessingXpMult    = ChurchRepository.xpMultiplier(dungeonFlags)
+        val blessingCoinMult  = ChurchRepository.coinMultiplier(dungeonFlags)
         val capes = playerRepo.applyMultiSkillResults(totalXpPerSkill, allItems, coinsGained)
         if (allFoodConsumed.isNotEmpty())   playerRepo.consumeItems(allFoodConsumed)
         if (allArrowsConsumed.isNotEmpty()) playerRepo.consumeItems(allArrowsConsumed)
@@ -602,18 +619,24 @@ class CombatViewModel @Inject constructor(
             }
             playerRepo.incrementDungeonRun(session.activityKey)
         }
+        val xpBlessingBonusBySkill = totalXpPerSkill
+            .mapValues { (_, xp) -> (xp.toDouble() * (blessingXpMult - 1)).toLong() }
+            .filter { (_, bonus) -> bonus > 0 }
+        val coinBlessingBonus = (coinsGained.toDouble() * (blessingCoinMult - 1)).toLong()
         sessionRepo.deleteSession(session.sessionId)
 
         _extra.update {
             it.copy(
                 combatResult = CombatSessionResult(
-                    dungeonDisplayName = dungeon?.displayName ?: session.activityKey,
-                    xpPerSkill         = totalXpPerSkill,
-                    itemsGained        = allItems,
-                    coinsGained        = coinsGained,
-                    won                = !playerDied,
-                    killsByEnemy       = allKillsByEnemy,
-                    foodConsumed       = allFoodConsumed,
+                    dungeonDisplayName     = dungeon?.displayName ?: session.activityKey,
+                    xpPerSkill             = totalXpPerSkill,
+                    itemsGained            = allItems,
+                    coinsGained            = coinsGained,
+                    won                    = !playerDied,
+                    killsByEnemy           = allKillsByEnemy,
+                    foodConsumed           = allFoodConsumed,
+                    xpBlessingBonusBySkill = xpBlessingBonusBySkill,
+                    coinBlessingBonus      = coinBlessingBonus,
                 ),
                 snackbarMessage = buildCapeMessage(capes),
             )
@@ -685,6 +708,7 @@ class CombatViewModel @Inject constructor(
         weaponStrBonus: Int,
         equippedFood: Map<String, Int> = emptyMap(),
         foodHealValues: Map<String, Int> = emptyMap(),
+        blessingDefBonus: Int = 0,
     ): List<SessionFrame> = CombatSimulator.simulateBoss(
         boss              = boss,
         bossKey           = bossKey,
@@ -696,6 +720,7 @@ class CombatViewModel @Inject constructor(
         weaponStrBonus    = weaponStrBonus,
         equippedFood      = equippedFood,
         foodHealValues    = foodHealValues,
+        blessingDefBonus  = blessingDefBonus,
     )
 
     // ------------------------------------------------------------------
