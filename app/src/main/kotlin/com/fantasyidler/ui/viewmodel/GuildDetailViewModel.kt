@@ -12,7 +12,6 @@ import com.fantasyidler.repository.GuildRepository
 import com.fantasyidler.repository.PlayerRepository
 import com.fantasyidler.util.formatCoins
 import com.fantasyidler.util.formatXp
-import com.fantasyidler.util.toTitleCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -119,7 +118,8 @@ class GuildDetailViewModel @Inject constructor(
                     val parts = buildList {
                         if (rewards.xp > 0) add("+${rewards.xp.toLong().formatXp()} XP")
                         if (rewards.coins > 0) add("+${rewards.coins.toLong().formatCoins()} coins")
-                        rewards.items.forEach { (key, qty) -> add("${key.toTitleCase()} x$qty") }
+                        val itemCount = rewards.items.values.sum()
+                        if (itemCount > 0) add("x$itemCount items")
                     }
                     val suffix = if (parts.isNotEmpty()) " (${parts.joinToString(", ")})" else ""
                     _extra.update { it.copy(snackbarMessage = "Quest complete: $questName!$suffix") }
