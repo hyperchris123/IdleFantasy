@@ -468,6 +468,7 @@ private fun LanguageSection() {
         "es-ES"  to stringResource(R.string.settings_lang_español_españa),
         "nl"     to stringResource(R.string.settings_lang_dutch),
         "tr"     to stringResource(R.string.settings_lang_turkish),
+        "it"     to stringResource(R.string.settings_lang_italiano),
         "system" to stringResource(R.string.settings_lang_system),
     )
     val selectedLabel =
