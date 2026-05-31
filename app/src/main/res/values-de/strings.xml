@@ -261,7 +261,7 @@
     <string name="label_daily">Daily</string>
     <string name="label_daily_quests">Tagesaufgaben</string>
     <string name="label_daily_reset">Reset um 6:00 Uhr</string>
-    <string name="label_daily_reward">2.000 Münzen (1/100: Zwergengear)</string>
+    <string name="label_daily_reward">2.000 Münzen (1/500: Zwergengear)</string>
     <string name="msg_daily_claimed_coins">Tagesaufgabe abgeschlossen! +2.000 Münzen.</string>
     <string name="msg_daily_claimed_dwarven">Tagesaufgabe abgeschlossen! Du hast %1$s gefunden!</string>
 
@@ -277,9 +277,6 @@
     <string name="settings_tutorial_title">Einleitung</string>
     <string name="settings_tutorial_desc">Die Einleitung erneut anzeigen</string>
     <string name="settings_reopen">Erneut öffnen</string>
-    <string name="settings_changelog_title">What\'s New</string>
-    <string name="settings_changelog_desc">View the latest update changes</string>
-    <string name="settings_changelog_btn">View</string>
     <string name="settings_foss_desc">Idle Fantasy ist freie und quelloffene Software.</string>
     <string name="settings_reset_title">Fortschritt zurücksetzen</string>
     <string name="settings_reset_desc">Alle Fähigkeiten, Gegenstände, Missionen und Münzen löschen</string>
@@ -412,7 +409,6 @@
     <string name="profile_equip_best">Mit der besten Ausrüstung ausstatten</string>
     <string name="profile_weapons">Weapons</string>
     <string name="profile_combat_gear">Kampfausrüstung</string>
-    <string name="profile_view_combat_gear">View Combat Gear</string>
     <string name="profile_gathering_tools">Werkzeuge</string>
     <string name="profile_food_dungeon">Essen (Dungeon)</string>
     <string name="profile_no_food">Keine gekochten Lebensmittel im Inventar</string>
@@ -574,8 +570,6 @@
     <string name="worker_dismiss_confirm_body">The active session and queue will be cancelled. Your hire fee and any queued materials will be returned.</string>
     <string name="inn_daily_menu">Daily Menu</string>
     <string name="inn_laborers_header">Laborers</string>
-    <string name="inn_slot1_header">Long Laborer</string>
-    <string name="inn_slot2_header">Skilled Worker</string>
     <string name="quest_kbd_slayer_1_name">King Black Dragon Slayer I</string>
     <string name="quest_kbd_slayer_2_name">King Black Dragon Slayer II</string>
     <string name="quest_kbd_slayer_3_name">King Black Dragon Slayer III</string>

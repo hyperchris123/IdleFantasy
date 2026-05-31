@@ -23,11 +23,9 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
-import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -84,7 +82,7 @@ fun AppNavigation(
     val currentDestination = backStackEntry?.destination
 
     val tabSubScreens: Map<String, Set<String>> = mapOf(
-        "home"   to setOf("shop", "settings", "inn", Screen.WorkerSkills.route, "guild_hall", "guild_detail/{guild}", "church", "slayer"),
+        "home"   to setOf("shop", "settings", "inn", "worker_skills", "guild_hall", "guild_detail/{guild}", "church", "slayer"),
         "skills" to setOf("farming", "mercantile"),
     )
 
@@ -111,7 +109,7 @@ fun AppNavigation(
                                         saveState = true
                                     }
                                     launchSingleTop = true
-                                    restoreState = !isHome && screen !is Screen.Profile
+                                    restoreState = !isHome
                                 }
                             }
                         },
@@ -178,8 +176,7 @@ fun AppNavigation(
                 )
             }
             composable(Screen.Quests.route)   { QuestsScreen() }
-            composable(Screen.Profile.route)  { ProfileScreen(onNavigateToCombat = { navController.navigate(Screen.Combat.gearRoute) }) }
-            composable(Screen.Combat.gearRoute) { CombatScreen(startOnGear = true) }
+            composable(Screen.Profile.route)  { ProfileScreen() }
             composable(Screen.Settings.route) { entry ->
                 SettingsScreen(
                     onBack           = { if (navController.currentBackStackEntry == entry) navController.popBackStack() },
@@ -192,21 +189,14 @@ fun AppNavigation(
             composable(Screen.Inn.route) { entry ->
                 InnScreen(
                     onBack = { if (navController.currentBackStackEntry == entry) navController.popBackStack() },
-                    onNavigateToWorkerSkills = { slot ->
+                    onNavigateToWorkerSkills = {
                         navController.popBackStack()
-                        navController.navigate(Screen.WorkerSkills.routeWithSlot(slot))
+                        navController.navigate(Screen.WorkerSkills.route)
                     },
                 )
             }
-            composable(
-                route     = Screen.WorkerSkills.route,
-                arguments = listOf(navArgument("initialSlot") { type = NavType.IntType; defaultValue = 1 }),
-            ) { entry ->
-                val initialSlot = entry.arguments?.getInt("initialSlot") ?: 1
-                WorkerSkillsScreen(
-                    initialSlot = initialSlot,
-                    onBack      = { if (navController.currentBackStackEntry == entry) navController.popBackStack() },
-                )
+            composable(Screen.WorkerSkills.route) { entry ->
+                WorkerSkillsScreen(onBack = { if (navController.currentBackStackEntry == entry) navController.popBackStack() })
             }
             composable(Screen.GuildHall.route) { entry ->
                 GuildHallScreen(
