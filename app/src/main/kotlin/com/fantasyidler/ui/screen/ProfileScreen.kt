@@ -21,6 +21,7 @@ import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.foundation.background
 import androidx.compose.material3.Button
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.TextButton
@@ -80,8 +81,9 @@ import com.fantasyidler.util.formatXp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
-    viewModel:      InventoryViewModel    = hiltViewModel(),
-    achievementsVm: AchievementsViewModel = hiltViewModel(),
+    viewModel:           InventoryViewModel    = hiltViewModel(),
+    achievementsVm:      AchievementsViewModel = hiltViewModel(),
+    onNavigateToCombat:  () -> Unit            = {},
 ) {
     val state    by viewModel.uiState.collectAsState()
     val achState by achievementsVm.uiState.collectAsState()
@@ -198,10 +200,11 @@ fun ProfileScreen(
                     0 -> SkillsTab(state.skillLevels, state.skillXp, context)
                     1 -> InventoryTab(state.inventory, context, viewModel::categoryFor)
                     2 -> EquipmentTab(
-                        equipped  = state.equipped,
-                        context   = context,
-                        onSlotTap = viewModel::openSlotPicker,
-                        onUnequip = viewModel::unequip,
+                        equipped            = state.equipped,
+                        context             = context,
+                        onSlotTap           = viewModel::openSlotPicker,
+                        onUnequip           = viewModel::unequip,
+                        onNavigateToCombat  = onNavigateToCombat,
                     )
                     3 -> PetsTab(
                         allPets     = viewModel.allPets,
@@ -642,8 +645,19 @@ private fun EquipmentTab(
     context: android.content.Context,
     onSlotTap: (String) -> Unit,
     onUnequip: (String) -> Unit,
+    onNavigateToCombat: () -> Unit = {},
 ) {
     LazyColumn(modifier = Modifier.fillMaxSize()) {
+        item {
+            OutlinedButton(
+                onClick  = onNavigateToCombat,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 10.dp),
+            ) {
+                Text(stringResource(R.string.profile_view_combat_gear))
+            }
+        }
         item { SlotSectionHeader(stringResource(R.string.profile_gathering_tools)) }
         items(EquipSlot.TOOL_SLOTS) { slot ->
             EquipSlotRow(
