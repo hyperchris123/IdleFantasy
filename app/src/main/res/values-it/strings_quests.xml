@@ -326,7 +326,7 @@
     <string name="quest_lich_slayer_2_objective">Sconfiggi 20 Lich</string>
 
     <!-- Dungeon exploration extended -->
-    <string name="quest_dungeon_imp_1_name">Esploratore di Dungeon: Caverna di Imp</string>
+    <string name="quest_dungeon_imp_1_name">Esploratore di Dungeon VII</string>
     <string name="quest_dungeon_imp_1_objective">Completa la Caverna di Imp 5 volte</string>
     <string name="quest_dungeon_infernal_1_name">Dungeon Master IV</string>
     <string name="quest_dungeon_infernal_1_objective">Completa il Forte Infernale 5 volte</string>

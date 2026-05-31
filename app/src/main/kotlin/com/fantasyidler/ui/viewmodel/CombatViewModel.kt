@@ -21,6 +21,7 @@ import com.fantasyidler.repository.PlayerRepository
 import com.fantasyidler.repository.QuestRepository
 import com.fantasyidler.repository.QueuedSessionStarter
 import com.fantasyidler.repository.SessionRepository
+import com.fantasyidler.repository.SlayerRepository
 import com.fantasyidler.simulator.CombatSimulator
 import com.fantasyidler.simulator.SkillSimulator
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -93,6 +94,7 @@ class CombatViewModel @Inject constructor(
     private val gameData: GameDataRepository,
     private val questRepo: QuestRepository,
     private val guildRepo: GuildRepository,
+    private val slayerRepo: SlayerRepository,
     private val queuedSessionStarter: QueuedSessionStarter,
     private val json: Json,
 ) : ViewModel() {
@@ -597,6 +599,15 @@ class CombatViewModel @Inject constructor(
             if (playerDied) maxOf(0L, (it * 0.1).toLong()) else it
         }
         val dungeon = gameData.dungeons[session.activityKey]
+
+        // Accumulate Slayer XP for kills that match the active task (skipped on death)
+        if (!playerDied) {
+            var slayerXp = 0L
+            for ((enemy, kills) in allKillsByEnemy) {
+                slayerXp += slayerRepo.recordKills(enemy, kills)
+            }
+            if (slayerXp > 0L) totalXpPerSkill[Skills.SLAYER] = (totalXpPerSkill[Skills.SLAYER] ?: 0L) + slayerXp
+        }
 
         val dungeonFlags      = playerRepo.getFlags()
         val blessingXpMult    = ChurchRepository.xpMultiplier(dungeonFlags)

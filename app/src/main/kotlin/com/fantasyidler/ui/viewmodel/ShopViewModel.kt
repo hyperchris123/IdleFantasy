@@ -258,7 +258,8 @@ class ShopViewModel @Inject constructor(
         }
 
         val base = if (marketPrice != null) maxOf(basePrice, maxOf(1, marketPrice / 3)) else basePrice
-        return (base * mercantileSellBonus(uiState.value.mercantileLevel)).toInt().coerceAtLeast(1)
+        val result = (base * mercantileSellBonus(uiState.value.mercantileLevel)).toInt().coerceAtLeast(1)
+        return if (marketPrice != null) minOf(result, marketPrice - 1).coerceAtLeast(1) else result
     }
 
     fun discountedPrice(entry: ShopEntry): Int =

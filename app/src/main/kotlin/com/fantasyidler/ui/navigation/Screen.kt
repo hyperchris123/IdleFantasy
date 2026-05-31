@@ -123,6 +123,12 @@ sealed class Screen(
         selectedIcon = Icons.Filled.Explore,
     )
 
+    object Slayer : Screen(
+        route    = "slayer",
+        labelRes = R.string.slayer_title,
+        icon     = Icons.Filled.Shield,
+    )
+
     companion object {
         val bottomNavItems = listOf(Skills, Combat, Home, Quests, Profile)
     }

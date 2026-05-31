@@ -105,6 +105,9 @@ fun CombatScreen(
     val invState         by inventoryVm.uiState.collectAsState()
     val context           = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
+    val visibleDungeons   = remember(state.unlockedDungeons) {
+        viewModel.dungeonList.filter { !it.loreUnlockOnly || it.name in state.unlockedDungeons }
+    }
 
     LaunchedEffect(state.snackbarMessage) {
         state.snackbarMessage?.let {
@@ -165,7 +168,7 @@ fun CombatScreen(
                     when (page) {
                         0 -> CombatSessionBanner(
                             session        = combatSession,
-                            dungeons       = viewModel.dungeonList,
+                            dungeons       = visibleDungeons,
                             bosses         = viewModel.bossList,
                             enemies        = viewModel.enemyMap,
                             skillLevels    = state.skillLevels,
@@ -179,7 +182,7 @@ fun CombatScreen(
                             onDebugFinish  = viewModel::debugFinishSession,
                         )
                         1 -> CombatSelectionList(
-                            dungeons         = viewModel.dungeonList,
+                            dungeons         = visibleDungeons,
                             bosses           = viewModel.bossList,
                             skillLevels      = state.skillLevels,
                             survivalRatings  = state.dungeonSurvivalRatings,
@@ -229,7 +232,7 @@ fun CombatScreen(
                 HorizontalPager(state = pagerState, modifier = Modifier.weight(1f)) { page ->
                     when (page) {
                         0 -> CombatSelectionList(
-                            dungeons         = viewModel.dungeonList,
+                            dungeons         = visibleDungeons,
                             bosses           = viewModel.bossList,
                             skillLevels      = state.skillLevels,
                             survivalRatings  = state.dungeonSurvivalRatings,

@@ -236,6 +236,7 @@ class QuestsViewModel @Inject constructor(
         quest.skill in gatheringSkills                          -> "Gathering"
         quest.skill in craftingSkills                          -> "Crafting"
         quest.skill == "combat" && quest.type in combatTypes   -> "Combat"
+        quest.skill == "slayer"                                -> "Combat"
         quest.type in specialTypes                             -> "Special"
         else                                                   -> "Special"
     }

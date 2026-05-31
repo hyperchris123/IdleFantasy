@@ -2,6 +2,7 @@ package com.fantasyidler.repository
 
 import android.content.Context
 import com.fantasyidler.data.json.BoneData
+import com.fantasyidler.data.json.SlayerTaskData
 import com.fantasyidler.data.json.CropData
 import com.fantasyidler.data.json.BossData
 import com.fantasyidler.data.json.CookingRecipe
@@ -59,6 +60,12 @@ class GameDataRepository @Inject constructor(
 
     private inline fun <reified T> asset(path: String): T =
         json.decodeFromString<T>(loadAsset(path))
+
+    // ------------------------------------------------------------------ slayer
+
+    val slayerTasks: Map<String, SlayerTaskData> by lazy {
+        asset("data/slayer_tasks.json")
+    }
 
     // ------------------------------------------------------------------ enemies
 

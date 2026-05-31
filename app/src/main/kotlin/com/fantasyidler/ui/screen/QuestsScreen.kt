@@ -343,8 +343,7 @@ private fun QuestRow(
             .padding(horizontal = 16.dp, vertical = 12.dp),
     ) {
         // Title
-        val displayName = GameStrings.questName(context, quest.id).takeIf { it.isNotBlank() }
-            ?: quest.name
+        val displayName = GameStrings.questName(context, quest.id, quest.name)
         Text(
             text       = displayName,
             style      = MaterialTheme.typography.bodyLarge,
