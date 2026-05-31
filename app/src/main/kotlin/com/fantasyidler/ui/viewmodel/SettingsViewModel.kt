@@ -6,6 +6,8 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fantasyidler.data.model.PlayerFlags
+import com.fantasyidler.data.model.toExport
+import com.fantasyidler.data.model.toSkillSession
 import com.fantasyidler.repository.BackupScheduler
 import com.fantasyidler.repository.PlayerRepository
 import com.fantasyidler.repository.QueuedSessionStarter
@@ -119,18 +121,38 @@ class SettingsViewModel @Inject constructor(
 
     fun exportSave(onReady: (String) -> Unit) {
         viewModelScope.launch {
-            onReady(playerRepo.exportSave())
+            val sessions = buildList {
+                sessionRepo.getActiveSession()?.let { add(it.toExport()) }
+                addAll(sessionRepo.getAllCompletedSessions().map { it.toExport() })
+                for (slot in 1..2) {
+                    sessionRepo.getActiveWorkerSession(slot)?.let { add(it.toExport()) }
+                    addAll(sessionRepo.getAllCompletedWorkerSessions(slot).map { it.toExport() })
+                }
+            }
+            onReady(playerRepo.exportSave(sessions))
         }
     }
 
     fun importSave(jsonString: String, onDone: (success: Boolean) -> Unit) {
         viewModelScope.launch {
             try {
-                playerRepo.importSave(jsonString)
+                val export = playerRepo.importSave(jsonString)
                 sessionRepo.deleteAllSessions()
                 sessionRepo.deleteAllWorkerSessions()
+                val now = System.currentTimeMillis()
+                val exportedAt = export.exportedAt.takeIf { it > 0L } ?: now
+                export.sessions.forEach { s ->
+                    val session = if (s.completed) {
+                        s.toSkillSession()
+                    } else {
+                        val remainingMs = (s.endsAt - exportedAt).coerceAtLeast(0L)
+                        s.toSkillSession().copy(endsAt = now + remainingMs)
+                    }
+                    sessionRepo.insertSession(session)
+                }
                 sessionRepo.recoverActiveSession(queuedSessionStarter)
-                sessionRepo.recoverActiveWorkerSession(workerStarter)
+                sessionRepo.recoverActiveWorkerSession(1, workerStarter)
+                sessionRepo.recoverActiveWorkerSession(2, workerStarter)
                 onDone(true)
             } catch (_: Exception) {
                 onDone(false)

@@ -91,6 +91,7 @@ import com.fantasyidler.util.GameStrings
 import com.fantasyidler.util.formatCoins
 import com.fantasyidler.util.formatXp
 import com.fantasyidler.util.toCountdown
+import com.fantasyidler.util.toTitleCase
 import kotlinx.coroutines.delay
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
@@ -100,6 +101,7 @@ import kotlinx.serialization.json.Json
 fun CombatScreen(
     viewModel:    CombatViewModel    = hiltViewModel(),
     inventoryVm:  InventoryViewModel = hiltViewModel(),
+    startOnGear:  Boolean            = false,
 ) {
     val state            by viewModel.uiState.collectAsState()
     val invState         by inventoryVm.uiState.collectAsState()
@@ -144,7 +146,7 @@ fun CombatScreen(
 
         val combatSession = state.combatSession
         if (combatSession != null) {
-            val pagerState = rememberPagerState(pageCount = { 3 })
+            val pagerState = rememberPagerState(initialPage = if (startOnGear) 2 else 0, pageCount = { 3 })
             val scope = rememberCoroutineScope()
             Column(Modifier.padding(padding).fillMaxSize()) {
                 TabRow(selectedTabIndex = pagerState.currentPage) {
@@ -209,7 +211,7 @@ fun CombatScreen(
                 }
             }
         } else {
-            val pagerState = rememberPagerState(pageCount = { 3 })
+            val pagerState = rememberPagerState(initialPage = if (startOnGear) 1 else 0, pageCount = { 3 })
             val scope = rememberCoroutineScope()
             Column(Modifier.padding(padding).fillMaxSize()) {
                 TabRow(selectedTabIndex = pagerState.currentPage) {
@@ -298,6 +300,7 @@ fun CombatScreen(
                 boss              = boss,
                 skillLevels       = state.skillLevels,
                 availablePotions  = state.availablePotions,
+                potionEffects     = viewModel.potionEffects,
                 selectedPotionKey = state.selectedPotionKey,
                 isStarting        = state.startingSession,
                 onPotionSelected  = viewModel::selectPotion,
@@ -325,6 +328,7 @@ fun CombatScreen(
                 availableSpells      = viewModel.availableSpells(state.skillLevels),
                 selectedSpell        = state.selectedSpell,
                 availablePotions     = state.availablePotions,
+                potionEffects        = viewModel.potionEffects,
                 selectedPotionKey    = state.selectedPotionKey,
                 isStarting           = state.startingSession,
                 onWeaponSlotSelected = viewModel::selectWeaponSlot,
@@ -1289,6 +1293,7 @@ private fun DungeonInfoSheet(
     availableSpells: List<SpellData>,
     selectedSpell: SpellData?,
     availablePotions: Map<String, Int>,
+    potionEffects: Map<String, Map<String, Int>>,
     selectedPotionKey: String?,
     isStarting: Boolean,
     onWeaponSlotSelected: (String) -> Unit,
@@ -1489,13 +1494,26 @@ private fun DungeonInfoSheet(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Text(
-                        text       = if (key == null) stringResource(R.string.combat_no_potion)
-                                     else GameStrings.itemName(context, key),
-                        style      = MaterialTheme.typography.bodyMedium,
-                        fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
-                        color      = if (isSelected) GoldPrimary else MaterialTheme.colorScheme.onSurface,
-                    )
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text       = if (key == null) stringResource(R.string.combat_no_potion)
+                                         else GameStrings.itemName(context, key),
+                            style      = MaterialTheme.typography.bodyMedium,
+                            fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
+                            color      = if (isSelected) GoldPrimary else MaterialTheme.colorScheme.onSurface,
+                        )
+                        if (key != null) {
+                            val effectStr = potionEffects[key]?.entries
+                                ?.joinToString(", ") { (stat, bonus) -> "+$bonus ${stat.toTitleCase()}" }
+                            if (effectStr != null) {
+                                Text(
+                                    text  = "($effectStr)",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            }
+                        }
+                    }
                     if (key != null) {
                         Text(
                             text  = "×${availablePotions[key]}",
@@ -1559,6 +1577,7 @@ private fun BossInfoSheet(
     boss: BossData,
     skillLevels: Map<String, Int>,
     availablePotions: Map<String, Int>,
+    potionEffects: Map<String, Map<String, Int>>,
     selectedPotionKey: String?,
     isStarting: Boolean,
     onPotionSelected: (String?) -> Unit,
@@ -1657,13 +1676,26 @@ private fun BossInfoSheet(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Text(
-                        text       = if (key == null) stringResource(R.string.combat_no_potion)
-                                     else GameStrings.itemName(context, key),
-                        style      = MaterialTheme.typography.bodyMedium,
-                        fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
-                        color      = if (isSelected) GoldPrimary else MaterialTheme.colorScheme.onSurface,
-                    )
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text       = if (key == null) stringResource(R.string.combat_no_potion)
+                                         else GameStrings.itemName(context, key),
+                            style      = MaterialTheme.typography.bodyMedium,
+                            fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
+                            color      = if (isSelected) GoldPrimary else MaterialTheme.colorScheme.onSurface,
+                        )
+                        if (key != null) {
+                            val effectStr = potionEffects[key]?.entries
+                                ?.joinToString(", ") { (stat, bonus) -> "+$bonus ${stat.toTitleCase()}" }
+                            if (effectStr != null) {
+                                Text(
+                                    text  = "($effectStr)",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            }
+                        }
+                    }
                     if (key != null) {
                         Text(
                             text  = "×${availablePotions[key]}",

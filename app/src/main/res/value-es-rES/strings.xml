@@ -809,4 +809,10 @@
     <string name="item_slayer_platebody_desc">Heavy armour etched with slayer runes.</string>
     <string name="item_slayer_platelegs_name">Slayer Platelegs</string>
     <string name="item_slayer_platelegs_desc">Protective legs crafted for extended dungeon runs.</string>
+    <string name="settings_changelog_title">What\'s New</string>
+    <string name="settings_changelog_desc">View the latest update changes</string>
+    <string name="settings_changelog_btn">View</string>
+    <string name="profile_view_combat_gear">View Combat Gear</string>
+    <string name="inn_slot1_header">Long Laborer</string>
+    <string name="inn_slot2_header">Skilled Worker</string>
 </resources>

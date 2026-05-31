@@ -214,34 +214,38 @@ class PlayerRepository @Inject constructor(
         updateFlags(flags.copy(sessionQueue = listOf(action) + flags.sessionQueue))
     }
 
-    /** Appends an action to the worker's queue. Returns false if already full (1 item) or no worker hired. */
-    suspend fun enqueueWorkerAction(action: QueuedAction): Boolean {
+    private fun PlayerFlags.workerForSlot(slot: Int) = if (slot == 2) hiredWorker2 else hiredWorker
+    private fun PlayerFlags.withWorkerForSlot(slot: Int, w: HiredWorker?) =
+        if (slot == 2) copy(hiredWorker2 = w) else copy(hiredWorker = w)
+
+    /** Appends an action to the given worker slot's queue. Returns false if full (1 item) or no worker hired. */
+    suspend fun enqueueWorkerAction(slot: Int, action: QueuedAction): Boolean {
         val flags = getFlags()
-        val worker = flags.hiredWorker ?: return false
+        val worker = flags.workerForSlot(slot) ?: return false
         if (worker.sessionQueue.size >= 1) return false
-        updateFlags(flags.copy(hiredWorker = worker.copy(sessionQueue = worker.sessionQueue + action)))
+        updateFlags(flags.withWorkerForSlot(slot, worker.copy(sessionQueue = worker.sessionQueue + action)))
         return true
     }
 
-    /** Removes and returns the first item in the worker's queue, or null if empty/no worker. */
-    suspend fun dequeueNextWorkerAction(): QueuedAction? {
+    /** Removes and returns the first item in the given slot's queue, or null if empty/no worker. */
+    suspend fun dequeueNextWorkerAction(slot: Int): QueuedAction? {
         val flags = getFlags()
-        val worker = flags.hiredWorker ?: return null
+        val worker = flags.workerForSlot(slot) ?: return null
         val queue = worker.sessionQueue
         if (queue.isEmpty()) return null
-        updateFlags(flags.copy(hiredWorker = worker.copy(sessionQueue = queue.drop(1))))
+        updateFlags(flags.withWorkerForSlot(slot, worker.copy(sessionQueue = queue.drop(1))))
         return queue.first()
     }
 
-    suspend fun requeueWorkerActionAtFront(action: QueuedAction) {
+    suspend fun requeueWorkerActionAtFront(slot: Int, action: QueuedAction) {
         val flags = getFlags()
-        val worker = flags.hiredWorker ?: return
-        updateFlags(flags.copy(hiredWorker = worker.copy(sessionQueue = listOf(action) + worker.sessionQueue)))
+        val worker = flags.workerForSlot(slot) ?: return
+        updateFlags(flags.withWorkerForSlot(slot, worker.copy(sessionQueue = listOf(action) + worker.sessionQueue)))
     }
 
-    suspend fun clearHiredWorker() {
+    suspend fun clearHiredWorker(slot: Int) {
         val flags = getFlags()
-        updateFlags(flags.copy(hiredWorker = null))
+        updateFlags(flags.withWorkerForSlot(slot, null))
     }
 
     /** Removes the queued item at [index]. No-op if out of range. */
@@ -508,8 +512,8 @@ class PlayerRepository @Inject constructor(
         return true
     }
 
-    /** Returns a JSON string capturing the full player save including quest progress. */
-    suspend fun exportSave(): String {
+    /** Returns a JSON string capturing the full player save including quest progress and sessions. */
+    suspend fun exportSave(sessions: List<com.fantasyidler.data.model.SkillSessionExport> = emptyList()): String {
         val player = getOrCreatePlayer()
         return json.encode<PlayerExport>(
             PlayerExport(
@@ -522,12 +526,14 @@ class PlayerRepository @Inject constructor(
                 coins          = player.coins,
                 questProgress  = questProgressDao.getAllProgress(),
                 farmingPatches = farmingPatchDao.getAllPatches(),
+                sessions       = sessions,
+                exportedAt     = System.currentTimeMillis(),
             )
         )
     }
 
-    /** Overwrites the current save with data from a previously exported JSON string. */
-    suspend fun importSave(jsonString: String) {
+    /** Overwrites the current save with data from a previously exported JSON string. Returns the parsed export. */
+    suspend fun importSave(jsonString: String): PlayerExport {
         val export = json.decodeFromString<PlayerExport>(stripJsonGarbage(jsonString))
         val player = getOrCreatePlayer()
         playerDao.upsert(
@@ -545,6 +551,7 @@ class PlayerRepository @Inject constructor(
         export.questProgress.forEach { questProgressDao.upsert(it) }
         farmingPatchDao.clearAll()
         export.farmingPatches.forEach { farmingPatchDao.upsert(it) }
+        return export
     }
 
     // Finds the end of the root JSON object and drops any trailing garbage.

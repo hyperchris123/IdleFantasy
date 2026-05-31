@@ -39,7 +39,9 @@ sealed class Screen(
         labelRes     = R.string.nav_combat,
         icon         = Icons.Outlined.Shield,
         selectedIcon = Icons.Filled.Shield,
-    )
+    ) {
+        const val gearRoute = "combat/gear"
+    }
     object Home : Screen(
         route        = "home",
         labelRes     = R.string.nav_home,
@@ -85,10 +87,12 @@ sealed class Screen(
     )
 
     object WorkerSkills : Screen(
-        route    = "worker_skills",
+        route    = "worker_skills?initialSlot={initialSlot}",
         labelRes = R.string.worker_skills_title_nav,
         icon     = Icons.Filled.ShowChart,
-    )
+    ) {
+        fun routeWithSlot(slot: Int) = "worker_skills?initialSlot=$slot"
+    }
 
     object GuildHall : Screen(
         route    = "guild_hall",

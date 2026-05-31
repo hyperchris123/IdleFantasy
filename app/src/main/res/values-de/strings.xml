@@ -412,6 +412,7 @@
     <string name="profile_equip_best">Mit der besten Ausrüstung ausstatten</string>
     <string name="profile_weapons">Weapons</string>
     <string name="profile_combat_gear">Kampfausrüstung</string>
+    <string name="profile_view_combat_gear">View Combat Gear</string>
     <string name="profile_gathering_tools">Werkzeuge</string>
     <string name="profile_food_dungeon">Essen (Dungeon)</string>
     <string name="profile_no_food">Keine gekochten Lebensmittel im Inventar</string>
@@ -573,6 +574,8 @@
     <string name="worker_dismiss_confirm_body">The active session and queue will be cancelled. Your hire fee and any queued materials will be returned.</string>
     <string name="inn_daily_menu">Daily Menu</string>
     <string name="inn_laborers_header">Laborers</string>
+    <string name="inn_slot1_header">Long Laborer</string>
+    <string name="inn_slot2_header">Skilled Worker</string>
     <string name="quest_kbd_slayer_1_name">King Black Dragon Slayer I</string>
     <string name="quest_kbd_slayer_2_name">King Black Dragon Slayer II</string>
     <string name="quest_kbd_slayer_3_name">King Black Dragon Slayer III</string>
