@@ -88,24 +88,30 @@ class GuildRepository @Inject constructor(
 
     /** Called when a gathering or firemaking session is collected. */
     suspend fun recordGuildGathering(skillName: String, items: Map<String, Int>) {
+        var flags = getRefreshedGuildDailyFlags()
+        val completedIds = loadCompletedQuestIds()
+        val currentLevel = guildLevel(skillName, flags.guildReputation[skillName] ?: 0L, completedIds)
         for ((questId, quest) in gameData.guildQuests) {
             if (quest.guild != skillName || quest.type != "gather") continue
+            if (quest.guildLevelRequired > currentLevel) continue
             val count = items[quest.target] ?: continue
             if (count > 0) addQuestProgress(questId, count)
         }
-        var flags = getRefreshedGuildDailyFlags()
         flags = applyDailyGathering(flags, skillName, items)
         playerRepo.updateFlags(flags)
     }
 
     /** Called when a crafting session is collected (smithing, cooking, fletching, crafting, runecrafting, herblore). */
     suspend fun recordGuildCrafting(skillName: String, items: Map<String, Int>) {
+        var flags = getRefreshedGuildDailyFlags()
+        val completedIds = loadCompletedQuestIds()
+        val currentLevel = guildLevel(skillName, flags.guildReputation[skillName] ?: 0L, completedIds)
         for ((questId, quest) in gameData.guildQuests) {
             if (quest.guild != skillName || quest.type != "craft") continue
+            if (quest.guildLevelRequired > currentLevel) continue
             val count = items[quest.target] ?: continue
             if (count > 0) addQuestProgress(questId, count)
         }
-        var flags = getRefreshedGuildDailyFlags()
         flags = applyDailyCrafting(flags, skillName, items)
         playerRepo.updateFlags(flags)
     }
@@ -114,37 +120,46 @@ class GuildRepository @Inject constructor(
     suspend fun recordGuildCombat(killsByEnemy: Map<String, Int>, combatStyle: String) {
         val guild = combatStyleToGuild(combatStyle)
         val totalKills = killsByEnemy.values.sum()
+        var flags = getRefreshedGuildDailyFlags()
         if (totalKills > 0) {
+            val completedIds = loadCompletedQuestIds()
+            val currentLevel = guildLevel(guild, flags.guildReputation[guild] ?: 0L, completedIds)
             for ((questId, quest) in gameData.guildQuests) {
                 if (quest.guild != guild || quest.type != "kill") continue
+                if (quest.guildLevelRequired > currentLevel) continue
                 addQuestProgress(questId, totalKills)
             }
         }
-        var flags = getRefreshedGuildDailyFlags()
         flags = applyDailyCombat(flags, guild, totalKills)
         playerRepo.updateFlags(flags)
     }
 
     /** Called when a prayer session is collected. */
     suspend fun recordGuildPrayer(totalBuried: Int) {
+        var flags = getRefreshedGuildDailyFlags()
         if (totalBuried > 0) {
+            val completedIds = loadCompletedQuestIds()
+            val currentLevel = guildLevel("prayer", flags.guildReputation["prayer"] ?: 0L, completedIds)
             for ((questId, quest) in gameData.guildQuests) {
                 if (quest.guild != "prayer" || quest.type != "prayer") continue
+                if (quest.guildLevelRequired > currentLevel) continue
                 addQuestProgress(questId, totalBuried)
             }
         }
-        var flags = getRefreshedGuildDailyFlags()
         flags = applyDailyPrayer(flags, totalBuried)
         playerRepo.updateFlags(flags)
     }
 
     /** Called when a mercantile trade route session is collected. */
     suspend fun recordGuildTrade(coinsEarned: Long = 0L) {
+        var flags = getRefreshedGuildDailyFlags()
+        val completedIds = loadCompletedQuestIds()
+        val currentLevel = guildLevel("mercantile", flags.guildReputation["mercantile"] ?: 0L, completedIds)
         for ((questId, quest) in gameData.guildQuests) {
             if (quest.guild != "mercantile" || quest.type != "trade") continue
+            if (quest.guildLevelRequired > currentLevel) continue
             addQuestProgress(questId, 1)
         }
-        var flags = getRefreshedGuildDailyFlags()
         flags = applyDailyTrade(flags)
         flags = applyDailyEarnCoins(flags, coinsEarned)
         playerRepo.updateFlags(flags)
@@ -152,11 +167,14 @@ class GuildRepository @Inject constructor(
 
     /** Called when an agility session is collected (counts completed sessions, not items). */
     suspend fun recordGuildSessions() {
+        var flags = getRefreshedGuildDailyFlags()
+        val completedIds = loadCompletedQuestIds()
+        val currentLevel = guildLevel("agility", flags.guildReputation["agility"] ?: 0L, completedIds)
         for ((questId, quest) in gameData.guildQuests) {
             if (quest.guild != "agility" || quest.type != "sessions") continue
+            if (quest.guildLevelRequired > currentLevel) continue
             addQuestProgress(questId, 1)
         }
-        var flags = getRefreshedGuildDailyFlags()
         flags = applyDailySessions(flags)
         playerRepo.updateFlags(flags)
     }
@@ -174,11 +192,29 @@ class GuildRepository @Inject constructor(
         questProgressDao.upsert(row.copy(completed = true, completedAt = System.currentTimeMillis()))
 
         val flags = playerRepo.getFlags()
+        // Read completedIds AFTER marking the quest complete so this quest counts toward the gate.
+        val completedIds = loadCompletedQuestIds()
+        val oldLevel = guildLevel(quest.guild, flags.guildReputation[quest.guild] ?: 0L, completedIds)
         val newRep = (flags.guildReputation[quest.guild] ?: 0L) + quest.rewards.reputation
-        playerRepo.updateFlags(
-            flags.copy(guildReputation = flags.guildReputation + (quest.guild to newRep))
-        )
+        val newLevel = guildLevel(quest.guild, newRep, completedIds)
 
+        var newFlags = flags.copy(guildReputation = flags.guildReputation + (quest.guild to newRep))
+
+        if (newLevel > oldLevel) {
+            // Reset any pre-accumulated progress on the newly active tier.
+            for ((id, q) in gameData.guildQuests) {
+                if (q.guild != quest.guild || q.guildLevelRequired != newLevel) continue
+                val progressRow = questProgressDao.getQuestProgress(id) ?: continue
+                if (progressRow.progress > 0 && !progressRow.completed) {
+                    questProgressDao.upsert(progressRow.copy(progress = 0))
+                }
+            }
+            newFlags = newFlags.copy(
+                guildQuestResetLevels = newFlags.guildQuestResetLevels + (quest.guild to newLevel)
+            )
+        }
+
+        playerRepo.updateFlags(newFlags)
         return GuildQuestClaimResult.Success(quest.rewards)
     }
 
@@ -216,8 +252,8 @@ class GuildRepository @Inject constructor(
             }
     }
 
-    /** Returns updated flags with guild daily reward claimed and reputation incremented. Returns null if not claimable. */
-    fun claimGuildDaily(flags: PlayerFlags, templateId: String): Pair<PlayerFlags, GuildQuestRewards>? {
+    /** Returns updated flags with guild daily reward claimed and reputation incremented (capped at tier boundary if gate quests incomplete). Returns null if not claimable. */
+    suspend fun claimGuildDaily(flags: PlayerFlags, templateId: String): Pair<PlayerFlags, GuildQuestRewards>? {
         val pool = gameData.guildDailyPool.associateBy { it.id }
         val template = pool[templateId] ?: return null
         val progress = flags.guildDailyProgress[templateId] ?: 0
@@ -225,7 +261,10 @@ class GuildRepository @Inject constructor(
         if (templateId in flags.guildDailyClaimed) return null
 
         val guild = template.guild
-        val newRep = (flags.guildReputation[guild] ?: 0L) + template.rewards.reputation
+        val completedIds = loadCompletedQuestIds()
+        val currentRep = flags.guildReputation[guild] ?: 0L
+        val cap = repCapForGuild(guild, currentRep, completedIds)
+        val newRep = minOf(currentRep + template.rewards.reputation, cap)
         val newFlags = flags.copy(
             guildDailyClaimed   = flags.guildDailyClaimed + templateId,
             guildReputation     = flags.guildReputation + (guild to newRep),
@@ -287,9 +326,16 @@ class GuildRepository @Inject constructor(
         )
     }
 
-    /** Refreshes guild dailies if the 6am boundary has passed and returns current flags. */
+    /** Refreshes guild dailies if needed, then retroactively resets any quest progress that pre-accumulated above the current tier. */
     suspend fun ensureGuildDailiesRefreshed(): PlayerFlags {
-        return getRefreshedGuildDailyFlags()
+        var flags = getRefreshedGuildDailyFlags()
+        val completedIds = loadCompletedQuestIds()
+        val retroFlags = retroactivelyResetQuestProgress(flags, completedIds)
+        if (retroFlags !== flags) {
+            playerRepo.updateFlags(retroFlags)
+            flags = retroFlags
+        }
+        return flags
     }
 
     // -------------------------------------------------------------------------
@@ -315,6 +361,44 @@ class GuildRepository @Inject constructor(
             (flags.guildReputation[guild] ?: 0L) > 0L &&
                 flags.guildDailyIds.none { pool[it]?.guild == guild }
         }
+    }
+
+    private suspend fun loadCompletedQuestIds(): Set<String> =
+        questProgressDao.getAllProgress().filter { it.completed }.map { it.questId }.toSet()
+
+    /** Returns the rep cap for a guild at the current level. Rep cannot exceed the next tier threshold while gate quests are incomplete. */
+    private fun repCapForGuild(guild: String, currentRep: Long, completedIds: Set<String>): Long {
+        val level = guildLevel(guild, currentRep, completedIds)
+        if (level >= 10) return Long.MAX_VALUE
+        val tierQuests = gameData.guildQuests.values.filter { it.guild == guild && it.guildLevelRequired == level }
+        return if (tierQuests.isEmpty() || tierQuests.all { it.id in completedIds }) {
+            Long.MAX_VALUE
+        } else {
+            REP_THRESHOLDS[level] - 1
+        }
+    }
+
+    /** Resets progress for any quest tier that has not yet been reset-on-advance, to clear pre-accumulated dirty counts. Runs once per level per guild. */
+    private suspend fun retroactivelyResetQuestProgress(flags: PlayerFlags, completedIds: Set<String>): PlayerFlags {
+        var updatedFlags = flags
+        for (guild in ALL_GUILDS) {
+            val level = guildLevel(guild, flags.guildReputation[guild] ?: 0L, completedIds)
+            if (level == 0) continue
+            val resetLevel = flags.guildQuestResetLevels[guild] ?: 0
+            if (level <= resetLevel) continue
+            for ((questId, quest) in gameData.guildQuests) {
+                if (quest.guild != guild) continue
+                if (quest.guildLevelRequired <= resetLevel || quest.guildLevelRequired > level) continue
+                val row = questProgressDao.getQuestProgress(questId) ?: continue
+                if (row.progress > 0 && !row.completed) {
+                    questProgressDao.upsert(row.copy(progress = 0))
+                }
+            }
+            updatedFlags = updatedFlags.copy(
+                guildQuestResetLevels = updatedFlags.guildQuestResetLevels + (guild to level)
+            )
+        }
+        return updatedFlags
     }
 
     private suspend fun addQuestProgress(questId: String, delta: Int) {

@@ -181,7 +181,13 @@ private fun GuildCard(
                 )
                 LevelBadge(level = summary.level)
             }
-            if (summary.hasDailiesAvailable) {
+            if (summary.questGateBlocked) {
+                Text(
+                    text  = stringResource(R.string.guild_quest_required),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.error,
+                )
+            } else if (summary.hasDailiesAvailable) {
                 Text(
                     text  = stringResource(R.string.guild_dailies_available),
                     style = MaterialTheme.typography.labelSmall,

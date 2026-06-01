@@ -325,6 +325,7 @@
     <!-- ===== HomeScreen ===== -->
     <string name="home_died_message">Vous êtes mort et avez perdu la majorité de vos gains.</string>
     <string name="home_xp_boost_was_active">Le bonus d’XP x2 était actif</string>
+    <string name="home_xp_boost_active">Bonus XP x2 actif — %1$s restant</string>
     <string name="home_loot">Butin</string>
     <string name="home_food_consumed">Nourriture consommée</string>
     <string name="home_bones_buried">Os enterrés</string>
@@ -659,6 +660,8 @@
     <string name="inn_daily_resets">Réinitialisé chaque jour à 6h</string>
     <string name="inn_food_heal">+%1$d PV</string>
     <string name="inn_food_purchased">Nourriture achetée.</string>
+    <string name="inn_buy_qty">Quantité</string>
+    <string name="inn_buy_total">Total : %1$s</string>
     <string name="inn_card_desc">Ouvriers et nourriture quotidienne</string>
     <string name="worker_no_active_session">Ouvrier au repos — aucune session en file d\'attente</string>
     <string name="worker_add_sessions">Ajouter des sessions</string>
@@ -768,9 +771,11 @@
     <string name="settings_backup_failed">Échec de la sauvegarde.</string>
     <string name="settings_backup_folder_set">Dossier de sauvegarde défini.</string>
     <string name="home_town_title">Ville</string>
-    <string name="home_town_desc">Visitez la boutique, l\'auberge, la guilde et l\'église</string>
+    <string name="home_town_desc">Visitez la boutique, l\'auberge, la guilde, l\'église et le maître tueur</string>
     <string name="guild_dailies_available">Quêtes quotidiennes disponibles</string>
     <string name="guild_do_dailies_hint">Faites des quêtes pour augmenter votre réputation</string>
+    <string name="guild_quest_gate_blocked">Complete quests to advance your rank</string>
+    <string name="guild_quest_required">Quest required to advance</string>
     <string name="guild_name_mercantile">Guilde des Marchands</string>
     <string name="skill_mercantile">Marchandage</string>
     <string name="label_support_skills">Support</string>

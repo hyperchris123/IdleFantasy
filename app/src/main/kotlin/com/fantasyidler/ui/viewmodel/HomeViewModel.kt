@@ -93,6 +93,7 @@ data class HomeUiState(
     val workerSummary: SessionSummary? = null,
     val activeBlessingKey: String = "",
     val activeBlessingRemainingMs: Long = 0L,
+    val xpBoostRemainingMs: Long = 0L,
 )
 
 @HiltViewModel
@@ -178,6 +179,7 @@ class HomeViewModel @Inject constructor(
                 workerQueue2        = flags.hiredWorker2?.sessionQueue ?: emptyList(),
                 activeBlessingKey          = flags.activeBlessingKey,
                 activeBlessingRemainingMs  = (flags.activeBlessingExpiresAt - System.currentTimeMillis()).coerceAtLeast(0L),
+                xpBoostRemainingMs         = (flags.xpBoostExpiresAt - System.currentTimeMillis()).coerceAtLeast(0L),
             )
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), HomeUiState())
