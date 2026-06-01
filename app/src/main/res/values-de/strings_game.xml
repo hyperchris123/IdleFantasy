@@ -25,7 +25,7 @@
     <!-- Translator note: %1$s = enemy display name -->
     <string name="game_combat_enemy_defeated">%1$s besiegt!</string>
     <!-- Translator note: %1$d = HP restored -->
-    <string name="game_combat_food_eaten">Gegessen —  %1$d HP wiederhergestellt.</string>
+    <string name="game_combat_food_eaten">Gegessen — %1$d LP wiederhergestellt.</string>
     <string name="game_combat_player_died">Du wurdest besiegt.</string>
     <string name="game_dungeon_cleared">Dungeon abgeschlossen!</string>
     <!-- Translator note: %1$s = dungeon display name -->

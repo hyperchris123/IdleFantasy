@@ -290,7 +290,6 @@ fun WorkerSkillsScreen(
                 is SheetState.Firemaking -> FiremakingSheet(
                     availableLogs     = sheet.availableLogs,
                     inventory         = state.inventory,
-                    currentXp         = state.skillXp[Skills.FIREMAKING] ?: 0L,
                     isStarting        = false,
                     hasActiveSession  = true,
                     isQueueFull       = isQueueFull,

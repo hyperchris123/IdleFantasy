@@ -616,7 +616,6 @@ class CombatViewModel @Inject constructor(
             recentSessions = (listOf(com.fantasyidler.data.model.RecentSession(
                 skillName = session.skillName,
                 activityDisplayName = boss?.displayName ?: session.activityKey,
-                activityKey = session.activityKey,
             )) + bossRecentFlags.recentSessions).take(10),
         ))
         _extra.update {
@@ -709,7 +708,6 @@ class CombatViewModel @Inject constructor(
             recentSessions = (listOf(com.fantasyidler.data.model.RecentSession(
                 skillName = session.skillName,
                 activityDisplayName = dungeon?.displayName ?: session.activityKey,
-                activityKey = session.activityKey,
             )) + dungeonRecentFlags.recentSessions).take(10),
         ))
 

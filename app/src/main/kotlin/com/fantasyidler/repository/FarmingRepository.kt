@@ -65,7 +65,7 @@ class FarmingRepository @Inject constructor(
             )
         }
 
-        scheduleAlarm(patchNumber, crop.id, plantedAt + crop.growthTimeMs)
+        scheduleAlarm(patchNumber, crop.displayName, plantedAt + crop.growthTimeMs)
         return true
     }
 

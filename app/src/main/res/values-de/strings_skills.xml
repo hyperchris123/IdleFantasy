@@ -20,7 +20,7 @@
     <string name="skill_smithing_name">Schmieden</string>
     <string name="skill_smithing_desc">Schmelze Erze zu Barren und schmiede mächtige Metallausrüstung.</string>
     <string name="skill_cooking_name">Kochen</string>
-    <string name="skill_cooking_desc">Verarbeite rohe Zutaten zu Speisen, die im Kampf die HP wiederherstellen.</string>
+    <string name="skill_cooking_desc">Verarbeite rohe Zutaten zu Speisen, die im Kampf LP wiederherstellen.</string>
     <string name="skill_fletching_name">Herstellen</string>
     <string name="skill_fletching_desc">Stelle Pfeil und Bogen aus Holzstämmen und Metallteilen her.</string>
     <string name="skill_crafting_name">Fertigen</string>
@@ -45,15 +45,6 @@
     <string name="skill_hitpoints_desc">Deine Gesamtgesundheit. Je höher der Wert, desto länger hältst du im Kampf durch.</string>
     <string name="skill_prayer_name">Gebete</string>
     <string name="skill_prayer_desc">Vergrabe Knochen, um Gebets-EP zu sammeln und mächtige Kampfgebete freizuschalten.</string>
-
-    <!-- ===== Skill unlock sheet labels ===== -->
-    <string name="label_lv">Lv. %1$d</string>
-    <string name="skills_agility_course_detail">Lv. %1$d  •  %2$d XP/Runde</string>
-    <string name="label_hp_passive">Passiv — erhöht maximale TP</string>
-    <string name="label_hp_scales">Max. TP steigt jedes Level</string>
-    <string name="label_hp_max">Max. TP: %1$d</string>
-    <string name="label_xp_per_bone">%1$s (%2$d XP/Knochen)</string>
-    <string name="label_xp_per_kill">%1$s (%2$d XP/Abschuss)</string>
 
     <!-- ===== Agility course names and descriptions ===== -->
     <string name="agility_beginner_course_name">Einsteigerkurs</string>

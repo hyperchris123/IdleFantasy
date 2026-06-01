@@ -313,7 +313,6 @@ class SkillsViewModel @Inject constructor(
 
             if (sessionRepo.getActiveSession() != null) {
                 val enqueued = playerRepo.enqueueAction(action)
-                if (enqueued) playerRepo.consumeItems(mapOf(logKey to actualQty))
                 _uiState.update {
                     it.copy(
                         snackbarMessage = if (enqueued) "Added to queue: Firemaking." else "Queue is full (3/3).",

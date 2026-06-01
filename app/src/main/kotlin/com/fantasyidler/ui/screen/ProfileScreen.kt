@@ -65,9 +65,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -83,12 +81,11 @@ import com.fantasyidler.ui.viewmodel.slotDisplayName
 import com.fantasyidler.ui.viewmodel.xpProgressFraction
 import com.fantasyidler.util.GameStrings
 import com.fantasyidler.util.formatCoins
-import com.fantasyidler.util.stringByName
 import com.fantasyidler.util.toTitleCase
 
 private val SKILL_CATEGORY_GROUPS: List<Pair<Int, List<String>>> = listOf(
-    R.string.label_gathering      to listOf("mining", "fishing", "woodcutting", "farming", "agility"),
-    R.string.label_crafting       to listOf("smithing", "cooking", "fletching", "crafting", "runecrafting", "herblore", "firemaking"),
+    R.string.label_gathering      to listOf("mining", "fishing", "woodcutting", "farming", "firemaking", "agility"),
+    R.string.label_crafting       to listOf("smithing", "cooking", "fletching", "crafting", "runecrafting", "herblore"),
     R.string.label_support_skills to listOf("prayer", "mercantile", "slayer"),
     R.string.label_combat         to listOf("attack", "strength", "defense", "ranged", "magic", "hitpoints"),
 )
@@ -317,7 +314,7 @@ private fun SkillsTab(
 ) {
     var selectedSkill by remember { mutableStateOf<String?>(null) }
     val milestones = remember(selectedSkill) {
-        selectedSkill?.let { buildUnlockMilestones(it, viewModel, context) } ?: emptyList()
+        selectedSkill?.let { buildUnlockMilestones(it, viewModel) } ?: emptyList()
     }
 
     LazyColumn(modifier = Modifier.fillMaxSize()) {
@@ -371,45 +368,38 @@ private fun SkillsTab(
 
 @Composable
 private fun CircularSkillProgress(level: Int, progressFraction: Float, modifier: Modifier = Modifier) {
-    val gold      = GoldPrimary
-    val track     = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.15f)
-    val onSurface = MaterialTheme.colorScheme.onSurface
-    val textStyle = MaterialTheme.typography.labelMedium.copy(
-        fontWeight = FontWeight.Bold,
-        color      = onSurface,
-    )
-    val measurer = rememberTextMeasurer()
-    Canvas(modifier = modifier.size(56.dp)) {
-        val stroke  = 5.dp.toPx()
-        val inset   = stroke / 2f
-        val rect    = Rect(inset, inset, size.width - inset, size.height - inset)
-        drawArc(
-            color      = track,
-            startAngle = -90f,
-            sweepAngle = 360f,
-            useCenter  = false,
-            topLeft    = rect.topLeft,
-            size       = rect.size,
-            style      = Stroke(width = stroke, cap = StrokeCap.Round),
-        )
-        if (progressFraction > 0f) {
+    val gold  = GoldPrimary
+    val track = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.15f)
+    Box(modifier = modifier.size(56.dp), contentAlignment = Alignment.Center) {
+        val strokeDp = 5.dp
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            val stroke = strokeDp.toPx()
+            val inset  = stroke / 2f
+            val rect   = Rect(inset, inset, size.width - inset, size.height - inset)
             drawArc(
-                color      = gold,
+                color      = track,
                 startAngle = -90f,
-                sweepAngle = progressFraction * 360f,
+                sweepAngle = 360f,
                 useCenter  = false,
                 topLeft    = rect.topLeft,
                 size       = rect.size,
                 style      = Stroke(width = stroke, cap = StrokeCap.Round),
             )
+            if (progressFraction > 0f) {
+                drawArc(
+                    color      = gold,
+                    startAngle = -90f,
+                    sweepAngle = progressFraction * 360f,
+                    useCenter  = false,
+                    topLeft    = rect.topLeft,
+                    size       = rect.size,
+                    style      = Stroke(width = stroke, cap = StrokeCap.Round),
+                )
+            }
         }
-        val measured = measurer.measure(level.toString(), textStyle)
-        drawText(
-            textLayoutResult = measured,
-            topLeft = androidx.compose.ui.geometry.Offset(
-                x = (size.width  - measured.size.width)  / 2f,
-                y = (size.height - measured.size.height) / 2f,
-            ),
+        Text(
+            text  = level.toString(),
+            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
         )
     }
 }
@@ -426,7 +416,7 @@ private fun SkillGridCard(
     val progress = xpProgressFraction(xp)
     ElevatedCard(modifier = modifier.clickable { onClick() }) {
         Column(
-            modifier            = Modifier.fillMaxWidth().padding(8.dp),
+            modifier            = Modifier.padding(8.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
@@ -474,7 +464,7 @@ private fun SkillUnlockSheet(
                     fontWeight = FontWeight.Bold,
                 )
                 Text(
-                    text  = stringResource(R.string.guild_level_label, level),
+                    text  = "Level $level",
                     style = MaterialTheme.typography.bodySmall,
                     color = GoldPrimary,
                 )
@@ -490,7 +480,7 @@ private fun SkillUnlockSheet(
                 verticalAlignment = Alignment.Top,
             ) {
                 Text(
-                    text     = stringResource(R.string.label_lv, milestone.level),
+                    text     = "Lv ${milestone.level}",
                     style    = MaterialTheme.typography.labelMedium,
                     color    = if (unlocked) GoldPrimary
                                else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f),
@@ -515,121 +505,119 @@ private fun SkillUnlockSheet(
     }
 }
 
-private fun buildUnlockMilestones(skillKey: String, vm: InventoryViewModel, context: android.content.Context): List<UnlockMilestone> =
+private fun buildUnlockMilestones(skillKey: String, vm: InventoryViewModel): List<UnlockMilestone> =
     when (skillKey) {
         "mining" ->
-            vm.ores.entries
-                .sortedBy { it.value.levelRequired }
-                .distinctBy { it.value.levelRequired }
-                .map { (key, ore) -> UnlockMilestone(ore.levelRequired, GameStrings.itemName(context, key)) }
+            vm.ores.values
+                .sortedBy { it.levelRequired }
+                .distinctBy { it.levelRequired }
+                .map { UnlockMilestone(it.levelRequired, it.displayName) }
 
         "fishing" ->
-            vm.fish.entries
-                .sortedBy { it.value.levelRequired }
-                .distinctBy { it.value.levelRequired }
-                .map { (key, fish) -> UnlockMilestone(fish.levelRequired, GameStrings.itemName(context, key)) }
+            vm.fish.values
+                .sortedBy { it.levelRequired }
+                .distinctBy { it.levelRequired }
+                .map { UnlockMilestone(it.levelRequired, it.displayName) }
 
         "woodcutting" ->
-            vm.trees.entries
-                .sortedBy { it.value.levelRequired }
-                .distinctBy { it.value.levelRequired }
-                .map { (key, tree) -> UnlockMilestone(tree.levelRequired, GameStrings.itemName(context, key)) }
+            vm.trees.values
+                .sortedBy { it.levelRequired }
+                .distinctBy { it.levelRequired }
+                .map { UnlockMilestone(it.levelRequired, it.displayName) }
 
         "farming" ->
-            vm.crops.entries
-                .sortedBy { it.value.levelRequired }
-                .distinctBy { it.value.levelRequired }
-                .map { (key, crop) -> UnlockMilestone(crop.levelRequired, GameStrings.cropName(context, key)) }
+            vm.crops.values
+                .sortedBy { it.levelRequired }
+                .distinctBy { it.levelRequired }
+                .map { UnlockMilestone(it.levelRequired, it.displayName) }
 
         "firemaking" ->
-            vm.logs.entries
-                .sortedBy { it.value.levelRequired }
-                .distinctBy { it.value.levelRequired }
-                .map { (key, log) -> UnlockMilestone(log.levelRequired, GameStrings.itemName(context, key)) }
+            vm.logs.values
+                .sortedBy { it.levelRequired }
+                .distinctBy { it.levelRequired }
+                .map { UnlockMilestone(it.levelRequired, it.displayName) }
 
         "agility" ->
-            vm.agilityCourses.entries
-                .sortedBy { it.value.levelRequired }
-                .map { (key, course) ->
-                    UnlockMilestone(course.levelRequired, context.stringByName("agility_${key}_name") ?: course.displayName)
-                }
+            vm.agilityCourses.values
+                .sortedBy { it.levelRequired }
+                .map { UnlockMilestone(it.levelRequired, it.displayName) }
 
         "smithing" ->
-            vm.smithingRecipes.entries
-                .sortedBy { it.value.levelRequired }
-                .distinctBy { it.value.levelRequired }
-                .map { (key, recipe) -> UnlockMilestone(recipe.levelRequired, GameStrings.itemName(context, key)) }
+            vm.smithingRecipes.values
+                .sortedBy { it.levelRequired }
+                .distinctBy { it.levelRequired }
+                .map { UnlockMilestone(it.levelRequired, it.displayName) }
 
         "cooking" ->
-            vm.cookingRecipes.entries
-                .sortedBy { it.value.levelRequired }
-                .distinctBy { it.value.levelRequired }
-                .map { (key, recipe) -> UnlockMilestone(recipe.levelRequired, GameStrings.itemName(context, key)) }
+            vm.cookingRecipes.values
+                .sortedBy { it.levelRequired }
+                .distinctBy { it.levelRequired }
+                .map { UnlockMilestone(it.levelRequired, it.displayName) }
 
         "fletching" ->
-            vm.fletchingRecipes.entries
-                .sortedBy { it.value.levelRequired }
-                .distinctBy { it.value.levelRequired }
-                .map { (key, recipe) -> UnlockMilestone(recipe.levelRequired, GameStrings.itemName(context, key)) }
+            vm.fletchingRecipes.values
+                .sortedBy { it.levelRequired }
+                .distinctBy { it.levelRequired }
+                .map { UnlockMilestone(it.levelRequired, it.displayName) }
 
         "crafting" ->
-            vm.craftingRecipes.entries
-                .sortedBy { it.value.levelRequired }
-                .distinctBy { it.value.levelRequired }
-                .map { (key, recipe) -> UnlockMilestone(recipe.levelRequired, GameStrings.itemName(context, key)) }
+            vm.craftingRecipes.values
+                .sortedBy { it.levelRequired }
+                .distinctBy { it.levelRequired }
+                .map { UnlockMilestone(it.levelRequired, it.displayName) }
 
         "runecrafting" ->
-            vm.runes.entries
-                .sortedBy { it.value.levelRequired }
-                .map { (key, rune) -> UnlockMilestone(rune.levelRequired, GameStrings.itemName(context, key)) }
+            vm.runes.values
+                .sortedBy { it.levelRequired }
+                .map { UnlockMilestone(it.levelRequired, it.displayName) }
 
         "herblore" ->
-            vm.herbloreRecipes.entries
-                .sortedBy { it.value.levelRequired }
-                .distinctBy { it.value.levelRequired }
-                .map { (key, recipe) -> UnlockMilestone(recipe.levelRequired, GameStrings.itemName(context, key)) }
+            vm.herbloreRecipes.values
+                .sortedBy { it.levelRequired }
+                .distinctBy { it.levelRequired }
+                .map { UnlockMilestone(it.levelRequired, it.displayName) }
 
         "attack", "strength", "ranged", "magic" ->
-            vm.allEquipment.entries
-                .filter { it.value.requirements.containsKey(skillKey) }
-                .sortedBy { it.value.requirements[skillKey] ?: 0 }
-                .distinctBy { it.value.requirements[skillKey] }
-                .map { (key, item) -> UnlockMilestone(item.requirements[skillKey]!!, GameStrings.itemName(context, key)) }
+            vm.allEquipment.values
+                .filter { it.requirements.containsKey(skillKey) }
+                .sortedBy { it.requirements[skillKey] ?: 0 }
+                .distinctBy { it.requirements[skillKey] }
+                .map { UnlockMilestone(it.requirements[skillKey]!!, it.displayName) }
 
         "defense" ->
-            vm.allEquipment.entries
-                .filter { it.value.requirements.containsKey("defense") }
-                .sortedBy { it.value.requirements["defense"] ?: 0 }
-                .distinctBy { it.value.requirements["defense"] }
-                .map { (key, item) -> UnlockMilestone(item.requirements["defense"]!!, GameStrings.itemName(context, key)) }
+            vm.allEquipment.values
+                .filter { it.requirements.containsKey("defense") }
+                .sortedBy { it.requirements["defense"] ?: 0 }
+                .distinctBy { it.requirements["defense"] }
+                .map { UnlockMilestone(it.requirements["defense"]!!, it.displayName) }
 
         "hitpoints" -> listOf(
-            UnlockMilestone(1,  context.getString(R.string.label_hp_passive)),
-            UnlockMilestone(10, context.getString(R.string.label_hp_scales)),
-            UnlockMilestone(99, context.getString(R.string.label_hp_max, 99)),
+            UnlockMilestone(1,  "Passive — increases max HP"),
+            UnlockMilestone(10, "Max HP increases each level"),
+            UnlockMilestone(99, "Max HP: 99"),
         )
 
         "prayer" ->
-            vm.bones.entries
-                .sortedBy { it.value.xpPerBone }
-                .mapIndexed { i, (key, bone) ->
+            vm.bones.values
+                .sortedBy { it.xpPerBone }
+                .mapIndexed { i, bone ->
                     UnlockMilestone(
                         level       = (i * 7 + 1).coerceAtMost(99),
-                        description = context.getString(R.string.label_xp_per_bone, GameStrings.itemName(context, key), bone.xpPerBone.toInt()),
+                        description = "${bone.displayName} (${bone.xpPerBone.toInt()} XP/bone)",
                     )
                 }
 
         "mercantile" ->
             vm.tradeRoutes
                 .sortedBy { it.levelRequired }
-                .map { UnlockMilestone(it.levelRequired, GameStrings.tradeRouteName(context, it.id, it.displayName)) }
+                .map { UnlockMilestone(it.levelRequired, it.displayName) }
 
         "slayer" ->
             vm.slayerTaskData.entries
                 .sortedBy { it.value.slayerLevel }
                 .distinctBy { it.value.slayerLevel }
                 .map { (key, task) ->
-                    UnlockMilestone(task.slayerLevel, context.getString(R.string.label_xp_per_kill, GameStrings.enemyName(context, key), task.xpPerKill))
+                    UnlockMilestone(task.slayerLevel, "${key.toTitleCase()} (${task.xpPerKill} XP/kill)")
                 }
 
         else -> emptyList()
@@ -1199,7 +1187,7 @@ private fun NotesTab(
             if (dungeons.isNotEmpty()) {
                 item {
                     Text(
-                        text = GameStrings.skillName(LocalContext.current, skill),
+                        text = skill.replaceFirstChar { it.uppercase() },
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(top = 8.dp, bottom = 4.dp),
