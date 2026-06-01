@@ -28,7 +28,7 @@ Better equipment means faster gathering and surviving tougher dungeons. Craft yo
 
 ## Combat and dungeons
 
-Explore **20 dungeons** from the starter Farm all the way to late-game Fortress Ruins and beyond. Each dungeon has its own enemy roster, difficulty rating, and potential drops. Before you go in, the game tells you how your current gear stacks up. Choose from Melee, Ranged, or Magic — each style levels its own combat skills.
+Explore **20 dungeons** from the starter Farm all the way to late-game Fortress Ruins and beyond. Each dungeon has its own enemy roster, difficulty rating, and potential drops. Before you go in, the game tells you how your current gear stacks up. Choose from Melee, Ranged, or Magic; each style levels its own combat skills.
 
 ## Quests
 
@@ -40,7 +40,7 @@ Over **170 quests** span all skills. Daily quests reset every morning for a quic
 
 ## Church
 
-The **Church** offers timed blessings powered by Prayer levels and bones. Blessings come in three types — XP boosts (up to 1.5×), Defense bonuses, and Coin multipliers — with stronger tiers unlocking at higher Prayer levels. One blessing can be active at a time and its status and remaining duration are shown on the home screen.
+The **Church** offers timed blessings powered by Prayer levels and bones. Blessings come in three types (XP boosts up to 1.5×, Defense bonuses, and Coin multipliers), with stronger tiers unlocking at higher Prayer levels. One blessing can be active at a time and its status and remaining duration are shown on the home screen.
 
 ## Slayer
 
