@@ -202,7 +202,7 @@
     </plurals>
 
     <!-- ===== Error messages ===== -->
-    <string name="error_no_player">Die Spielerdaten konnten nicht geladen werden. Bitte started die App erneut.</string>
+    <string name="error_no_player">Die Spielerdaten konnten nicht geladen werden. Bitte startet die App erneut.</string>
     <string name="error_session_already_active">Ihr führt bereits eine Aktivität aus. Beendet diese zuerst oder brecht sie ab.</string>
     <string name="error_not_enough_coins">Nicht genug Münzen.</string>
     <!-- Translator note: %1$s = item display name -->
@@ -225,7 +225,7 @@
 
     <!-- ===== Onboarding ===== -->
     <string name="onboarding_welcome_title">Willkommen zu Idle Fantasy</string>
-    <string name="onboarding_welcome_body">Beendet Aktivitäten und beobachte, wie sich Euer Charakter weiterentwickelt. Die Aktivitäten dauern eine Stunde, selbst wenn die App geschlossen ist.</string>
+    <string name="onboarding_welcome_body">Beendet Aktivitäten und erlebt, wie sich Euer Charakter weiterentwickelt. Die Aktivitäten dauern eine Stunde, selbst wenn die App geschlossen ist.</string>
     <string name="onboarding_first_session_hint">Tippt auf eine beliebige Fertigkeit, um loszulegen.</string>
 
     <!-- ===== Settings ===== -->
@@ -233,7 +233,7 @@
     <string name="settings_notifications">Benachrichtigungen zu Aktivitäten</string>
     <string name="settings_notifications_desc">Zeigt Euch eine Benachrichtigung an, wenn Eure Aktivität beendet wurde</string>
     <string name="settings_battery_optimization">Akkuoptimierung</string>
-    <string name="settings_battery_optimization_desc">Deaktiviert die Akkuoptimierung für „Idle Fantasy“, um rechtzeitig Benachrichtigungen zu erhalten</string>
+    <string name="settings_battery_optimization_desc">Deaktiviert die Akkuoptimierung für Idle Fantasy, um rechtzeitig Benachrichtigungen zu erhalten</string>
     <string name="settings_battery_optimization_btn">Einstellungen anpassen</string>
     <string name="settings_language">Sprache</string>
     <string name="settings_about">Über</string>
@@ -252,9 +252,9 @@
     <!-- ===== SkillsScreen ===== -->
     <string name="btn_back_arrow">← Zurück</string>
     <string name="btn_start_burying">Mit dem Vergraben beginnen</string>
-    <string name="btn_start_crafting">Mit der Herstellung beginnen</string>
+    <string name="btn_start_crafting">Mit der Fertigung beginnen</string>
     <string name="btn_select">Auswählen</string>
-    <string name="label_special">Speziell</string>
+    <string name="label_special">Spezial</string>
 
     <!-- ===== QuestsScreen ===== -->
     <string name="label_claim_reward">Prämie einlösen</string>
@@ -344,7 +344,7 @@
     <string name="settings_backup_hourly">Stündlich</string>
     <string name="settings_backup_daily">Täglich</string>
     <string name="settings_backup_weekly">Wöchentlich</string>
-    <string name="settings_backup_at_5am">immer 05:00 Uhr</string>
+    <string name="settings_backup_at_5am">um 05:00 Uhr</string>
     <string name="settings_backup_now">Jetzt sichern</string>
     <string name="settings_backup_success">Sicherung durchgeführt.</string>
     <string name="settings_backup_failed">Sicherung fehlgeschlagen.</string>
@@ -378,7 +378,7 @@
     <string name="combat_level_label">Kampflevel</string>
     <string name="combat_log_label">Kampfprotokoll</string>
     <string name="combat_solo_bosses">Einzelbosse</string>
-    <string name="combat_dungeon_runs">%1$d runs</string>
+    <string name="combat_dungeon_runs">%1$d Mal abgeschlossen</string>
     <string name="combat_atk">ANG</string>
     <string name="combat_str">STÄ</string>
     <string name="combat_def">VER</string>
@@ -458,7 +458,7 @@
     <string name="skills_level_reached">Level %1$d erreicht!</string>
     <string name="skills_no_logs">Keine Holzscheite im Inventar</string>
     <string name="skills_log_desc">Lv. %1$d  •  %2$s XP/Holz</string>
-    <string name="skills_req_with_have">Benötigt %1$d %2$s (Du hast %3$d %4$s)</string>
+    <string name="skills_req_with_have">Benötigt %1$d %2$s (Ihr habt %3$d %4$s)</string>
 
     <!-- ===== ShopScreen ===== -->
     <string name="shop_active">AKTIV</string>
@@ -499,9 +499,9 @@
     <string name="character_edit_title">Charakter bearbeiten</string>
     <string name="character_name_label">Name Eures Charakters</string>
     <string name="character_gender">Geschlecht</string>
-    <string name="character_gender_male">Herr</string>
-    <string name="character_gender_female">Dame</string>
-    <string name="character_gender_other">Andere</string>
+    <string name="character_gender_male">Junker / Männlich</string><!-- TODO Any better idea? -->
+    <string name="character_gender_female">Maid / Weiblich</string><!-- TODO Any better idea? -->
+    <string name="character_gender_other">Andere / Ungewiss</string><!-- TODO Any better idea? -->
     <string name="character_race">Rasse</string>
     <string name="character_race_human">Mensch</string>
     <string name="character_race_elf">Elf</string>
@@ -512,8 +512,8 @@
 
     <!-- ===== OnboardingScreen ===== -->
     <string name="onboarding_sessions_title">Aktivitäten</string>
-    <string name="onboarding_sessions_desc">Wählt eine Fähigkeit und beginnt eine Übungsrunde. Aktivitäten laufen im Hintergrund weiter, selbst wenn die App geschlossen ist. Kommt später wieder um Eure Beute und XP einzukassieren.</string>
-    <string name="onboarding_progress_title">Arbeitet Euch herauf</string>
+    <string name="onboarding_sessions_desc">Wählt eine Fähigkeit und beginnt eine Übungsrunde. Aktivitäten laufen im Hintergrund weiter, selbst wenn die App geschlossen ist. Kommt später wieder, um Eure Beute und XP einzukassieren.</string>
+    <string name="onboarding_progress_title">Arbeitet Euch hoch</string>
     <string name="onboarding_progress_desc">Schürft Erz, um es zu Barren zu schmelzen. Stellt daraus anschließend Waffen und Rüstungen her. Verwendet bessere Ausrüstung, um gefährlichere Dungeons und Bosse zu bezwingen. Verbesserte Werkzeuge beschleunigen das Sammeln. Hochwertige Ausrüstung erlaubt es Euch, eigentlich tödliche Abenteuer zu bestreiten.</string>
     <string name="onboarding_quests_title">Missionen &amp; Haustiere</string>
     <string name="onboarding_quests_desc">Beendet Missionen, um XP zu erhalten. Seltenere Haustiere finden manchmal während Eurer Aktivitäten Beute und gewähren außerdem einen dauerhaften XP-Boost.</string>
@@ -522,7 +522,7 @@
     <!-- Quantity picker quick buttons -->
     <string name="qty_max">Max</string>
 
-    <!-- ===== TInn / Worker ===== -->
+    <!-- ===== Inn / Worker ===== -->
     <string-array name="worker_names">
         <item>Aldric</item>
         <item>Brenna</item>
@@ -551,7 +551,7 @@
         <item>Yara</item>
     </string-array>
     <string name="inn_title">Schänke</string>
-    <string name="inn_desc">Heuert einen Arbeiter an, der an euer statt Fähigkeiten trainiert. Oder kauft Speisen vom Tagesmenü.</string>
+    <string name="inn_desc">Heuert einen Arbeiter an, der an Eurer statt Fähigkeiten trainiert. Oder kauft Speisen vom Tagesmenü.</string>
     <string name="inn_worker_already_hired">Ihr habt bereits einen Arbeiter angeheuert.</string>
     <string name="inn_not_enough_coins">Nicht genug Münzen.</string>
     <string name="inn_hire">Anheuern</string>
@@ -566,7 +566,7 @@
     <string name="inn_journeyman_desc">6h Sammeln, 1.25-fache Effizienz. Herstellung, Gebet und Runenherstellung ist auf 360 Gegenstände pro Aktivität begrenzt.</string>
     <string name="inn_master_desc">4h Sammeln, 2-fache Effizienz. Herstellung, Gebet und Runenherstellung ist auf 240 Gegenstände pro Aktivität begrenzt.</string>
     <string name="inn_gathering_note">Sammeln: Aktivitätszeit in Stunden x Effizienz wird auf Beute und XP angewendet</string>
-    <string name="inn_crafting_note">Herstellen/Gebet/Runenherstellung: Die Menge ist pro Rang begrenzt; Der Erfahrene Arbeiter hat keine Begrenzung</string>
+    <string name="inn_crafting_note">Herstellen/Gebet/Runenherstellung: Die Menge ist pro Rang begrenzt. Der Erfahrene Arbeiter hat keine Begrenzung</string>
     <string name="worker_skills_title">Arbeiter: %1$s</string>
     <string name="worker_session_active">Arbeiter führt Aktivität aus</string>
     <string name="worker_session_complete">Arbeiter hat Aktivität abgeschlossen</string>
@@ -581,10 +581,10 @@
     <string name="inn_laborers_header">Arbeiter</string>
     <string name="inn_slot1_header">Erfahrener Arbeiter</string>
     <string name="inn_slot2_header">Facharbeiter</string>
-    <string name="quest_kbd_slayer_1_name">King Black Dragon Slayer I</string><!--! TODO I think we need more context here -->
-    <string name="quest_kbd_slayer_2_name">King Black Dragon Slayer II</string><!--! TODO I think we need more context here -->
-    <string name="quest_kbd_slayer_3_name">King Black Dragon Slayer III</string><!--! TODO I think we need more context here -->
-    <string name="inn_daily_resets">Täglich neu um 06:00 Uhr morgens</string>
+    <string name="quest_kbd_slayer_1_name">Schlächter des Königs der Schwarzdrachen I</string>
+    <string name="quest_kbd_slayer_2_name">Schlächter des Königs der Schwarzdrachen II</string>
+    <string name="quest_kbd_slayer_3_name">Schlächter des Königs der Schwarzdrachen III</string>
+    <string name="inn_daily_resets">Wird jeden Morgen um 06:00 Uhr erneuert</string>
     <string name="inn_food_heal">+%1$d LP</string>
     <string name="inn_food_purchased">Speisen erworben.</string>
     <string name="inn_buy_qty">Menge</string>
@@ -788,10 +788,10 @@
 
     <!-- Slayer -->
     <string name="skill_slayer_name">Slayer</string>
-    <string name="skill_slayer_desc">Erhaltet vom Slayer Master in der Stadt Aufgaben.</string>
+    <string name="skill_slayer_desc">Erhaltet in der Stadt Aufgaben vom Slayer Master.</string>
     <string name="slayer_title">Slayer Master</string>
     <string name="slayer_card_desc">Aufgaben und Belohnungen für Slayer</string>
-    <string name="slayer_desc">Beendet Aufgaben, um Slayer XP und Punkte zu verdienen. Kauft euch dafür exklusive Ausrüstung im Laden.</string>
+    <string name="slayer_desc">Beendet Aufgaben, um Slayer XP und Punkte zu verdienen. Kauft euch dafür exklusive Ausrüstung im Slayer-Laden.</string>
     <string name="slayer_level_label">Level %1$d</string>
     <string name="slayer_xp_label">%1$s XP</string>
     <string name="slayer_points">%1$d Pkt.</string>
@@ -800,13 +800,13 @@
     <string name="slayer_get_task">Erhaltet eine neue Aufgabe</string>
     <string name="slayer_skip_task">Überspringen (30 Pkt.)</string>
     <string name="slayer_no_task">Keine aktiven Aufgaben. Erhaltet hier neue Aufgaben.</string>
-    <string name="slayer_task_stuck">This enemy is only found in an Expeditions dungeon you haven\'t discovered yet. Reroll for free.</string><!-- TODO -->
-    <string name="slayer_reroll_free">Reroll (free)</string><!-- TODO -->
+    <string name="slayer_task_stuck">Dieser Gegner kann nur auf einer Entdeckungsreise in einem Dungeon angetroffen werden, den Ihr noch nicht erkundet habt. Würfelt erneut ohne zu zahlen.</string>
+    <string name="slayer_reroll_free">Würfelt erneut (kostenlos)</string>
     <string name="slayer_no_eligible_tasks">Euer derzeitiges Slayer Level berechtigt Euch zu keinen weiteren Aufgaben.</string>
-    <string name="slayer_task_complete">Aufgabe abgeschlossen! Besucht den Slayer Master für weitere.</string>
+    <string name="slayer_task_complete">Aufgabe abgeschlossen! Besucht den Slayer Master, um eine neue Aufgabe zu erhalten.</string>
     <string name="slayer_xp_per_kill">%1$d XP/Kill</string>
     <string name="slayer_points_on_complete">+%1$d Pkt. bei Abschluss</string>
-    <string name="slayer_shop_title">Slayer Laden</string>
+    <string name="slayer_shop_title">Slayer-Laden</string>
     <string name="slayer_shop_cost">%1$d Pkt.</string>
     <string name="slayer_not_enough_points">Nicht genug Slayer Punkte.</string>
     <string name="slayer_already_owned">Bereits im Besitz.</string>

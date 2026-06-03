@@ -2,7 +2,7 @@
 <resources>
     <!-- ===== Ores ===== -->
     <string name="item_copper_ore_name">Kupfererz</string>
-    <string name="item_copper_ore_desc">Gewöhnliches Erz. Kombinieret es mit Zinnerz, um Bronzebarren zu schmelzen.</string>
+    <string name="item_copper_ore_desc">Gewöhnliches Erz. Kombiniert es mit Zinnerz, um Bronzebarren zu schmelzen.</string>
     <string name="item_tin_ore_name">Zinnerz</string>
     <string name="item_tin_ore_desc">Gewöhnliches Erz. Kombiniert es mit Kupfererz, um Bronzebarren zu schmelzen.</string>
     <string name="item_iron_ore_name">Eisenerz</string>
@@ -54,7 +54,7 @@
 
     <!-- ===== Logs ===== -->
     <string name="item_log_name">Holzscheite</string>
-    <string name="item_log_desc">EinfachesHolzscheite von gewöhnlichen Bäumen. Wird zum Feuermachen und zur Pfeilherstellung verwendet.</string>
+    <string name="item_log_desc">Einfache Holzscheite von gewöhnlichen Bäumen. Wird zum Feuermachen und zur Pfeilherstellung verwendet.</string>
     <string name="item_oak_log_name">Eichenholzscheite</string>
     <string name="item_oak_log_desc">Holzscheite aus Eichenholz</string>
     <string name="item_willow_log_name">Weidenholzscheite</string>
@@ -233,8 +233,8 @@
     <string name="item_basic_staff_desc">Ein einfacher magischer Stab für angehende Zauberlehrlinge.</string>
     <string name="item_apprentice_staff_name">Stab des Zauberlehrlings</string>
     <string name="item_apprentice_staff_desc">Ein verbesserter Stab für erfahrenere Zauberlehrlinge.</string>
-    <string name="item_staff_of_air_name">Stab der Luft</string>
-    <string name="item_staff_of_air_desc">Ein Elementarstab, der mit der Kraft der Luft durchtränkt ist.</string>
+    <string name="item_staff_of_air_name">Stab des Windes</string>
+    <string name="item_staff_of_air_desc">Ein Elementarstab, der mit der Kraft des Windes durchtränkt ist.</string>
     <string name="item_staff_of_water_name">Stab des Wassers</string>
     <string name="item_staff_of_water_desc">Ein Elementarstab, der mit der Kraft des Wassers durchtränkt ist.</string>
     <string name="item_staff_of_earth_name">Stab der Erde</string>
@@ -442,11 +442,11 @@
 
     <!-- ===== Miscellaneous drops ===== -->
     <string name="item_ashes_name">Asche</string>
-    <string name="item_ashes_desc">Verbrannte Reste von normalen Holzscheiten. Verstreut sie in Gebetsfertigkeit, um Bonus-Gebets-XP zu erhalten.</string>
+    <string name="item_ashes_desc">Verbrannte Reste von normalen Holzscheiten. Verstreut sie in der Fertigkeit Gebete, um Bonus-Gebets-XP zu erhalten.</string>
     <string name="item_oak_ashes_name">Eichenasche</string>
     <string name="item_oak_ashes_desc">Verbrannte Reste von Eichenstämmen. Verstreut sie, um mehr Gebets-XP zu erhalten als mit gewöhnlicher Asche.</string>
     <string name="item_willow_ashes_name">Weidenasche</string>
-    <string name="item_willow_ashes_desc">Verbrannte Reste von Weidenstämmen. Verstreuen, um Gebets-XP zu erhalten.</string>
+    <string name="item_willow_ashes_desc">Verbrannte Reste von Weidenstämmen. Verstreut sie, um Gebets-XP zu erhalten.</string>
     <string name="item_maple_ashes_name">Ahornasche</string>
     <string name="item_maple_ashes_desc">Verbrannte Reste von Ahornholzstämmen. Verstreut sie, um Gebets-XP zu erhalten.</string>
     <string name="item_yew_ashes_name">Eibenasche</string>
@@ -458,7 +458,7 @@
     <string name="item_bones_name">Knochen</string>
     <string name="item_bones_desc">Knochen eines kleinen Lebewesens. Vergrabt sie, um Gebets-XP zu erhalten.</string>
     <string name="item_big_bones_name">Große Knochen</string>
-    <string name="item_big_bones_desc">Größere Knochen. Verleiht mehr Gebets-XP, wenn sie vergraben werden.</string>
+    <string name="item_big_bones_desc">Größere Knochen. Verleihen mehr Gebets-XP, wenn sie vergraben werden.</string>
     <string name="item_giant_bones_name">Riesige Knochen</string>
     <string name="item_giant_bones_desc">Massive Knochen mächtiger Gegner. Verleiht beträchtliche Gebets-XP.</string>
     <string name="item_dragon_bone_name">Drachenknochen</string>
@@ -495,8 +495,8 @@
     <string name="item_troll_bone_desc">Ein riesiger, krummer Knochen von einem Bergtroll.</string>
 
     <!-- ===== Runes ===== -->
-    <string name="item_air_rune_name">Luftrune</string>
-    <string name="item_air_rune_desc">Eine Rune, die mit der Kraft der Luft erfüllt ist. Wird in Luftzaubern verwendet.</string>
+    <string name="item_air_rune_name">Windrune</string>
+    <string name="item_air_rune_desc">Eine Rune, die mit der Kraft des Windes erfüllt ist. Wird in Windzaubern verwendet.</string>
     <string name="item_water_rune_name">Wasserrune</string>
     <string name="item_water_rune_desc">Eine Rune, die von der Kraft des Wassers durchdrungen ist.</string>
     <string name="item_earth_rune_name">Erdrune</string>
