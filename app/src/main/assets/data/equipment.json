@@ -2079,13 +2079,12 @@
     "name": "dwarven_warhammer",
     "display_name": "Dwarven Warhammer",
     "slot": "weapon",
-    "combat_style": "attack",
+    "combat_style": "strength",
     "description": "A massive dwarven hammer that crushes all in its path.",
     "attack_bonus": 55,
     "strength_bonus": 70,
     "defense_bonus": 0,
     "requirements": {
-      "attack": 60,
       "strength": 60
     }
   },
