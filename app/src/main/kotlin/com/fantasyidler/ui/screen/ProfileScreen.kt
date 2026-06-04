@@ -65,7 +65,9 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -84,8 +86,8 @@ import com.fantasyidler.util.formatCoins
 import com.fantasyidler.util.toTitleCase
 
 private val SKILL_CATEGORY_GROUPS: List<Pair<Int, List<String>>> = listOf(
-    R.string.label_gathering      to listOf("mining", "fishing", "woodcutting", "farming", "firemaking", "agility"),
-    R.string.label_crafting       to listOf("smithing", "cooking", "fletching", "crafting", "runecrafting", "herblore"),
+    R.string.label_gathering      to listOf("mining", "fishing", "woodcutting", "farming", "agility"),
+    R.string.label_crafting       to listOf("smithing", "cooking", "fletching", "crafting", "runecrafting", "herblore", "firemaking"),
     R.string.label_support_skills to listOf("prayer", "mercantile", "slayer"),
     R.string.label_combat         to listOf("attack", "strength", "defense", "ranged", "magic", "hitpoints"),
 )
@@ -368,38 +370,45 @@ private fun SkillsTab(
 
 @Composable
 private fun CircularSkillProgress(level: Int, progressFraction: Float, modifier: Modifier = Modifier) {
-    val gold  = GoldPrimary
-    val track = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.15f)
-    Box(modifier = modifier.size(56.dp), contentAlignment = Alignment.Center) {
-        val strokeDp = 5.dp
-        Canvas(modifier = Modifier.fillMaxSize()) {
-            val stroke = strokeDp.toPx()
-            val inset  = stroke / 2f
-            val rect   = Rect(inset, inset, size.width - inset, size.height - inset)
+    val gold      = GoldPrimary
+    val track     = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.15f)
+    val onSurface = MaterialTheme.colorScheme.onSurface
+    val textStyle = MaterialTheme.typography.labelMedium.copy(
+        fontWeight = FontWeight.Bold,
+        color      = onSurface,
+    )
+    val measurer = rememberTextMeasurer()
+    Canvas(modifier = modifier.size(56.dp)) {
+        val stroke  = 5.dp.toPx()
+        val inset   = stroke / 2f
+        val rect    = Rect(inset, inset, size.width - inset, size.height - inset)
+        drawArc(
+            color      = track,
+            startAngle = -90f,
+            sweepAngle = 360f,
+            useCenter  = false,
+            topLeft    = rect.topLeft,
+            size       = rect.size,
+            style      = Stroke(width = stroke, cap = StrokeCap.Round),
+        )
+        if (progressFraction > 0f) {
             drawArc(
-                color      = track,
+                color      = gold,
                 startAngle = -90f,
-                sweepAngle = 360f,
+                sweepAngle = progressFraction * 360f,
                 useCenter  = false,
                 topLeft    = rect.topLeft,
                 size       = rect.size,
                 style      = Stroke(width = stroke, cap = StrokeCap.Round),
             )
-            if (progressFraction > 0f) {
-                drawArc(
-                    color      = gold,
-                    startAngle = -90f,
-                    sweepAngle = progressFraction * 360f,
-                    useCenter  = false,
-                    topLeft    = rect.topLeft,
-                    size       = rect.size,
-                    style      = Stroke(width = stroke, cap = StrokeCap.Round),
-                )
-            }
         }
-        Text(
-            text  = level.toString(),
-            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
+        val measured = measurer.measure(level.toString(), textStyle)
+        drawText(
+            textLayoutResult = measured,
+            topLeft = androidx.compose.ui.geometry.Offset(
+                x = (size.width  - measured.size.width)  / 2f,
+                y = (size.height - measured.size.height) / 2f,
+            ),
         )
     }
 }
@@ -416,7 +425,7 @@ private fun SkillGridCard(
     val progress = xpProgressFraction(xp)
     ElevatedCard(modifier = modifier.clickable { onClick() }) {
         Column(
-            modifier            = Modifier.padding(8.dp),
+            modifier            = Modifier.fillMaxWidth().padding(8.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(

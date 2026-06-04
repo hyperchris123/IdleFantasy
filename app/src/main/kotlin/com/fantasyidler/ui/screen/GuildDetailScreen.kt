@@ -30,14 +30,16 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -93,7 +95,8 @@ fun GuildDetailScreen(
             return@Scaffold
         }
 
-        var selectedTab by remember { mutableIntStateOf(0) }
+        val pagerState     = rememberPagerState(pageCount = { 2 })
+        val scope          = rememberCoroutineScope()
         val claimableQuests = state.quests.count { !it.completed && it.progress >= it.quest.amount && state.guildLevel >= it.quest.guildLevelRequired }
         val claimableDailies = state.dailies.count { !it.claimed && it.progress >= it.template.amount }
 
@@ -106,7 +109,7 @@ fun GuildDetailScreen(
                 questGateBlocked          = state.questGateBlocked,
             )
 
-            TabRow(selectedTabIndex = selectedTab) {
+            TabRow(selectedTabIndex = pagerState.currentPage) {
                 val questLabel = stringResource(R.string.guild_tab_quests).let {
                     if (claimableQuests > 0) "$it ($claimableQuests)" else it
                 }
@@ -114,30 +117,32 @@ fun GuildDetailScreen(
                     if (claimableDailies > 0) "$it ($claimableDailies)" else it
                 }
                 Tab(
-                    selected = selectedTab == 0,
-                    onClick  = { selectedTab = 0 },
+                    selected = pagerState.currentPage == 0,
+                    onClick  = { scope.launch { pagerState.animateScrollToPage(0) } },
                     text     = { Text(questLabel, style = MaterialTheme.typography.labelMedium) },
                 )
                 Tab(
-                    selected = selectedTab == 1,
-                    onClick  = { selectedTab = 1 },
+                    selected = pagerState.currentPage == 1,
+                    onClick  = { scope.launch { pagerState.animateScrollToPage(1) } },
                     text     = { Text(dailyLabel, style = MaterialTheme.typography.labelMedium) },
                 )
             }
 
-            when (selectedTab) {
-                0 -> GuildQuestsTab(
-                    quests     = state.quests,
-                    guildLevel = state.guildLevel,
-                    onClaim    = { viewModel.claimGuildQuest(it) },
-                )
-                1 -> GuildDailiesTab(
-                    dailies      = state.dailies,
-                    nextResetMs  = state.nextResetMs,
-                    inventory    = state.inventory,
-                    onClaim      = { viewModel.claimGuildDaily(it) },
-                    onContribute = { viewModel.contributeFarmingDaily(it) },
-                )
+            HorizontalPager(state = pagerState, modifier = Modifier.weight(1f)) { page ->
+                when (page) {
+                    0 -> GuildQuestsTab(
+                        quests     = state.quests,
+                        guildLevel = state.guildLevel,
+                        onClaim    = { viewModel.claimGuildQuest(it) },
+                    )
+                    else -> GuildDailiesTab(
+                        dailies      = state.dailies,
+                        nextResetMs  = state.nextResetMs,
+                        inventory    = state.inventory,
+                        onClaim      = { viewModel.claimGuildDaily(it) },
+                        onContribute = { viewModel.contributeFarmingDaily(it) },
+                    )
+                }
             }
         }
     }
