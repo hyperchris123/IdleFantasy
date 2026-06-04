@@ -30,27 +30,56 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.fantasyidler.R
+import com.fantasyidler.data.json.GuildDailyTemplate
+import com.fantasyidler.data.json.GuildQuestData
 import com.fantasyidler.repository.GuildDailyWithProgress
 import com.fantasyidler.repository.GuildQuestWithProgress
 import com.fantasyidler.ui.theme.GoldPrimary
 import com.fantasyidler.ui.viewmodel.GuildDetailViewModel
+import com.fantasyidler.util.GameStrings
 import com.fantasyidler.util.formatCoins
+
+@Composable
+private fun localizedQuestDesc(type: String, target: String, amount: Int, guild: String): String {
+    val context = LocalContext.current
+    val guildName = guildDisplayName(guild)
+    val itemName  = if (target.isNotEmpty() && target != "any") GameStrings.itemName(context, target) else ""
+    val combatStyle = when (guild) {
+        "warriors" -> stringResource(R.string.guild_combat_melee)
+        "archers"  -> stringResource(R.string.guild_combat_ranged)
+        "mages"    -> stringResource(R.string.guild_combat_magic)
+        else       -> guild
+    }
+    return when (type) {
+        "gather"     -> stringResource(R.string.guild_quest_desc_gather, amount, itemName, guildName)
+        "craft"      -> stringResource(R.string.guild_quest_desc_craft, amount, itemName, guildName)
+        "kill"       -> stringResource(R.string.guild_quest_desc_kill, amount, combatStyle)
+        "prayer"     -> stringResource(R.string.guild_quest_desc_prayer, amount, guildName)
+        "sessions"   -> stringResource(R.string.guild_quest_desc_sessions, amount, GameStrings.skillName(context, target), guildName)
+        "trade"      -> stringResource(R.string.guild_quest_desc_trade, amount, guildName)
+        "earn_coins" -> stringResource(R.string.guild_quest_desc_earn_coins, amount.toLong().formatCoins(), guildName)
+        else         -> ""
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -93,7 +122,8 @@ fun GuildDetailScreen(
             return@Scaffold
         }
 
-        var selectedTab by remember { mutableIntStateOf(0) }
+        val pagerState     = rememberPagerState(pageCount = { 2 })
+        val scope          = rememberCoroutineScope()
         val claimableQuests = state.quests.count { !it.completed && it.progress >= it.quest.amount && state.guildLevel >= it.quest.guildLevelRequired }
         val claimableDailies = state.dailies.count { !it.claimed && it.progress >= it.template.amount }
 
@@ -106,7 +136,7 @@ fun GuildDetailScreen(
                 questGateBlocked          = state.questGateBlocked,
             )
 
-            TabRow(selectedTabIndex = selectedTab) {
+            TabRow(selectedTabIndex = pagerState.currentPage) {
                 val questLabel = stringResource(R.string.guild_tab_quests).let {
                     if (claimableQuests > 0) "$it ($claimableQuests)" else it
                 }
@@ -114,30 +144,32 @@ fun GuildDetailScreen(
                     if (claimableDailies > 0) "$it ($claimableDailies)" else it
                 }
                 Tab(
-                    selected = selectedTab == 0,
-                    onClick  = { selectedTab = 0 },
+                    selected = pagerState.currentPage == 0,
+                    onClick  = { scope.launch { pagerState.animateScrollToPage(0) } },
                     text     = { Text(questLabel, style = MaterialTheme.typography.labelMedium) },
                 )
                 Tab(
-                    selected = selectedTab == 1,
-                    onClick  = { selectedTab = 1 },
+                    selected = pagerState.currentPage == 1,
+                    onClick  = { scope.launch { pagerState.animateScrollToPage(1) } },
                     text     = { Text(dailyLabel, style = MaterialTheme.typography.labelMedium) },
                 )
             }
 
-            when (selectedTab) {
-                0 -> GuildQuestsTab(
-                    quests     = state.quests,
-                    guildLevel = state.guildLevel,
-                    onClaim    = { viewModel.claimGuildQuest(it) },
-                )
-                1 -> GuildDailiesTab(
-                    dailies      = state.dailies,
-                    nextResetMs  = state.nextResetMs,
-                    inventory    = state.inventory,
-                    onClaim      = { viewModel.claimGuildDaily(it) },
-                    onContribute = { viewModel.contributeFarmingDaily(it) },
-                )
+            HorizontalPager(state = pagerState, modifier = Modifier.weight(1f)) { page ->
+                when (page) {
+                    0 -> GuildQuestsTab(
+                        quests     = state.quests,
+                        guildLevel = state.guildLevel,
+                        onClaim    = { viewModel.claimGuildQuest(it) },
+                    )
+                    else -> GuildDailiesTab(
+                        dailies      = state.dailies,
+                        nextResetMs  = state.nextResetMs,
+                        inventory    = state.inventory,
+                        onClaim      = { viewModel.claimGuildDaily(it) },
+                        onContribute = { viewModel.contributeFarmingDaily(it) },
+                    )
+                }
             }
         }
     }
@@ -257,7 +289,7 @@ private fun GuildQuestRow(
                 )
             }
             Text(
-                text       = qwp.quest.name,
+                text       = GameStrings.questName(LocalContext.current, qwp.quest.id, qwp.quest.name),
                 style      = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.SemiBold,
                 color      = if (locked) dimColor else MaterialTheme.colorScheme.onSurface,
@@ -265,7 +297,7 @@ private fun GuildQuestRow(
         }
         Spacer(Modifier.height(2.dp))
         Text(
-            text  = qwp.quest.description,
+            text  = localizedQuestDesc(qwp.quest.type, qwp.quest.target, qwp.quest.amount, qwp.quest.guild),
             style = MaterialTheme.typography.bodySmall,
             color = if (locked) dimColor else MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -385,13 +417,13 @@ private fun GuildDailyCard(
             .padding(horizontal = 16.dp, vertical = 12.dp),
     ) {
         Text(
-            text       = dwp.template.name,
+            text       = GameStrings.questName(LocalContext.current, dwp.template.id, dwp.template.name),
             style      = MaterialTheme.typography.bodyLarge,
             fontWeight = FontWeight.SemiBold,
         )
         Spacer(Modifier.height(2.dp))
         Text(
-            text  = dwp.template.description,
+            text  = localizedQuestDesc(dwp.template.type, dwp.template.target, dwp.template.amount, dwp.template.guild),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -445,7 +477,7 @@ private fun GuildDailyCard(
                 if (inventoryQty > 0) {
                     Spacer(Modifier.height(8.dp))
                     OutlinedButton(onClick = onContribute, modifier = Modifier.fillMaxWidth()) {
-                        Text("Contribute from inventory ($inventoryQty available)")
+                        Text(stringResource(R.string.guild_contribute_inventory, inventoryQty))
                     }
                 }
             }

@@ -1,0 +1,7 @@
+• Fix: Quest Champion achievement now requires completing all quests rather than a hardcoded count that had become stale as new quests were added
+• Fix: Firemaking and Runecrafting quests now appear under the Crafting tab instead of Gathering, matching their skill category
+• Fix: Firemaking quantity picker now shows the XP and projected level progression preview, matching other quantity-based skills
+• Fix: Berserker Ring, Archer's Ring, Seers' Ring, Ring of Wealth, Ring of Suffering, Amulet of Fury, Necklace of Anguish, and Tormented Necklace purchased from the Merchants Guild can now be equipped; they were missing from the equipment data and appeared as unequippable items in the inventory
+• Fix: Skill level circles on the Profile screen are now centred horizontally within each card
+• Fix: Tapping the Skills tab while in the Slayer screen now returns to the Skills list, matching the behaviour of Farming and Mercantile
+• Fix: Shop and Guild screens now support swiping between tabs

@@ -247,6 +247,7 @@ fun SkillsScreen(
                 is SheetState.Firemaking -> FiremakingSheet(
                     availableLogs     = sheet.availableLogs,
                     inventory         = state.inventory,
+                    currentXp         = state.skillXp[Skills.FIREMAKING] ?: 0L,
                     isStarting        = state.startingSession,
                     hasActiveSession  = state.anySessionActive,
                     isQueueFull       = state.queueSize >= 3,
@@ -1031,7 +1032,7 @@ internal fun AgilitySheet(
                     val xpGain = SkillSimulator.estimateAgilityXp(course.xpPerSuccess, course.levelRequired, currentAgilityLevel)
                     ActivityRow(
                         name             = course.displayName,
-                        detail           = "Lv. ${course.levelRequired}  •  ${course.xpPerSuccess} XP/lap",
+                        detail           = context.getString(R.string.skills_agility_course_detail, course.levelRequired, course.xpPerSuccess),
                         projectedLabel   = projectedXpLabel(currentXp, xpGain),
                         isStarting       = isStarting,
                         hasActiveSession = hasActiveSession,
@@ -1063,6 +1064,7 @@ internal fun AgilitySheet(
 internal fun FiremakingSheet(
     availableLogs: Map<String, LogData>,
     inventory: Map<String, Int>,
+    currentXp: Long,
     isStarting: Boolean,
     hasActiveSession: Boolean,
     isQueueFull: Boolean,
@@ -1143,7 +1145,7 @@ internal fun FiremakingSheet(
                 modifier = Modifier.padding(horizontal = 16.dp),
             )
             Text(
-                text     = "${maxQty} ${stringResource(R.string.firemaking_logs_in_inventory)}  •  ${totalXp} XP",
+                text     = "${maxQty} ${stringResource(R.string.firemaking_logs_in_inventory)}",
                 style    = MaterialTheme.typography.bodySmall,
                 color    = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
@@ -1170,7 +1172,22 @@ internal fun FiremakingSheet(
                 }
             }
             QtyQuickButtons(qty, maxQty) { qty = it; textValue = it.toString() }
-            Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(8.dp))
+            Text(
+                text       = projectedXpLabel(currentXp, totalXp.toLong()),
+                style      = MaterialTheme.typography.bodyMedium,
+                color      = GoldPrimary,
+                fontWeight = FontWeight.SemiBold,
+                modifier   = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+            )
+            if (sessionDurationMs > 0) {
+                Text(
+                    text     = "~${(qty.toLong() * (sessionDurationMs / 60)).formatDurationMs()}",
+                    style    = MaterialTheme.typography.bodySmall,
+                    color    = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
+                )
+            }
             val enabled = !isStarting && !(!hasActiveSession && false) && (hasActiveSession || !isQueueFull.not()) && maxQty > 0
             Button(
                 onClick  = { onStart(key, qty) },
@@ -1924,7 +1941,7 @@ private fun CraftRecipeRow(
         Column(horizontalAlignment = Alignment.End) {
             when {
                 !meetsLvl  -> Text(
-                    text  = "Lv. ${recipe.levelRequired}",
+                    text  = stringResource(R.string.label_lv, recipe.levelRequired),
                     style = MaterialTheme.typography.labelSmall,
                     color = dim,
                 )
