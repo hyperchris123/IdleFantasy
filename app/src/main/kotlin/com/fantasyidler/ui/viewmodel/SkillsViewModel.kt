@@ -68,6 +68,7 @@ data class SkillsUiState(
     val farmingEfficiency: Float = 1.0f,
     val sessionDurationMs: Long = 0L,
     val skillPrestige: Map<String, Int> = emptyMap(),
+    val inventory: Map<String, Int> = emptyMap(),
 )
 
 sealed class SheetState {
@@ -122,6 +123,7 @@ class SkillsViewModel @Inject constructor(
             val levels:   Map<String, Int>     = json.decodeFromString(player.skillLevels)
             val xp:       Map<String, Long>    = json.decodeFromString(player.skillXp)
             val equipped: Map<String, String?> = json.decodeFromString(player.equipped)
+            val inv:      Map<String, Int>     = json.decodeFromString(player.inventory)
             val flags = try { json.decodeFromString<PlayerFlags>(player.flags) } catch (_: Exception) { PlayerFlags() }
             extra.copy(
                 isLoading             = false,
@@ -136,6 +138,7 @@ class SkillsViewModel @Inject constructor(
                 farmingEfficiency     = toolEfficiency(equipped[EquipSlot.HOE],         EquipSlot.HOE,         0),
                 sessionDurationMs     = SkillSimulator.sessionDurationMs(levels[Skills.AGILITY] ?: 1),
                 skillPrestige         = flags.skillPrestige,
+                inventory             = inv,
             )
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), SkillsUiState())
@@ -287,32 +290,51 @@ class SkillsViewModel @Inject constructor(
         )
     }
 
-    fun startFiremakingSession(logKey: String) = startSession(Skills.FIREMAKING, logKey) {
-        val player  = playerRepo.getOrCreatePlayer()
-        val levels: Map<String, Int>  = json.decodeFromString(player.skillLevels)
-        val xpMap:  Map<String, Long> = json.decodeFromString(player.skillXp)
+    fun startFiremakingSession(logKey: String, qty: Int) {
+        viewModelScope.launch {
+            val player = playerRepo.getOrCreatePlayer()
+            val inv: Map<String, Int> = json.decodeFromString(player.inventory)
+            val available = inv[logKey] ?: 0
+            if (available <= 0) {
+                _uiState.update { it.copy(snackbarMessage = "No logs in inventory") }
+                return@launch
+            }
+            val actualQty = qty.coerceIn(1, available)
+            val levels: Map<String, Int> = json.decodeFromString(player.skillLevels)
+            val agility = levels[Skills.AGILITY] ?: 1
+            val perLogMs = SkillSimulator.sessionDurationMs(agility) / 60L
+            val action = QueuedAction(
+                skillName           = Skills.FIREMAKING,
+                activityKey         = logKey,
+                skillDisplayName    = "Firemaking",
+                qty                 = actualQty,
+                estimatedDurationMs = actualQty.toLong() * perLogMs,
+            )
 
-        SkillSimulator.simulateGathering(
-            skillData          = gameData.firemakingSkillData,
-            startXp            = xpMap[Skills.FIREMAKING] ?: 0L,
-            agilityLevel       = levels[Skills.AGILITY] ?: 1,
-            petBoostPct        = petBoostFor(player.pets, Skills.FIREMAKING),
-            forcedDropPerFrame = ashForLog(logKey),
-        )
+            if (sessionRepo.getActiveSession() != null) {
+                val enqueued = playerRepo.enqueueAction(action)
+                _uiState.update {
+                    it.copy(
+                        snackbarMessage = if (enqueued) "Added to queue: Firemaking." else "Queue is full (3/3).",
+                        sheetSkill = null,
+                    )
+                }
+                return@launch
+            }
+
+            _uiState.update { it.copy(startingSession = true, sheetSkill = null) }
+            try {
+                playerRepo.enqueueAction(action)
+                queuedSessionStarter.startNextQueued()
+            } catch (e: Exception) {
+                _uiState.update { it.copy(snackbarMessage = "Failed to start session: ${e.message}") }
+            } finally {
+                _uiState.update { it.copy(startingSession = false) }
+            }
+        }
     }
 
-    /** Maps a log key to the ash variant produced by burning it. Falls back to base ashes. */
-    private fun ashForLog(logKey: String): String = when (logKey) {
-        "oak_log"     -> "oak_ashes"
-        "willow_log"  -> "willow_ashes"
-        "maple_log"   -> "maple_ashes"
-        "yew_log"     -> "yew_ashes"
-        "magic_log"   -> "magic_ashes"
-        "redwood_log" -> "redwood_ashes"
-        else          -> "ashes"
-    }
-
-    fun startRunecraftingSession(runeKey: String, qty: Int) {
+    fun startRunecraftingSession(runeKey: String, qty: Int, catalystKey: String? = null) {
         viewModelScope.launch {
             val runeData = gameData.runes[runeKey] ?: return@launch
             val player   = playerRepo.getOrCreatePlayer()
@@ -334,6 +356,7 @@ class SkillsViewModel @Inject constructor(
                         skillDisplayName    = "Runecrafting",
                         qty                 = qty,
                         estimatedDurationMs = qty.toLong() * perItemMs,
+                        catalystKey         = catalystKey,
                     )
                 )
                 if (enqueued) playerRepo.consumeItems(mapOf("rune_essence" to runeData.essenceCost * qty))
@@ -354,6 +377,7 @@ class SkillsViewModel @Inject constructor(
 
                 // Compute totals without building one frame per essence — stays within
                 // Android's 2 MB CursorWindow per-row limit for large qty values.
+                val ashBonus = catalystKey?.let { ashRuneBonusForKey(it) } ?: 0
                 val startXp = xpMap[Skills.RUNECRAFTING] ?: 0L
                 var currentXp   = startXp
                 var totalRunes  = 0
@@ -364,7 +388,7 @@ class SkillsViewModel @Inject constructor(
                         level >= 75 -> 3
                         level >= 50 -> 2
                         else        -> 1
-                    }
+                    } + ashBonus
                     val xpGain = (runeData.xpPerRune * multiplier).toInt()
                     totalRunes  += multiplier
                     totalXpGain += xpGain
@@ -390,6 +414,10 @@ class SkillsViewModel @Inject constructor(
                     frames,
                 )
                 playerRepo.consumeItems(mapOf("rune_essence" to runeData.essenceCost * qty))
+                if (catalystKey != null) {
+                    val ashCost = (qty + 9) / 10
+                    playerRepo.consumeItems(mapOf(catalystKey to ashCost))
+                }
                 sessionRepo.startSession(
                     skillName        = Skills.RUNECRAFTING,
                     activityKey      = runeKey,
@@ -592,18 +620,14 @@ class SkillsViewModel @Inject constructor(
             )
 
             // Record quest / daily / guild progress
-            val gatheringSkills = setOf(Skills.MINING, Skills.WOODCUTTING, Skills.FISHING,
-                Skills.AGILITY, Skills.FIREMAKING, Skills.RUNECRAFTING)
-            val craftingSkills = setOf(Skills.SMITHING, Skills.COOKING, Skills.FLETCHING, Skills.CRAFTING, Skills.HERBLORE)
+            val gatheringSkills = setOf(Skills.MINING, Skills.WOODCUTTING, Skills.FISHING, Skills.AGILITY)
+            val craftingSkills  = setOf(Skills.SMITHING, Skills.COOKING, Skills.FLETCHING, Skills.CRAFTING,
+                Skills.HERBLORE, Skills.FIREMAKING, Skills.RUNECRAFTING)
             when (session.skillName) {
                 in gatheringSkills -> {
                     questRepo.recordGathering(session.skillName, regularItems)
                     playerRepo.recordDailyGathering(regularItems)
-                    when (session.skillName) {
-                        Skills.AGILITY      -> guildRepo.recordGuildSessions()
-                        Skills.RUNECRAFTING -> guildRepo.recordGuildCrafting(session.skillName, regularItems)
-                        else                -> guildRepo.recordGuildGathering(session.skillName, regularItems)
-                    }
+                    guildRepo.recordGuildGathering(session.skillName, regularItems)
                 }
                 in craftingSkills -> {
                     questRepo.recordCrafting(session.skillName, regularItems)
@@ -616,9 +640,10 @@ class SkillsViewModel @Inject constructor(
                     playerRepo.recordDailyPrayer(buried)
                     guildRepo.recordGuildPrayer(buried)
                 }
-            }
-            if (session.skillName == Skills.FIREMAKING) {
-                playerRepo.consumeItems(mapOf(session.activityKey to frames.size))
+                Skills.MERCANTILE -> {
+                    val coins = regularItems["_coins"]?.toLong() ?: 0L
+                    guildRepo.recordGuildTrade(coins)
+                }
             }
 
             // Handle pet drops
@@ -750,6 +775,14 @@ class SkillsViewModel @Inject constructor(
      * Looks up the pet XP boost percentage for [skillKey].
      * Pets store their boosted_skill as a JSON string; we decode inline.
      */
+    private fun ashRuneBonusForKey(ashKey: String): Int = when (ashKey) {
+        "ashes", "oak_ashes", "willow_ashes" -> 1
+        "maple_ashes", "yew_ashes"           -> 2
+        "magic_ashes"                        -> 3
+        "redwood_ashes"                      -> 4
+        else                                 -> 0
+    }
+
     private fun petBoostFor(petsJson: String, skillKey: String): Int {
         val pets = try {
             json.decodeFromString<List<com.fantasyidler.data.model.OwnedPet>>(petsJson)

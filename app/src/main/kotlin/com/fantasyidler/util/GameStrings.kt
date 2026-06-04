@@ -18,7 +18,9 @@ import android.content.Context
 object GameStrings {
 
     fun itemName(context: Context, key: String): String =
-        context.stringByName("item_${key}_name") ?: key.toTitleCase()
+        context.stringByName("item_${key}_name")
+            ?: context.stringByName("crop_${key}_name")
+            ?: key.toTitleCase()
 
     fun itemDesc(context: Context, key: String): String =
         context.stringByName("item_${key}_desc") ?: ""
@@ -67,6 +69,24 @@ object GameStrings {
 
     fun cropName(context: Context, key: String): String =
         context.stringByName("crop_${key}_name") ?: key.toTitleCase()
+
+    fun tradeRouteName(context: Context, id: String, fallback: String = id.toTitleCase()): String =
+        context.stringByName("trade_route_${id}_name") ?: fallback
+
+    fun tradeRouteDesc(context: Context, id: String, fallback: String = ""): String =
+        context.stringByName("trade_route_${id}_desc") ?: fallback
+
+    fun craftingCategory(context: Context, raw: String): String {
+        val resId = context.resources.getIdentifier(
+            "crafting_cat_${raw.lowercase()}", "string", context.packageName)
+        return if (resId != 0) context.getString(resId) else raw
+    }
+
+    fun craftingTier(context: Context, raw: String): String {
+        val resId = context.resources.getIdentifier(
+            "crafting_tier_${raw.lowercase()}", "string", context.packageName)
+        return if (resId != 0) context.getString(resId) else raw
+    }
 
     fun boneName(context: Context, key: String): String =
         context.stringByName("bone_${key}_name") ?: key.toTitleCase()

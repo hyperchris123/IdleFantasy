@@ -589,4 +589,22 @@
     <string name="item_super_ranging_potion_name">Super Poción de Distancia</string>
     <string name="item_super_magic_potion_name">Super Poción de Magia</string>
     <string name="item_overload_potion_name">Poción Overload</string>
+
+    <!-- Enhanced potions -->
+    <string name="item_enhanced_attack_brew_name">Cerveza de ataque mejorada</string>
+    <string name="item_enhanced_defense_brew_name">Cerveza de defensa mejorada</string>
+    <string name="item_enhanced_attack_potion_name">Poción de ataque mejorada</string>
+    <string name="item_enhanced_defense_potion_name">Poción de defensa mejorada</string>
+    <string name="item_enhanced_onion_brew_name">Cerveza de cebolla mejorada</string>
+    <string name="item_enhanced_carrot_brew_name">Cerveza de zanahoria mejorada</string>
+    <string name="item_enhanced_strength_brew_name">Cerveza de fuerza mejorada</string>
+    <string name="item_enhanced_strength_potion_name">Poción de fuerza mejorada</string>
+    <string name="item_enhanced_ranging_potion_name">Poción de combate a distancia mejorada</string>
+    <string name="item_enhanced_magic_potion_name">Poción mágica mejorada</string>
+    <string name="item_enhanced_super_strength_potion_name">Poción de superfuerza mejorada</string>
+    <string name="item_enhanced_super_attack_potion_name">Poción de superataque mejorada</string>
+    <string name="item_enhanced_super_defense_potion_name">Poción de superdefensa mejorada</string>
+    <string name="item_enhanced_super_ranging_potion_name">Poción de súper combate a distancia mejorada</string>
+    <string name="item_enhanced_super_magic_potion_name">Poción de súper magia mejorada</string>
+    <string name="item_enhanced_overload_potion_name">Poción de sobrecarga mejorada</string>
 </resources>

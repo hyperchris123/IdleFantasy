@@ -82,6 +82,8 @@ data class PlayerFlags(
     @SerialName("show_recent_activity_log") val showRecentActivityLog: Boolean = true,
     /** Prestige level per skill: skill key → 0–3. */
     @SerialName("skill_prestige") val skillPrestige: Map<String, Int> = emptyMap(),
+    /** Ash fertilizer per farming patch: patchNumber.toString() → ash item key. */
+    @SerialName("farming_fertilizer") val farmingFertilizer: Map<String, String> = emptyMap(),
 )
 
 /** A single entry in the recent sessions log. */
@@ -110,12 +112,14 @@ data class QueuedAction(
     @SerialName("skill_name") val skillName: String,
     @SerialName("activity_key") val activityKey: String,
     @SerialName("skill_display_name") val skillDisplayName: String,
-    /** Quantity — used for prayer (bones) and runecrafting (essence). 0 = not applicable. */
+    /** Quantity — used for prayer (bones), runecrafting (essence), and firemaking (logs). 0 = not applicable. */
     val qty: Int = 0,
     /** Pre-computed session duration in ms, used to display accurate queue end time. */
     @SerialName("estimated_duration_ms") val estimatedDurationMs: Long = 0L,
     /** Coins to refund if this action is cancelled (mercantile trade route cost). */
     @SerialName("coin_refund") val coinRefund: Long = 0L,
+    /** Ash item key used as a catalyst for herblore or runecrafting. Null = no catalyst. */
+    @SerialName("catalyst_key") val catalystKey: String? = null,
 )
 
 // ---------------------------------------------------------------------------
@@ -317,8 +321,8 @@ object Skills {
     const val MERCANTILE  = "mercantile"
     const val SLAYER      = "slayer"
 
-    val GATHERING = listOf(MINING, FISHING, WOODCUTTING, FARMING, FIREMAKING, AGILITY)
-    val CRAFTING_SKILLS = listOf(SMITHING, COOKING, FLETCHING, CRAFTING, RUNECRAFTING, HERBLORE)
+    val GATHERING = listOf(MINING, FISHING, WOODCUTTING, FARMING, AGILITY)
+    val CRAFTING_SKILLS = listOf(SMITHING, COOKING, FLETCHING, CRAFTING, FIREMAKING, RUNECRAFTING, HERBLORE)
     val COMBAT = listOf(ATTACK, STRENGTH, DEFENSE, RANGED, MAGIC, HITPOINTS, PRAYER)
     val SUPPORT = listOf(PRAYER, MERCANTILE)
     val ALL = GATHERING + CRAFTING_SKILLS + COMBAT + listOf(MERCANTILE, SLAYER)

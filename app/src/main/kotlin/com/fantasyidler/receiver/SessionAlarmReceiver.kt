@@ -38,10 +38,13 @@ class SessionAlarmReceiver : BroadcastReceiver() {
             try {
                 val session = sessionRepository.getSession(sessionId)
                 sessionRepository.markCompleted(sessionId)
+                // Compute how late the alarm fired so the next session can be backdated.
+                val now = System.currentTimeMillis()
+                val backdateMs = if (session != null) maxOf(0L, now - session.endsAt) else 0L
                 if (session?.isWorkerSession == true) {
                     workerQueuedSessionStarter.startNextQueued()
                 } else {
-                    val started = queuedSessionStarter.startNextQueued()
+                    val started = queuedSessionStarter.startNextQueued(backdateMs = backdateMs)
                     if (!started) {
                         val hasRunning = sessionRepository.getActiveSession()?.completed == false
                         if (!hasRunning) notificationManager.showSessionComplete(skillDisplayName)

@@ -33,12 +33,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.fantasyidler.R
 import com.fantasyidler.data.json.TradeRouteData
+import com.fantasyidler.util.GameStrings
 import com.fantasyidler.ui.theme.GoldPrimary
 import com.fantasyidler.ui.viewmodel.MercantileUiState
 import com.fantasyidler.ui.viewmodel.MercantileViewModel
@@ -147,6 +149,7 @@ private fun TradeRouteRow(
     queueFull: Boolean,
     onStart: () -> Unit,
 ) {
+    val context = LocalContext.current
     val canAfford = playerCoins >= route.coinCost
     val costStr   = route.coinCost.toLong().formatCoins()
     val minReturn = route.coinRanges.values.minOf { it.min } * 60L
@@ -158,13 +161,13 @@ private fun TradeRouteRow(
             .padding(horizontal = 16.dp, vertical = 12.dp),
     ) {
         Text(
-            text       = route.displayName,
+            text       = GameStrings.tradeRouteName(context, route.id, route.displayName),
             style      = MaterialTheme.typography.bodyLarge,
             fontWeight = FontWeight.SemiBold,
         )
         Spacer(Modifier.height(2.dp))
         Text(
-            text  = route.description,
+            text  = GameStrings.tradeRouteDesc(context, route.id, route.description),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )

@@ -69,4 +69,22 @@
     <string name="pet_tiny_templar_desc">Un petit compagnon poisson qui augmente votre XP de Pêche.</string>
     <string name="pet_tangleroot_name">Créature végétale</string>
     <string name="pet_tangleroot_desc">Une créature végétale magique qui améliore votre XP d’Agriculture.</string>
+
+    <!-- Missing dungeons -->
+    <string name="dungeon_collapsed_mine_name">Mine effondrée</string>
+    <string name="dungeon_collapsed_mine_desc">Une vaste caverne sous les mines de cuivre. Des trolls des cavernes et des golems de pierre hantent les décombres, et de grandes araignées tissent leurs toiles dans les galeries effondrées.</string>
+    <string name="dungeon_shadow_den_name">Repaire des ombres</string>
+    <string name="dungeon_shadow_den_desc">Un réseau de chambres souterraines utilisé par la guilde des voleurs de la région. Des canailles, des assassins et des créatures des ombres se tapissent dans chaque recoin.</string>
+    <string name="dungeon_abyssal_ruins_name">Ruines abyssales</string>
+    <string name="dungeon_abyssal_ruins_desc">D\'anciennes ruines qui existent simultanément au-dessus et en dessous du plan mortel. D\'étranges créatures abyssales se matérialisent et disparaissent de la réalité.</string>
+    <string name="dungeon_ancient_forest_ruins_name">Ruines de la forêt ancienne</string>
+    <string name="dungeon_ancient_forest_ruins_desc">Des ruines de pierre engloutries par la forêt primordiale, maintenant hantées par des créatures sauvages et des esprits vengeurs de druides.</string>
+    <string name="dungeon_ancient_forge_name">Forge ancienne</string>
+    <string name="dungeon_ancient_forge_desc">Une immense forge naine qui brûle depuis des siècles sans s\'arrêter. Des élémentaires de feu et des gardiens de forge protègent ses secrets.</string>
+    <string name="dungeon_arcane_ruins_name">Ruines arcanes</string>
+    <string name="dungeon_arcane_ruins_desc">Les chambres souterraines fonctionnelles d\'une tour de magicien détruite. Des constructions magiques et des gardiens enchantés patrouillent encore ses couloirs.</string>
+    <string name="dungeon_corrupted_sanctum_name">Sanctuaire corrompu</string>
+    <string name="dungeon_corrupted_sanctum_desc">Un sanctuaire baigné d\'ombre au cœur de la canopée corrompue. Des prêtres sombres et des bêtes corrompues gardent un ancien mal.</string>
+    <string name="dungeon_drowned_temple_name">Temple englouti</string>
+    <string name="dungeon_drowned_temple_desc">Un temple submergé sous la grotte marine, ses salles remplies d\'eau et de créatures marines qui en ont fait leur demeure.</string>
 </resources>

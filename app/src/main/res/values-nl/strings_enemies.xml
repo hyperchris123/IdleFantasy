@@ -69,4 +69,22 @@
     <string name="pet_tiny_templar_desc">Een kleine visvriend die je Vissers XP verbetert.</string>
     <string name="pet_tangleroot_name">Tangleroot</string>
     <string name="pet_tangleroot_desc">Een magisch plantwezen dat je Landbouw XP verbetert.</string>
+
+    <!-- Missing dungeons -->
+    <string name="dungeon_collapsed_mine_name">Ingestorte Mijn</string>
+    <string name="dungeon_collapsed_mine_desc">Een uitgestrekte grot onder de kopermijnen. Holtrollen en steengolems spoken door het puin, en reusachtige spinnen weven webben door de ingestorte schachten.</string>
+    <string name="dungeon_shadow_den_name">Schaduwschuilplaats</string>
+    <string name="dungeon_shadow_den_desc">Een netwerk van ondergrondse kamers gebruikt door het dievengilde van de regio. Schurken, huurmoordenaars en schaduwwezens loeren in elke hoek.</string>
+    <string name="dungeon_abyssal_ruins_name">Afgrondelijke Ruïnes</string>
+    <string name="dungeon_abyssal_ruins_desc">Oude ruïnes die tegelijkertijd boven en onder het sterfelijke vlak bestaan. Vreemde afgrondelijke wezens verschijnen en verdwijnen uit de realiteit.</string>
+    <string name="dungeon_ancient_forest_ruins_name">Oude Bosruïnes</string>
+    <string name="dungeon_ancient_forest_ruins_desc">Stenen ruïnes die zijn opgeslokt door het oerbos, nu achtervolgd door wilde wezens en wraakzuchtige geesten van druïden.</string>
+    <string name="dungeon_ancient_forge_name">Oud Smeedwerk</string>
+    <string name="dungeon_ancient_forge_desc">Een uitgestrekte dwergensmederij die al eeuwen ononderbroken brandt. Vuurelementen en smeedwachters beschermen haar geheimen.</string>
+    <string name="dungeon_arcane_ruins_name">Arcane Ruïnes</string>
+    <string name="dungeon_arcane_ruins_desc">De functionele ondergrondse kamers van een vernietigde tovenarstoren. Magische constructies en betoverde wachters patrouilleren nog steeds door de gangen.</string>
+    <string name="dungeon_corrupted_sanctum_name">Verdorven Heiligdom</string>
+    <string name="dungeon_corrupted_sanctum_desc">Een schaduwgedrenkt heiligdom in het hart van het verdorven bladerdak. Donkere priesters en verdorven beesten bewaken een oud kwaad.</string>
+    <string name="dungeon_drowned_temple_name">Verdronken Tempel</string>
+    <string name="dungeon_drowned_temple_desc">Een gezonken tempel onder de zeegrot, met gangen vol water en zeewezens die er hun thuis van hebben gemaakt.</string>
 </resources>

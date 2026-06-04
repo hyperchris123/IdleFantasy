@@ -183,9 +183,13 @@ class GameDataRepository @Inject constructor(
         asset("data/recipes/herblore.json")
     }
 
-    /** Potion key → map of stat name → flat bonus value. */
+    /** Potion key → map of stat name → flat bonus value. Includes enhanced_* variants at 2× base. */
     val potionEffects: Map<String, Map<String, Int>> by lazy {
-        herbloreRecipes.mapValues { (_, recipe) -> recipe.effects }
+        val base = herbloreRecipes.mapValues { (_, recipe) -> recipe.effects }
+        val enhanced = herbloreRecipes.mapValues { (_, recipe) ->
+            recipe.effects.mapValues { (_, v) -> (v * 2.0).toInt().coerceAtLeast(v + 1) }
+        }.mapKeys { (key, _) -> "enhanced_$key" }
+        base + enhanced
     }
 
     // ------------------------------------------------------------------ marketplace

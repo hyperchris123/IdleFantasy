@@ -69,4 +69,22 @@
     <string name="pet_tiny_templar_desc">Un piccolo pesce da compagnia che potenzia i tuoi XP in Pesca.</string>
     <string name="pet_tangleroot_name">Radice Annodata</string>
     <string name="pet_tangleroot_desc">Una creatura magica vegetale che migliora i tuoi XP in Agricoltura.</string>
+
+    <!-- Missing dungeons -->
+    <string name="dungeon_collapsed_mine_name">Miniera Crollata</string>
+    <string name="dungeon_collapsed_mine_desc">Una vasta caverna sotto le miniere di rame. Troll delle caverne e golem di roccia infestano le macerie, e ragni giganti tessono ragnatele nei cunicoli crollati.</string>
+    <string name="dungeon_shadow_den_name">Tana delle Ombre</string>
+    <string name="dungeon_shadow_den_desc">Una rete di camere sotterranee usata dalla gilda dei ladri della regione. Furfanti, assassini e creature delle ombre si nascondono in ogni angolo.</string>
+    <string name="dungeon_abyssal_ruins_name">Rovine Abissali</string>
+    <string name="dungeon_abyssal_ruins_desc">Antiche rovine che esistono simultaneamente sopra e sotto il piano mortale. Strane creature abissali appaiono e scompaiono dalla realtà.</string>
+    <string name="dungeon_ancient_forest_ruins_name">Rovine della Foresta Antica</string>
+    <string name="dungeon_ancient_forest_ruins_desc">Rovine di pietra inghiottite dalla foresta primordiale, ora infestate da creature feroci e spiriti vendicativi di druidi.</string>
+    <string name="dungeon_ancient_forge_name">Fucina Antica</string>
+    <string name="dungeon_ancient_forge_desc">Una vasta fucina nanica che brucia da secoli senza sosta. Elementali del fuoco e guardiani della fucina proteggono i suoi segreti.</string>
+    <string name="dungeon_arcane_ruins_name">Rovine Arcane</string>
+    <string name="dungeon_arcane_ruins_desc">Le camere sotterranee funzionali di una torre di mago distrutta. Costrutti magici e guardiani incantati pattugliano ancora i suoi corridoi.</string>
+    <string name="dungeon_corrupted_sanctum_name">Santuario Corrotto</string>
+    <string name="dungeon_corrupted_sanctum_desc">Un santuario pervaso d\'ombra nel cuore della foresta corrotta. Sacerdoti oscuri e bestie corrotte custodiscono un antico male.</string>
+    <string name="dungeon_drowned_temple_name">Tempio Sommerso</string>
+    <string name="dungeon_drowned_temple_desc">Un tempio sommerso sotto la grotta marina, le sue sale piene d\'acqua e creature marine che ne hanno fatto la loro dimora.</string>
 </resources>

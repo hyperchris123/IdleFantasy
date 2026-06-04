@@ -246,20 +246,22 @@ fun SkillsScreen(
                 )
                 is SheetState.Firemaking -> FiremakingSheet(
                     availableLogs     = sheet.availableLogs,
+                    inventory         = state.inventory,
                     isStarting        = state.startingSession,
                     hasActiveSession  = state.anySessionActive,
                     isQueueFull       = state.queueSize >= 3,
                     sessionDurationMs = state.sessionDurationMs,
-                    onSelect          = { logKey -> viewModel.startFiremakingSession(logKey) },
+                    onStart           = { logKey, qty -> viewModel.startFiremakingSession(logKey, qty) },
                     context           = context,
                 )
                 is SheetState.Runecrafting -> RunecraftingSheet(
                     sheet             = sheet,
+                    inventory         = state.inventory,
                     isStarting        = state.startingSession,
                     hasActiveSession  = state.anySessionActive,
                     isQueueFull       = state.queueSize >= 3,
                     sessionDurationMs = state.sessionDurationMs,
-                    onStart           = viewModel::startRunecraftingSession,
+                    onStart           = { runeKey, qty, ashKey -> viewModel.startRunecraftingSession(runeKey, qty, ashKey) },
                     currentXp         = state.skillXp[Skills.RUNECRAFTING] ?: 0L,
                 )
                 is SheetState.Prayer -> PrayerSheet(
@@ -1060,74 +1062,122 @@ internal fun AgilitySheet(
 @Composable
 internal fun FiremakingSheet(
     availableLogs: Map<String, LogData>,
+    inventory: Map<String, Int>,
     isStarting: Boolean,
     hasActiveSession: Boolean,
     isQueueFull: Boolean,
     sessionDurationMs: Long,
-    onSelect: (String) -> Unit,
+    onStart: (logKey: String, qty: Int) -> Unit,
     context: android.content.Context,
 ) {
     var selectedKey by remember { mutableStateOf<String?>(null) }
-    Column(Modifier.padding(bottom = 24.dp)) {
-        Text(
-            text     = stringResource(R.string.label_choose_activity),
-            style    = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
-        )
-        Text(
-            text     = stringResource(R.string.skill_firemaking_desc),
-            style    = MaterialTheme.typography.bodySmall,
-            color    = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 4.dp),
-        )
-        if (sessionDurationMs > 0) {
+    val selectedLog = selectedKey?.let { availableLogs[it] }
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 32.dp),
+    ) {
+        if (selectedLog == null) {
             Text(
-                text     = stringResource(R.string.skills_session_duration, sessionDurationMs / 60_000),
+                text     = stringResource(R.string.skill_firemaking_name),
+                style    = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+            )
+            Text(
+                text     = stringResource(R.string.skill_firemaking_desc),
                 style    = MaterialTheme.typography.bodySmall,
                 color    = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
             )
-        }
-        HorizontalDivider()
-        if (availableLogs.isEmpty()) {
-            Box(
-                modifier         = Modifier.fillMaxWidth().padding(32.dp),
-                contentAlignment = Alignment.Center,
-            ) {
-                Text(
-                    text  = stringResource(R.string.skills_no_logs),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
+            HorizontalDivider()
+            if (availableLogs.isEmpty()) {
+                Box(Modifier.fillMaxWidth().padding(32.dp), contentAlignment = Alignment.Center) {
+                    Text(stringResource(R.string.skills_no_logs), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
+            } else {
+                Column(Modifier.verticalScroll(rememberScrollState())) {
+                    availableLogs.entries.sortedBy { it.value.levelRequired }.forEach { (key, log) ->
+                        val ashName = GameStrings.itemName(context, when (key) {
+                            "oak_log" -> "oak_ashes"; "willow_log" -> "willow_ashes"
+                            "maple_log" -> "maple_ashes"; "yew_log" -> "yew_ashes"
+                            "magic_log" -> "magic_ashes"; "redwood_log" -> "redwood_ashes"
+                            else -> "ashes"
+                        })
+                        Row(
+                            modifier          = Modifier.fillMaxWidth().clickable { selectedKey = key }.padding(horizontal = 16.dp, vertical = 12.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Column(Modifier.weight(1f)) {
+                                Text(GameStrings.itemName(context, key), style = MaterialTheme.typography.bodyLarge)
+                                Text(
+                                    text  = stringResource(R.string.firemaking_burns_to, ashName) + "  •  ${log.xpPerLog} XP",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            }
+                            Text(
+                                text  = "${inventory[key] ?: 0} ${stringResource(R.string.firemaking_logs_in_inventory)}",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                        HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+                    }
+                }
             }
         } else {
-            Column(Modifier.verticalScroll(rememberScrollState())) {
-                availableLogs.entries
-                    .sortedBy { it.value.levelRequired }
-                    .forEach { (key, log) ->
-                        ActivityRow(
-                            name             = GameStrings.itemName(context, key),
-                            detail           = stringResource(R.string.skills_log_desc, log.levelRequired, log.xpPerLog),
-                            isStarting       = isStarting,
-                            hasActiveSession = hasActiveSession,
-                            isQueueFull      = isQueueFull,
-                            onClick          = { selectedKey = key },
-                        )
-                    }
+            val key      = selectedKey!!
+            val maxQty   = inventory[key] ?: 0
+            var qty      by remember(key) { androidx.compose.runtime.mutableIntStateOf(maxQty.coerceAtLeast(1)) }
+            var textValue by remember(key) { mutableStateOf(maxQty.coerceAtLeast(1).toString()) }
+            val totalXp = selectedLog.xpPerLog * qty
+
+            TextButton(onClick = { selectedKey = null }, modifier = Modifier.padding(start = 4.dp)) {
+                Text(stringResource(R.string.btn_back_arrow))
             }
+            Text(
+                text     = GameStrings.itemName(context, key),
+                style    = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(horizontal = 16.dp),
+            )
+            Text(
+                text     = "${maxQty} ${stringResource(R.string.firemaking_logs_in_inventory)}  •  ${totalXp} XP",
+                style    = MaterialTheme.typography.bodySmall,
+                color    = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
+            )
+            Spacer(Modifier.height(12.dp))
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
+                androidx.compose.material3.IconButton(onClick = { if (qty > 1) { qty--; textValue = qty.toString() } }, enabled = qty > 1) {
+                    androidx.compose.material3.Icon(androidx.compose.material.icons.Icons.Filled.Remove, contentDescription = null)
+                }
+                androidx.compose.material3.OutlinedTextField(
+                    value         = textValue,
+                    onValueChange = { new ->
+                        val f = new.filter { it.isDigit() }
+                        textValue = f
+                        f.toIntOrNull()?.coerceIn(1, maxQty.coerceAtLeast(1))?.let { qty = it }
+                    },
+                    keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = androidx.compose.ui.text.input.KeyboardType.Number),
+                    singleLine    = true,
+                    modifier      = Modifier.width(80.dp),
+                    textStyle     = MaterialTheme.typography.bodyLarge.copy(textAlign = androidx.compose.ui.text.style.TextAlign.Center),
+                )
+                androidx.compose.material3.IconButton(onClick = { if (qty < maxQty) { qty++; textValue = qty.toString() } }, enabled = qty < maxQty) {
+                    androidx.compose.material3.Icon(androidx.compose.material.icons.Icons.Filled.Add, contentDescription = null)
+                }
+            }
+            QtyQuickButtons(qty, maxQty) { qty = it; textValue = it.toString() }
+            Spacer(Modifier.height(16.dp))
+            val enabled = !isStarting && !(!hasActiveSession && false) && (hasActiveSession || !isQueueFull.not()) && maxQty > 0
+            Button(
+                onClick  = { onStart(key, qty) },
+                enabled  = !isStarting && maxQty > 0 && (!hasActiveSession || !isQueueFull),
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+            ) { Text(stringResource(R.string.firemaking_burn)) }
         }
-    }
-    selectedKey?.let { key ->
-        val log = availableLogs[key] ?: return@let
-        ActivityDetailDialog(
-            name             = GameStrings.itemName(context, key),
-            detail           = stringResource(R.string.skills_log_desc, log.levelRequired, log.xpPerLog),
-            description      = GameStrings.itemDesc(context, key),
-            hasActiveSession = hasActiveSession,
-            isQueueFull      = isQueueFull,
-            onConfirm        = { onSelect(key) },
-            onDismiss        = { selectedKey = null },
-        )
     }
 }
 
@@ -1148,6 +1198,7 @@ internal fun PrayerSheet(
     onStart: (boneKey: String, qty: Int) -> Unit,
     tierMaxQty: Int = Int.MAX_VALUE,
 ) {
+    val context = LocalContext.current
     var selectedKey by remember { mutableStateOf<String?>(null) }
     val selectedBone = selectedKey?.let { availableBones[it] }
 
@@ -1157,7 +1208,7 @@ internal fun PrayerSheet(
             .padding(bottom = 32.dp),
     ) {
         Text(
-            text     = "Prayer",
+            text     = stringResource(R.string.label_prayer),
             style    = MaterialTheme.typography.titleMedium,
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
         )
@@ -1200,7 +1251,7 @@ internal fun PrayerSheet(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Column(Modifier.weight(1f)) {
-                            Text(bone.displayName, style = MaterialTheme.typography.bodyLarge)
+                            Text(GameStrings.itemName(context, key), style = MaterialTheme.typography.bodyLarge)
                             Text(
                                 text  = stringResource(R.string.skills_bone_qty, bone.xpPerBone.toInt(), qty),
                                 style = MaterialTheme.typography.bodySmall,
@@ -1225,7 +1276,7 @@ internal fun PrayerSheet(
             ) { Text(stringResource(R.string.btn_back_arrow)) }
 
             Text(
-                text     = selectedBone.displayName,
+                text     = GameStrings.itemName(context, selectedKey ?: ""),
                 style    = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.padding(horizontal = 16.dp),
             )
@@ -1321,16 +1372,19 @@ internal fun PrayerSheet(
 @Composable
 internal fun RunecraftingSheet(
     sheet: SheetState.Runecrafting,
+    inventory: Map<String, Int> = emptyMap(),
     isStarting: Boolean,
     hasActiveSession: Boolean,
     isQueueFull: Boolean,
     sessionDurationMs: Long,
-    onStart: (String, Int) -> Unit,
+    onStart: (String, Int, String?) -> Unit,
     currentXp: Long = 0L,
     tierMaxQty: Int = Int.MAX_VALUE,
 ) {
+    val context = LocalContext.current
     var selectedKey by remember { mutableStateOf<String?>(null) }
     val selectedRune = selectedKey?.let { sheet.availableRunes[it] }
+    var selectedAshKey by remember { mutableStateOf<String?>(null) }
 
     Column(
         modifier = Modifier
@@ -1390,7 +1444,7 @@ internal fun RunecraftingSheet(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Column(Modifier.weight(1f)) {
-                            Text(rune.displayName, style = MaterialTheme.typography.bodyLarge)
+                            Text(GameStrings.itemName(context, key), style = MaterialTheme.typography.bodyLarge)
                             Text(
                                 text  = stringResource(R.string.skills_rune_desc, rune.xpPerRune.toInt(), rune.levelRequired),
                                 style = MaterialTheme.typography.bodySmall,
@@ -1419,7 +1473,7 @@ internal fun RunecraftingSheet(
             ) { Text(stringResource(R.string.btn_back_arrow)) }
 
             Text(
-                text     = selectedRune.displayName,
+                text     = GameStrings.itemName(context, selectedKey ?: ""),
                 style    = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.padding(horizontal = 16.dp),
             )
@@ -1494,8 +1548,38 @@ internal fun RunecraftingSheet(
                 )
             }
 
+            val ashTiers = listOf("ashes","oak_ashes","willow_ashes","maple_ashes","yew_ashes","magic_ashes","redwood_ashes")
+            val availableAshes = ashTiers.filter { (inventory[it] ?: 0) >= (qty + 9) / 10 }
+            if (availableAshes.isNotEmpty()) {
+                Spacer(Modifier.height(8.dp))
+                Text(stringResource(R.string.catalyst_optional), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(horizontal = 16.dp))
+                Spacer(Modifier.height(4.dp))
+                (listOf(null) + availableAshes).forEach { ashKey ->
+                    val bonus = when (ashKey) {
+                        "ashes","oak_ashes","willow_ashes" -> 1
+                        "maple_ashes","yew_ashes"         -> 2
+                        "magic_ashes"                     -> 3
+                        "redwood_ashes"                   -> 4
+                        else                              -> 0
+                    }
+                    Row(
+                        modifier          = Modifier.fillMaxWidth().clickable { selectedAshKey = ashKey }.padding(horizontal = 16.dp, vertical = 4.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            text  = if (ashKey == null) stringResource(R.string.catalyst_none) else GameStrings.itemName(context, ashKey),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = if (selectedAshKey == ashKey) GoldPrimary else MaterialTheme.colorScheme.onSurface,
+                            fontWeight = if (selectedAshKey == ashKey) FontWeight.SemiBold else FontWeight.Normal,
+                        )
+                        if (ashKey != null) Text(stringResource(R.string.catalyst_rune_bonus, bonus), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                }
+            }
+
             Button(
-                onClick  = { onStart(selectedKey!!, qty) },
+                onClick  = { onStart(selectedKey!!, qty, selectedAshKey) },
                 enabled  = !isStarting && qty > 0 && maxQty > 0 && !(hasActiveSession && isQueueFull),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -1653,6 +1737,7 @@ private fun CraftSkillSheet(
             sessionDurationMs = sessionDurationMs,
             context           = context,
             onSetQuantity     = { craftingViewModel.setQuantity(it, craftState.maxCraftable(selected)) },
+            onSetAsh          = if (selected.skillName == Skills.HERBLORE) craftingViewModel::setHerbloreAsh else null,
             onCraft           = craftingViewModel::craft,
             onBack            = craftingViewModel::dismissRecipe,
         )
@@ -1711,7 +1796,7 @@ private fun CraftSkillSheet(
                                 selectedCategory = if (selectedCategory == cat) null else cat
                                 selectedTier = null
                             },
-                            label     = { Text(cat) },
+                            label     = { Text(GameStrings.craftingCategory(context, cat)) },
                         )
                     }
                 }
@@ -1733,7 +1818,7 @@ private fun CraftSkillSheet(
                         FilterChip(
                             selected  = selectedTier == tier,
                             onClick   = { selectedTier = if (selectedTier == tier) null else tier },
-                            label     = { Text(tier) },
+                            label     = { Text(GameStrings.craftingTier(context, tier)) },
                         )
                     }
                 }
@@ -1774,14 +1859,14 @@ private fun CraftRecipeRow(
     ) {
         Column(Modifier.weight(1f)) {
             Text(
-                text       = recipe.displayName,
+                text       = GameStrings.itemName(context, recipe.outputKey),
                 style      = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Medium,
                 color      = if (enabled) MaterialTheme.colorScheme.onSurface else dim,
             )
             if (recipe.outputQty > 1) {
                 Text(
-                    text  = "×${recipe.outputQty} per craft",
+                    text  = context.getString(R.string.crafting_per_craft, recipe.outputQty),
                     style = MaterialTheme.typography.labelSmall,
                     color = if (enabled) MaterialTheme.colorScheme.primary else dim,
                 )
@@ -1802,11 +1887,11 @@ private fun CraftRecipeRow(
                 )
             }
             val statParts = buildList {
-                if (recipe.outputAttackBonus   > 0) add("+${recipe.outputAttackBonus} Atk")
-                if (recipe.outputStrengthBonus > 0) add("+${recipe.outputStrengthBonus} Str")
-                if (recipe.outputDefenseBonus  > 0) add("+${recipe.outputDefenseBonus} Def")
-                if (recipe.outputHealingValue  > 0) add("Heals ${recipe.outputHealingValue} HP")
-                if (recipe.outputDamage        > 0) add("+${recipe.outputDamage} dmg")
+                if (recipe.outputAttackBonus   > 0) add("+${recipe.outputAttackBonus} ${context.getString(R.string.profile_stat_atk)}")
+                if (recipe.outputStrengthBonus > 0) add("+${recipe.outputStrengthBonus} ${context.getString(R.string.profile_stat_str)}")
+                if (recipe.outputDefenseBonus  > 0) add("+${recipe.outputDefenseBonus} ${context.getString(R.string.profile_stat_def)}")
+                if (recipe.outputHealingValue  > 0) add(context.getString(R.string.combat_heals_hp, recipe.outputHealingValue))
+                if (recipe.outputDamage        > 0) add("+${recipe.outputDamage} ${context.getString(R.string.combat_log_dmg)}")
             }
             if (statParts.isNotEmpty()) {
                 Text(
@@ -1818,7 +1903,7 @@ private fun CraftRecipeRow(
             if (recipe.effects.isNotEmpty()) {
                 Text(
                     text  = recipe.effects.entries.joinToString("  ") { (stat, bonus) ->
-                        "+$bonus ${stat.replaceFirstChar { it.uppercase() }}"
+                        "+$bonus ${GameStrings.skillName(context, stat)}"
                     },
                     style = MaterialTheme.typography.labelSmall,
                     color = if (enabled) MaterialTheme.colorScheme.primary else dim,
@@ -1857,7 +1942,7 @@ private fun CraftRecipeRow(
                     )
                 }
                 else -> Text(
-                    text  = "No mats",
+                    text  = context.getString(R.string.crafting_no_mats),
                     style = MaterialTheme.typography.labelSmall,
                     color = dim,
                 )
@@ -1876,6 +1961,7 @@ private fun CraftQuantityContent(
     sessionDurationMs: Long,
     context: android.content.Context,
     onSetQuantity: (Int) -> Unit,
+    onSetAsh: ((String?) -> Unit)? = null,
     onCraft: () -> Unit,
     onBack: () -> Unit,
 ) {
@@ -1883,6 +1969,7 @@ private fun CraftQuantityContent(
     val max     = state.maxCraftable(recipe)
     val totalXp = recipe.xpPerItem * qty
     var textValue by remember(qty) { mutableStateOf(qty.toString()) }
+    val isHerblore = recipe.skillName == Skills.HERBLORE
 
     Column(
         modifier = Modifier
@@ -1892,7 +1979,7 @@ private fun CraftQuantityContent(
     ) {
         TextButton(onClick = onBack) { Text(stringResource(R.string.btn_back_arrow)) }
         Text(
-            text       = recipe.displayName,
+            text       = GameStrings.itemName(context, recipe.outputKey),
             style      = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
         )
@@ -1912,7 +1999,7 @@ private fun CraftQuantityContent(
             ) {
                 Text(GameStrings.itemName(context, item), style = MaterialTheme.typography.bodyMedium)
                 Text(
-                    text  = "$needed (have $have)",
+                    text  = context.getString(R.string.crafting_needed_have, needed, have),
                     style = MaterialTheme.typography.bodyMedium,
                     color = if (have >= needed) MaterialTheme.colorScheme.onSurface
                             else MaterialTheme.colorScheme.error,
@@ -1974,6 +2061,40 @@ private fun CraftQuantityContent(
                 color    = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.align(Alignment.CenterHorizontally),
             )
+        }
+        if (isHerblore && onSetAsh != null) {
+            val ashTiers = listOf("ashes","oak_ashes","willow_ashes","maple_ashes","yew_ashes","magic_ashes","redwood_ashes")
+            val availableAshes = ashTiers.filter { (state.inventory[it] ?: 0) >= qty }
+            if (availableAshes.isNotEmpty()) {
+                Spacer(Modifier.height(12.dp))
+                Text(stringResource(R.string.catalyst_optional), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Spacer(Modifier.height(4.dp))
+                val selectedAsh = state.herbloreAshKey
+                (listOf(null) + availableAshes).forEach { ashKey ->
+                    Row(
+                        modifier          = Modifier.fillMaxWidth().clickable { onSetAsh(ashKey) }.padding(vertical = 4.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            text  = if (ashKey == null) stringResource(R.string.catalyst_none) else GameStrings.itemName(context, ashKey),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = if (selectedAsh == ashKey) GoldPrimary else MaterialTheme.colorScheme.onSurface,
+                            fontWeight = if (selectedAsh == ashKey) FontWeight.SemiBold else FontWeight.Normal,
+                        )
+                        if (ashKey != null) {
+                            Text(
+                                text  = "×${state.inventory[ashKey] ?: 0}",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                    }
+                }
+                if (selectedAsh != null) {
+                    Text(stringResource(R.string.catalyst_enhanced_output), style = MaterialTheme.typography.labelSmall, color = GoldPrimary)
+                }
+            }
         }
         Spacer(Modifier.height(20.dp))
         Button(

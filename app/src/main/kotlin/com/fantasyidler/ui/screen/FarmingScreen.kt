@@ -12,9 +12,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.FilterChip
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.AlertDialog
@@ -59,6 +61,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.fantasyidler.R
 import com.fantasyidler.data.json.CropData
 import com.fantasyidler.data.model.FarmingPatch
+import com.fantasyidler.repository.FarmingRepository
 import com.fantasyidler.simulator.XpTable
 import com.fantasyidler.ui.theme.GoldPrimary
 import com.fantasyidler.ui.viewmodel.FarmingUiState
@@ -133,6 +136,7 @@ fun FarmingScreen(
                     patch       = patch,
                     crops       = state.availableCrops.associateBy { it.id },
                     now         = state.now,
+                    ashKey      = state.fertilizer[patchNumber.toString()],
                     onPlant     = { viewModel.openPlantSheet(patchNumber) },
                     onHarvest   = { viewModel.harvestPatch(patchNumber) },
                     onClear     = { viewModel.clearPatch(patchNumber) },
@@ -154,7 +158,7 @@ fun FarmingScreen(
             PlantSheet(
                 crops     = state.availableCrops,
                 inventory = state.inventory,
-                onPlant   = { crop -> viewModel.plantCrop(patchNum, crop) },
+                onPlant   = { crop, ashKey -> viewModel.plantCrop(patchNum, crop, ashKey) },
                 onDismiss = viewModel::closePlantSheet,
             )
         }
@@ -250,10 +254,12 @@ private fun PatchCard(
     patch: FarmingPatch?,
     crops: Map<String, CropData>,
     now: Long,
+    ashKey: String? = null,
     onPlant: () -> Unit,
     onHarvest: () -> Unit,
     onClear: () -> Unit,
 ) {
+    val context = LocalContext.current
     var showClearConfirm by remember { mutableStateOf(false) }
 
     val isEmpty   = patch == null || patch.cropType == null
@@ -296,10 +302,18 @@ private fun PatchCard(
                     val elapsed   = growthMs - remaining
                     val progress  = (elapsed.toFloat() / growthMs).coerceIn(0f, 1f)
                     Text(
-                        text       = "${cropData?.emoji ?: "🌱"} ${cropData?.displayName ?: patch.cropType}",
+                        text       = "${cropData?.emoji ?: "🌱"} ${GameStrings.cropName(context, patch.cropType)}",
                         style      = MaterialTheme.typography.bodyLarge,
                         fontWeight = FontWeight.SemiBold,
                     )
+                    if (ashKey != null) {
+                        val pct = ((FarmingRepository.ashYieldMultiplier(ashKey) - 1f) * 100).toInt()
+                        Text(
+                            text  = "🌿 ${context.getString(R.string.farming_fertilizer_yield, pct)}",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = GoldPrimary,
+                        )
+                    }
                     Spacer(Modifier.height(4.dp))
                     LinearProgressIndicator(
                         progress = { progress },
@@ -308,7 +322,7 @@ private fun PatchCard(
                     )
                     Spacer(Modifier.height(4.dp))
                     Text(
-                        text  = "Ready in ${remaining.formatDurationMs()}",
+                        text  = context.getString(R.string.farming_ready_in, remaining.formatDurationMs()),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -325,7 +339,7 @@ private fun PatchCard(
                 isReady -> {
                     // Ready
                     Text(
-                        text       = "${cropData?.emoji ?: "🌾"} ${cropData?.displayName ?: patch.cropType}",
+                        text       = "${cropData?.emoji ?: "🌾"} ${GameStrings.cropName(context, patch.cropType)}",
                         style      = MaterialTheme.typography.bodyLarge,
                         fontWeight = FontWeight.SemiBold,
                     )
@@ -385,9 +399,14 @@ private fun PatchCard(
 private fun PlantSheet(
     crops: List<CropData>,
     inventory: Map<String, Int>,
-    onPlant: (CropData) -> Unit,
+    onPlant: (CropData, String?) -> Unit,
     onDismiss: () -> Unit,
 ) {
+    val context = LocalContext.current
+    val ashTiers = listOf("ashes","oak_ashes","willow_ashes","maple_ashes","yew_ashes","magic_ashes","redwood_ashes")
+    val availableAshes = ashTiers.filter { (inventory[it] ?: 0) > 0 }
+    var selectedAshKey by remember { mutableStateOf<String?>(null) }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -398,6 +417,36 @@ private fun PlantSheet(
             style    = MaterialTheme.typography.titleMedium,
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
         )
+        if (availableAshes.isNotEmpty()) {
+            HorizontalDivider()
+            Text(
+                text     = stringResource(R.string.farming_fertilizer_optional),
+                style    = MaterialTheme.typography.labelMedium,
+                color    = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .horizontalScroll(rememberScrollState())
+                    .padding(horizontal = 16.dp, vertical = 4.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                androidx.compose.material3.FilterChip(
+                    selected = selectedAshKey == null,
+                    onClick  = { selectedAshKey = null },
+                    label    = { Text(stringResource(R.string.catalyst_none)) },
+                )
+                availableAshes.forEach { ashKey ->
+                    val pct = ((FarmingRepository.ashYieldMultiplier(ashKey) - 1f) * 100).toInt()
+                    androidx.compose.material3.FilterChip(
+                        selected = selectedAshKey == ashKey,
+                        onClick  = { selectedAshKey = ashKey },
+                        label    = { Text("${GameStrings.itemName(context, ashKey)} (+$pct%)") },
+                    )
+                }
+            }
+        }
         HorizontalDivider()
         Column(Modifier.verticalScroll(rememberScrollState())) {
             crops.forEach { crop ->
@@ -412,7 +461,7 @@ private fun PlantSheet(
                 ) {
                     Column(Modifier.weight(1f)) {
                         Text(
-                            text  = "${crop.emoji} ${crop.displayName}",
+                            text  = "${crop.emoji} ${GameStrings.cropName(context, crop.id)}",
                             style = MaterialTheme.typography.bodyLarge,
                             color = if (enabled) MaterialTheme.colorScheme.onSurface
                                     else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f),
@@ -430,7 +479,7 @@ private fun PlantSheet(
                     }
                     Spacer(Modifier.width(8.dp))
                     Button(
-                        onClick  = { onPlant(crop); onDismiss() },
+                        onClick  = { onPlant(crop, selectedAshKey); onDismiss() },
                         enabled  = enabled,
                     ) {
                         Text(stringResource(R.string.btn_plant))

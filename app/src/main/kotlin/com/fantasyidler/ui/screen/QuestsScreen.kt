@@ -48,7 +48,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import android.content.Context
 import com.fantasyidler.R
+import com.fantasyidler.data.json.DailyQuestTemplate
 import com.fantasyidler.repository.DailyQuestWithProgress
 import com.fantasyidler.ui.theme.GoldPrimary
 import com.fantasyidler.ui.viewmodel.QuestWithProgress
@@ -241,13 +243,33 @@ private fun DailyQuestsContent(
     }
 }
 
+private fun buildDailyObjective(context: Context, template: DailyQuestTemplate): String {
+    val verbResId = when (template.skill) {
+        "mining"      -> R.string.daily_verb_mining
+        "fishing"     -> R.string.daily_verb_fishing
+        "woodcutting" -> R.string.daily_verb_woodcutting
+        "smithing"    -> R.string.daily_verb_smithing
+        "cooking"     -> R.string.daily_verb_cooking
+        "combat"      -> R.string.daily_verb_combat
+        else          -> return template.description
+    }
+    val verb = context.getString(verbResId)
+    val item = GameStrings.itemName(context, template.target)
+    return "$verb ${template.amount} $item."
+}
+
 @Composable
 private fun DailyQuestCard(
     quest: DailyQuestWithProgress,
     onClaim: () -> Unit,
 ) {
+    val context    = LocalContext.current
     val isComplete = quest.progress >= quest.template.amount
     val isClaimed  = quest.claimed
+    val name      = GameStrings.questName(context, quest.template.id, quest.template.displayName)
+    val objective = GameStrings.questObjective(context, quest.template.id)
+        .takeIf { it.isNotBlank() }
+        ?: buildDailyObjective(context, quest.template)
 
     Column(
         Modifier
@@ -255,13 +277,13 @@ private fun DailyQuestCard(
             .padding(horizontal = 16.dp, vertical = 12.dp),
     ) {
         Text(
-            text       = quest.template.displayName,
+            text       = name,
             style      = MaterialTheme.typography.bodyLarge,
             fontWeight = FontWeight.Bold,
         )
         Spacer(Modifier.height(2.dp))
         Text(
-            text  = quest.template.description,
+            text  = objective,
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )

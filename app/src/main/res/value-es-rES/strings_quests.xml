@@ -195,9 +195,11 @@
     <string name="quest_orc_slayer_2_name">Cazador de Orcos II</string>
     <string name="quest_orc_slayer_2_objective">Derrota 50 Guerreros Orcos</string>
     <string name="quest_demon_slayer_1_name">Cazador de Demonios I</string>
-    <string name="quest_demon_slayer_1_objective">Derrota 20 Demonios Menores</string>
+    <string name="quest_demon_slayer_1_objective">Defeat the Demon Lord</string>
     <string name="quest_demon_slayer_2_name">Cazador de Demonios II</string>
-    <string name="quest_demon_slayer_2_objective">Derrota 40 Demonios Menores</string>
+    <string name="quest_demon_slayer_2_objective">Defeat the Demon Lord 5 times</string>
+    <string name="quest_demon_slayer_3_name">Cazador de Demonios III</string>
+    <string name="quest_demon_slayer_3_objective">Defeat the Demon Lord 25 times</string>
     <string name="quest_dragon_slayer_1_name">Cazador de Dragones I</string>
     <string name="quest_dragon_slayer_1_objective">Derrota 10 Dragones Verdes</string>
     <string name="quest_dragon_slayer_2_name">Cazador de Dragones II</string>
@@ -321,12 +323,27 @@
     <string name="quest_dungeon_infernal_1_objective">Complete the Infernal Stronghold 5 times</string>
     <string name="quest_dungeon_ancient_1_name">Dungeon Master V</string>
     <string name="quest_dungeon_ancient_1_objective">Complete the Ancient Temple 5 times</string>
+    <string name="quest_kbd_slayer_1_objective">Defeat the King Black Dragon</string>
+    <string name="quest_kbd_slayer_2_objective">Defeat the King Black Dragon 5 times</string>
+    <string name="quest_kbd_slayer_3_objective">Defeat the King Black Dragon 25 times</string>
     <string name="quest_kbd_slayer_4_name">King Black Dragon Slayer IV</string>
     <string name="quest_kbd_slayer_4_objective">Defeat the King Black Dragon 50 times</string>
     <string name="quest_demon_slayer_4_name">Demon Slayer IV</string>
     <string name="quest_demon_slayer_4_objective">Defeat the Demon Lord 50 times</string>
+    <string name="quest_kraken_killer_1_name">Kraken Killer I</string>
+    <string name="quest_kraken_killer_1_objective">Defeat the Kraken</string>
+    <string name="quest_kraken_killer_2_name">Kraken Killer II</string>
+    <string name="quest_kraken_killer_2_objective">Defeat the Kraken 5 times</string>
+    <string name="quest_kraken_killer_3_name">Kraken Killer III</string>
+    <string name="quest_kraken_killer_3_objective">Defeat the Kraken 25 times</string>
     <string name="quest_kraken_killer_4_name">Kraken Killer IV</string>
     <string name="quest_kraken_killer_4_objective">Defeat the Kraken 50 times</string>
+    <string name="quest_balrog_bane_1_name">Balrog Bane I</string>
+    <string name="quest_balrog_bane_1_objective">Defeat the Balrog</string>
+    <string name="quest_balrog_bane_2_name">Balrog Bane II</string>
+    <string name="quest_balrog_bane_2_objective">Defeat the Balrog 5 times</string>
+    <string name="quest_balrog_bane_3_name">Balrog Bane III</string>
+    <string name="quest_balrog_bane_3_objective">Defeat the Balrog 25 times</string>
     <string name="quest_balrog_bane_4_name">Balrog Bane IV</string>
     <string name="quest_balrog_bane_4_objective">Defeat the Balrog 50 times</string>
     <string name="quest_melee_warrior_4_name">Melee Warrior IV</string>
@@ -349,4 +366,38 @@
     <string name="quest_treasure_hunter_5_objective">Collect 10 Hellhound Fangs from combat</string>
     <string name="quest_treasure_hunter_6_name">Treasure Hunter VI</string>
     <string name="quest_treasure_hunter_6_objective">Collect 15 Troll Bones from combat</string>
+
+    <!-- Daily quest verbs -->
+    <string name="daily_verb_mining">Extraer</string>
+    <string name="daily_verb_fishing">Pescar</string>
+    <string name="daily_verb_woodcutting">Talar</string>
+    <string name="daily_verb_smithing">Forjar</string>
+    <string name="daily_verb_cooking">Cocinar</string>
+    <string name="daily_verb_combat">Derrotar</string>
+
+    <!-- Daily quest names -->
+    <string name="quest_daily_mine_iron_name">Minero de Hierro</string>
+    <string name="quest_daily_mine_coal_name">Cargador de Carbón</string>
+    <string name="quest_daily_mine_mithril_name">Prospector de Mithril</string>
+    <string name="quest_daily_mine_runite_name">Fiebre del Runite</string>
+    <string name="quest_daily_fish_salmon_name">Carrera del Salmón</string>
+    <string name="quest_daily_fish_lobster_name">Captura de Langosta</string>
+    <string name="quest_daily_fish_swordfish_name">Cazador de Pez Espada</string>
+    <string name="quest_daily_fish_shark_name">Domador de Tiburones</string>
+    <string name="quest_daily_wc_oak_name">Cortador de Roble</string>
+    <string name="quest_daily_wc_willow_name">Trabajador del Sauce</string>
+    <string name="quest_daily_wc_yew_name">Leñador de Tejo</string>
+    <string name="quest_daily_wc_magic_name">Leñador Mágico</string>
+    <string name="quest_daily_smith_iron_name">Herrero de Hierro</string>
+    <string name="quest_daily_smith_mithril_name">Forjador de Mithril</string>
+    <string name="quest_daily_smith_adamantite_name">Artesano de Adamantio</string>
+    <string name="quest_daily_smith_runite_name">Fundidor de Runite</string>
+    <string name="quest_daily_cook_trout_name">Chef de Trucha</string>
+    <string name="quest_daily_cook_salmon_name">Asador de Salmón</string>
+    <string name="quest_daily_cook_lobster_name">Cocinero de Langosta</string>
+    <string name="quest_daily_cook_swordfish_name">Cocinero de Pez Espada</string>
+    <string name="quest_daily_kill_goblin_name">Asesino de Goblins</string>
+    <string name="quest_daily_kill_bandit_name">Cazador de Bandidos</string>
+    <string name="quest_daily_kill_demon_name">Cazador de Demonios</string>
+    <string name="quest_daily_kill_dragon_name">Cazador de Dragones</string>
 </resources>

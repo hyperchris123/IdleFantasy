@@ -868,9 +868,9 @@
     <string name="prestige_confirm_message_xp">Votre niveau %1$s sera réinitialisé à 1, mais vous gagnerez un bonus permanent de +%2$d%% XP pour cette compétence.</string>
     <string name="prestige_confirm_message_stat">Votre niveau %1$s sera réinitialisé à 1, mais vous gagnerez un bonus permanent de +%2$d à vos statistiques.</string>
     <string name="achievement_prestige_first_name">Première réinitialisation</string>
-    <string name="achievement_prestige_first_desc">Atteignez le niveau Prestige pour la première fois avec n'importe quelle compétence/string>
+    <string name="achievement_prestige_first_desc">Atteignez le niveau Prestige pour la première fois avec n\'importe quelle compétence</string>
     <string name="achievement_prestige_any_3_name">Maîtrisé</string>
-    <string name="achievement_prestige_any_3_desc">Atteignez le niveau 3 de Prestige avec n'importe quelle compétence</string>
+    <string name="achievement_prestige_any_3_desc">Atteignez le niveau 3 de Prestige avec n\'importe quelle compétence</string>
     <string name="achievement_prestige_all_1_name">Repartir à zéro</string>
     <string name="achievement_prestige_all_1_desc">Atteignez le niveau Prestige pour toutes les compétences au moins une fois</string>
     <string name="achievement_prestige_all_3_name">Véritable Prestige</string>

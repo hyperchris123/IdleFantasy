@@ -56,20 +56,22 @@ class SessionRepository @Inject constructor(
         skillDisplayName: String,
         alarmOffsetMs: Long? = null,
         insertAsCompleted: Boolean = false,
+        backdateMs: Long = 0L,
     ): SkillSession {
         val now = System.currentTimeMillis()
+        val startedAt = now - backdateMs
         val session = SkillSession(
             sessionId   = UUID.randomUUID().toString(),
             skillName   = skillName,
-            startedAt   = now,
-            endsAt      = now + durationMs,
+            startedAt   = startedAt,
+            endsAt      = startedAt + durationMs,
             frames      = frames,
             activityKey = activityKey,
             completed   = insertAsCompleted,
         )
         sessionDao.insert(session)
         if (!insertAsCompleted) {
-            val alarmAt = if (alarmOffsetMs != null) now + alarmOffsetMs else session.endsAt
+            val alarmAt = if (alarmOffsetMs != null) startedAt + alarmOffsetMs else session.endsAt
             scheduleAlarm(session.sessionId, alarmAt, skillDisplayName)
         }
         return session
@@ -118,9 +120,11 @@ class SessionRepository @Inject constructor(
             return
         }
         if (session.completed) {
-            // Session already completed (alarm fired). Advance the queue in case the
-            // alarm + app-open race left it stuck with remaining items.
-            starter.startNextQueued()
+            // Alarm already fired and marked the session complete, but startNextQueued may
+            // not have run yet (race) or the queue was empty at that time. Backdate the
+            // next session by however long ago the completed session ended.
+            val backdateMs = maxOf(0L, System.currentTimeMillis() - session.endsAt)
+            starter.startNextQueued(backdateMs = backdateMs)
             return
         }
         val now = System.currentTimeMillis()
@@ -132,7 +136,7 @@ class SessionRepository @Inject constructor(
                 if (used == 0L) break
                 catchUpMs -= used
             }
-            starter.startNextQueued()
+            starter.startNextQueued(backdateMs = catchUpMs)
         } else {
             scheduleAlarm(session.sessionId, session.endsAt, session.skillName)
         }

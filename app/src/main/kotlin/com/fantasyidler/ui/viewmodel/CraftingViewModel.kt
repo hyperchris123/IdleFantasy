@@ -82,6 +82,8 @@ data class CraftingUiState(
     /** Non-null while the craft-quantity sheet is open. */
     val selectedRecipe: CraftableRecipe? = null,
     val craftQuantity:  Int = 1,
+    /** Ash catalyst key selected for a herblore brew, or null for no catalyst. */
+    val herbloreAshKey: String? = null,
     val snackbarMessage: String? = null,
     val isLoading: Boolean = true,
 ) {
@@ -280,7 +282,9 @@ class CraftingViewModel @Inject constructor(
         _extra.update { it.copy(selectedRecipe = recipe, craftQuantity = max) }
     }
 
-    fun dismissRecipe() = _extra.update { it.copy(selectedRecipe = null) }
+    fun dismissRecipe() = _extra.update { it.copy(selectedRecipe = null, herbloreAshKey = null) }
+
+    fun setHerbloreAsh(key: String?) = _extra.update { it.copy(herbloreAshKey = key) }
 
     /** [max] should come from the combined uiState (which has inventory), not _extra. */
     fun setQuantity(qty: Int, max: Int) =
@@ -291,6 +295,7 @@ class CraftingViewModel @Inject constructor(
         val recipe = state.selectedRecipe ?: return
         val max    = state.maxCraftable(recipe).coerceAtLeast(1)
         val qty    = state.craftQuantity.coerceIn(1, max)
+        val ashKey = if (recipe.skillName == Skills.HERBLORE) state.herbloreAshKey else null
 
         viewModelScope.launch {
             // Enqueue if a session is already running
@@ -303,6 +308,7 @@ class CraftingViewModel @Inject constructor(
                     skillDisplayName    = recipe.skillName.replaceFirstChar { it.uppercase() },
                     qty                 = qty,
                     estimatedDurationMs = qty.toLong() * perItemMs,
+                    catalystKey         = ashKey,
                 )
                 val enqueued = playerRepo.enqueueAction(action)
                 if (enqueued) playerRepo.consumeItems(recipe.materials.mapValues { it.value * qty })
@@ -329,6 +335,8 @@ class CraftingViewModel @Inject constructor(
             val totalXpGain = (qty * recipe.xpPerItem).toInt()
             val xpAfter     = startXp + totalXpGain
             val levelAfter  = XpTable.levelForXp(xpAfter)
+            val outputKey = if (ashKey != null && recipe.skillName == Skills.HERBLORE)
+                "enhanced_${recipe.outputKey}" else recipe.outputKey
             val frames = listOf(
                 SessionFrame(
                     minute      = 1,
@@ -337,7 +345,7 @@ class CraftingViewModel @Inject constructor(
                     xpAfter     = xpAfter,
                     levelBefore = levelBefore,
                     levelAfter  = levelAfter,
-                    items       = mapOf(recipe.outputKey to recipe.outputQty * qty),
+                    items       = mapOf(outputKey to recipe.outputQty * qty),
                     leveledUp   = levelAfter > levelBefore,
                     kills       = qty,
                 )
@@ -353,6 +361,7 @@ class CraftingViewModel @Inject constructor(
                 frames,
             )
             playerRepo.consumeItems(recipe.materials.mapValues { it.value * qty })
+            if (ashKey != null) playerRepo.consumeItems(mapOf(ashKey to qty))
             sessionRepo.startSession(
                 skillName        = recipe.skillName,
                 activityKey      = recipe.key,
@@ -360,7 +369,7 @@ class CraftingViewModel @Inject constructor(
                 durationMs       = qty * perItemMs,
                 skillDisplayName = recipe.skillName,
             )
-            _extra.update { it.copy(selectedRecipe = null) }
+            _extra.update { it.copy(selectedRecipe = null, herbloreAshKey = null) }
         }
     }
 

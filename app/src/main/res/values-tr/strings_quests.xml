@@ -195,9 +195,11 @@
     <string name="quest_orc_slayer_2_name">Ork Avcısı II</string>
     <string name="quest_orc_slayer_2_objective">50 Ork Savaşçısı Yen</string>
     <string name="quest_demon_slayer_1_name">Şeytan Avcısı I</string>
-    <string name="quest_demon_slayer_1_objective">20 Küçük Şeytan Yen</string>
+    <string name="quest_demon_slayer_1_objective">Defeat the Demon Lord</string>
     <string name="quest_demon_slayer_2_name">Şeytan Avcısı II</string>
-    <string name="quest_demon_slayer_2_objective">40 Küçük Şeytan Yen</string>
+    <string name="quest_demon_slayer_2_objective">Defeat the Demon Lord 5 times</string>
+    <string name="quest_demon_slayer_3_name">Şeytan Avcısı III</string>
+    <string name="quest_demon_slayer_3_objective">Defeat the Demon Lord 25 times</string>
     <string name="quest_dragon_slayer_1_name">Ejderha Avcısı I</string>
     <string name="quest_dragon_slayer_1_objective">10 Yeşil Ejderha Yen</string>
     <string name="quest_dragon_slayer_2_name">Ejderha Avcısı II</string>
@@ -321,12 +323,27 @@
     <string name="quest_dungeon_infernal_1_objective">Complete the Infernal Stronghold 5 times</string>
     <string name="quest_dungeon_ancient_1_name">Dungeon Master V</string>
     <string name="quest_dungeon_ancient_1_objective">Complete the Ancient Temple 5 times</string>
+    <string name="quest_kbd_slayer_1_objective">Defeat the King Black Dragon</string>
+    <string name="quest_kbd_slayer_2_objective">Defeat the King Black Dragon 5 times</string>
+    <string name="quest_kbd_slayer_3_objective">Defeat the King Black Dragon 25 times</string>
     <string name="quest_kbd_slayer_4_name">King Black Dragon Slayer IV</string>
     <string name="quest_kbd_slayer_4_objective">Defeat the King Black Dragon 50 times</string>
     <string name="quest_demon_slayer_4_name">Demon Slayer IV</string>
     <string name="quest_demon_slayer_4_objective">Defeat the Demon Lord 50 times</string>
+    <string name="quest_kraken_killer_1_name">Kraken Killer I</string>
+    <string name="quest_kraken_killer_1_objective">Defeat the Kraken</string>
+    <string name="quest_kraken_killer_2_name">Kraken Killer II</string>
+    <string name="quest_kraken_killer_2_objective">Defeat the Kraken 5 times</string>
+    <string name="quest_kraken_killer_3_name">Kraken Killer III</string>
+    <string name="quest_kraken_killer_3_objective">Defeat the Kraken 25 times</string>
     <string name="quest_kraken_killer_4_name">Kraken Killer IV</string>
     <string name="quest_kraken_killer_4_objective">Defeat the Kraken 50 times</string>
+    <string name="quest_balrog_bane_1_name">Balrog Bane I</string>
+    <string name="quest_balrog_bane_1_objective">Defeat the Balrog</string>
+    <string name="quest_balrog_bane_2_name">Balrog Bane II</string>
+    <string name="quest_balrog_bane_2_objective">Defeat the Balrog 5 times</string>
+    <string name="quest_balrog_bane_3_name">Balrog Bane III</string>
+    <string name="quest_balrog_bane_3_objective">Defeat the Balrog 25 times</string>
     <string name="quest_balrog_bane_4_name">Balrog Bane IV</string>
     <string name="quest_balrog_bane_4_objective">Defeat the Balrog 50 times</string>
     <string name="quest_melee_warrior_4_name">Melee Warrior IV</string>
@@ -349,4 +366,38 @@
     <string name="quest_treasure_hunter_5_objective">Collect 10 Hellhound Fangs from combat</string>
     <string name="quest_treasure_hunter_6_name">Treasure Hunter VI</string>
     <string name="quest_treasure_hunter_6_objective">Collect 15 Troll Bones from combat</string>
+
+    <!-- Daily quest verbs -->
+    <string name="daily_verb_mining">Kaz</string>
+    <string name="daily_verb_fishing">Yakala</string>
+    <string name="daily_verb_woodcutting">Kes</string>
+    <string name="daily_verb_smithing">Dök</string>
+    <string name="daily_verb_cooking">Pişir</string>
+    <string name="daily_verb_combat">Yen</string>
+
+    <!-- Daily quest names -->
+    <string name="quest_daily_mine_iron_name">Demir Madencisi</string>
+    <string name="quest_daily_mine_coal_name">Kömür Taşıyıcısı</string>
+    <string name="quest_daily_mine_mithril_name">Mithril Arayıcısı</string>
+    <string name="quest_daily_mine_runite_name">Runite Koşusu</string>
+    <string name="quest_daily_fish_salmon_name">Somon Akını</string>
+    <string name="quest_daily_fish_lobster_name">Istakoz Avı</string>
+    <string name="quest_daily_fish_swordfish_name">Kılıçbalığı Avcısı</string>
+    <string name="quest_daily_fish_shark_name">Köpekbalığı Avcısı</string>
+    <string name="quest_daily_wc_oak_name">Meşe Oduncusu</string>
+    <string name="quest_daily_wc_willow_name">Söğüt İşçisi</string>
+    <string name="quest_daily_wc_yew_name">Porsuk Oduncusu</string>
+    <string name="quest_daily_wc_magic_name">Büyülü Oduncu</string>
+    <string name="quest_daily_smith_iron_name">Demir Demircisi</string>
+    <string name="quest_daily_smith_mithril_name">Mithril Dövücüsü</string>
+    <string name="quest_daily_smith_adamantite_name">Adamantit Ustası</string>
+    <string name="quest_daily_smith_runite_name">Runite Eriticisi</string>
+    <string name="quest_daily_cook_trout_name">Alabalık Aşçısı</string>
+    <string name="quest_daily_cook_salmon_name">Somon Izgara</string>
+    <string name="quest_daily_cook_lobster_name">Istakoz Aşçısı</string>
+    <string name="quest_daily_cook_swordfish_name">Kılıçbalığı Aşçısı</string>
+    <string name="quest_daily_kill_goblin_name">Goblin Avcısı</string>
+    <string name="quest_daily_kill_bandit_name">Haydut Kırıcı</string>
+    <string name="quest_daily_kill_demon_name">Şeytan Avcısı</string>
+    <string name="quest_daily_kill_dragon_name">Ejderha Avcısı</string>
 </resources>

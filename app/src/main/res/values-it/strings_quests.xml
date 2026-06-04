@@ -194,10 +194,12 @@
     <string name="quest_orc_slayer_1_objective">Sconfiggi 25 Guerrieri Orchi</string>
     <string name="quest_orc_slayer_2_name">Cacciatore di Orchi II</string>
     <string name="quest_orc_slayer_2_objective">Sconfiggi 50 Guerrieri Orchi</string>
-    <string name="quest_demon_slayer_1_name">Cacciatore di Demoni Minori I</string>
-    <string name="quest_demon_slayer_1_objective">Sconfiggi 20 Demoni Minori</string>
-    <string name="quest_demon_slayer_2_name">Cacciatore di Demoni Minori II</string>
-    <string name="quest_demon_slayer_2_objective">Sconfiggi 40 Demoni Minori</string>
+    <string name="quest_demon_slayer_1_name">Cacciatore di Demoni I</string>
+    <string name="quest_demon_slayer_1_objective">Sconfiggi il Signore dei Demoni</string>
+    <string name="quest_demon_slayer_2_name">Cacciatore di Demoni II</string>
+    <string name="quest_demon_slayer_2_objective">Sconfiggi il Signore dei Demoni 5 volte</string>
+    <string name="quest_demon_slayer_3_name">Cacciatore di Demoni III</string>
+    <string name="quest_demon_slayer_3_objective">Sconfiggi il Signore dei Demoni 25 volte</string>
     <string name="quest_dragon_slayer_1_name">Cacciatore di Draghi I</string>
     <string name="quest_dragon_slayer_1_objective">Sconfiggi 10 Draghi Verdi</string>
     <string name="quest_dragon_slayer_2_name">Cacciatore di Draghi II</string>
@@ -334,12 +336,27 @@
     <string name="quest_dungeon_ancient_1_objective">Completa l\'Antico Tempio 5 volte</string>
 
     <!-- Boss extended -->
+    <string name="quest_kbd_slayer_1_objective">Sconfiggi il Drago Nero Regale</string>
+    <string name="quest_kbd_slayer_2_objective">Sconfiggi il Drago Nero Regale 5 volte</string>
+    <string name="quest_kbd_slayer_3_objective">Sconfiggi il Drago Nero Regale 25 volte</string>
     <string name="quest_kbd_slayer_4_name">Cacciatore di Draghi Neri Regali IV</string>
     <string name="quest_kbd_slayer_4_objective">Sconfiggi il Drago Nero Regale 50 volte</string>
     <string name="quest_demon_slayer_4_name">Cacciatore di Demoni IV</string>
     <string name="quest_demon_slayer_4_objective">Sconfiggi il Signore dei Demoni 50 volte</string>
+    <string name="quest_kraken_killer_1_name">Cacciatore di Kraken I</string>
+    <string name="quest_kraken_killer_1_objective">Sconfiggi il Kraken</string>
+    <string name="quest_kraken_killer_2_name">Cacciatore di Kraken II</string>
+    <string name="quest_kraken_killer_2_objective">Sconfiggi il Kraken 5 volte</string>
+    <string name="quest_kraken_killer_3_name">Cacciatore di Kraken III</string>
+    <string name="quest_kraken_killer_3_objective">Sconfiggi il Kraken 25 volte</string>
     <string name="quest_kraken_killer_4_name">Cacciatore di Kraken IV</string>
     <string name="quest_kraken_killer_4_objective">Sconfiggi il Kraken 50 volte</string>
+    <string name="quest_balrog_bane_1_name">Cacciatore di Balrog I</string>
+    <string name="quest_balrog_bane_1_objective">Sconfiggi il Balrog</string>
+    <string name="quest_balrog_bane_2_name">Cacciatore di Balrog II</string>
+    <string name="quest_balrog_bane_2_objective">Sconfiggi il Balrog 5 volte</string>
+    <string name="quest_balrog_bane_3_name">Cacciatore di Balrog III</string>
+    <string name="quest_balrog_bane_3_objective">Sconfiggi il Balrog 25 volte</string>
     <string name="quest_balrog_bane_4_name">Cacciatore di Balrog IV</string>
     <string name="quest_balrog_bane_4_objective">Sconfiggi il Balrog 50 volte</string>
 
@@ -368,4 +385,38 @@
     <string name="quest_treasure_hunter_5_objective">Raccogli 10 Zanne di Segugio Infernale dai tuoi combattimenti</string>
     <string name="quest_treasure_hunter_6_name">Cacciatore di Tesori VI</string>
     <string name="quest_treasure_hunter_6_objective">Raccogli 15 Ossa di Troll dai tuoi combattimenti</string>
+
+    <!-- Daily quest verbs -->
+    <string name="daily_verb_mining">Estrarre</string>
+    <string name="daily_verb_fishing">Pescare</string>
+    <string name="daily_verb_woodcutting">Tagliare</string>
+    <string name="daily_verb_smithing">Forgiare</string>
+    <string name="daily_verb_cooking">Cucinare</string>
+    <string name="daily_verb_combat">Sconfiggere</string>
+
+    <!-- Daily quest names -->
+    <string name="quest_daily_mine_iron_name">Minatore di Ferro</string>
+    <string name="quest_daily_mine_coal_name">Carbonaio</string>
+    <string name="quest_daily_mine_mithril_name">Prospettore di Mithril</string>
+    <string name="quest_daily_mine_runite_name">Corsa al Runite</string>
+    <string name="quest_daily_fish_salmon_name">Risalita del Salmone</string>
+    <string name="quest_daily_fish_lobster_name">Pescata di Aragoste</string>
+    <string name="quest_daily_fish_swordfish_name">Cacciatore di Pesci Spada</string>
+    <string name="quest_daily_fish_shark_name">Addestratore di Squali</string>
+    <string name="quest_daily_wc_oak_name">Taglialegna di Quercia</string>
+    <string name="quest_daily_wc_willow_name">Lavoratore del Salice</string>
+    <string name="quest_daily_wc_yew_name">Boscaiolo di Tasso</string>
+    <string name="quest_daily_wc_magic_name">Taglialegna Magico</string>
+    <string name="quest_daily_smith_iron_name">Fabbro del Ferro</string>
+    <string name="quest_daily_smith_mithril_name">Forgiatore di Mithril</string>
+    <string name="quest_daily_smith_adamantite_name">Artigiano di Adamantio</string>
+    <string name="quest_daily_smith_runite_name">Fonditore di Runite</string>
+    <string name="quest_daily_cook_trout_name">Chef della Trota</string>
+    <string name="quest_daily_cook_salmon_name">Grigliatore di Salmone</string>
+    <string name="quest_daily_cook_lobster_name">Cuoco dell\'Aragosta</string>
+    <string name="quest_daily_cook_swordfish_name">Cuoco del Pesce Spada</string>
+    <string name="quest_daily_kill_goblin_name">Ammazza Goblin</string>
+    <string name="quest_daily_kill_bandit_name">Sgominatore di Banditi</string>
+    <string name="quest_daily_kill_demon_name">Cacciatore di Demoni</string>
+    <string name="quest_daily_kill_dragon_name">Ammazza Draghi</string>
 </resources>

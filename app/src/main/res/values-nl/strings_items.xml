@@ -589,4 +589,22 @@
     <string name="item_super_ranging_potion_name">Super Boogschuttersdrank</string>
     <string name="item_super_magic_potion_name">Super Magiedrank</string>
     <string name="item_overload_potion_name">Overloaddrank</string>
+
+    <!-- Enhanced potions -->
+    <string name="item_enhanced_attack_brew_name">Verbeterd aanvalsbier</string>
+    <string name="item_enhanced_defense_brew_name">Verbeterd verdedigingsbier</string>
+    <string name="item_enhanced_attack_potion_name">Verbeterd aanvalsdrank</string>
+    <string name="item_enhanced_defense_potion_name">Verbeterd verdedigingsdrank</string>
+    <string name="item_enhanced_onion_brew_name">Verbeterd uienbier</string>
+    <string name="item_enhanced_carrot_brew_name">Verbeterd wortelbier</string>
+    <string name="item_enhanced_strength_brew_name">Verbeterd krachtensbier</string>
+    <string name="item_enhanced_strength_potion_name">Verbeterd krachtsdrank</string>
+    <string name="item_enhanced_ranging_potion_name">Verbeterd schietdrank</string>
+    <string name="item_enhanced_magic_potion_name">Verbeterd magiedrank</string>
+    <string name="item_enhanced_super_strength_potion_name">Verbeterd superfysieksdrank</string>
+    <string name="item_enhanced_super_attack_potion_name">Verbeterd superaanvalsdrank</string>
+    <string name="item_enhanced_super_defense_potion_name">Verbeterd superverdedigingsdrank</string>
+    <string name="item_enhanced_super_ranging_potion_name">Verbeterd superschietdrank</string>
+    <string name="item_enhanced_super_magic_potion_name">Verbeterd supermagiedrank</string>
+    <string name="item_enhanced_overload_potion_name">Verbeterd overbelasdrank</string>
 </resources>

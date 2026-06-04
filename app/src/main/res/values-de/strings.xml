@@ -847,4 +847,77 @@
     <string name="achievement_prestige_all_1_desc">Prestige all skills at least once</string>
     <string name="achievement_prestige_all_3_name">True Prestige</string>
     <string name="achievement_prestige_all_3_desc">Reach Prestige 3 on every skill</string>
+
+    <!-- Shop categories -->
+    <string name="shop_cat_ores_and_materials">Erze &amp; Materialien</string>
+    <string name="shop_cat_logs_and_wood">Holzscheite &amp; Holz</string>
+    <string name="shop_cat_seeds_and_farming">Samen &amp; Landwirtschaft</string>
+    <string name="shop_cat_merchants_guild">Händlergilde</string>
+    <string name="shop_cat_equipment">Ausrüstung</string>
+    <string name="shop_cat_special">Besonders</string>
+    <string name="shop_cat_weapons">Waffen</string>
+    <string name="shop_cat_armor">Rüstung</string>
+    <string name="shop_cat_tools">Werkzeug</string>
+    <string name="shop_cat_food">Nahrung</string>
+    <string name="shop_cat_materials">Materialien</string>
+    <string name="shop_cat_misc">Sonstiges</string>
+
+    <string name="crafting_per_craft">×%1$d pro Herstellung</string>
+
+    <!-- Skills screen localisation -->
+    <string name="farming_ready_in">Fertig in %1$s</string>
+    <string name="trade_route_local_market_name">Lokaler Markt</string>
+    <string name="trade_route_river_trading_post_name">Flusshandelsposten</string>
+    <string name="trade_route_eastern_caravan_name">Ostkarawane</string>
+    <string name="trade_route_grand_exchange_name">Große Börse</string>
+    <string name="trade_route_merchants_quarter_name">Händlerviertel</string>
+    <string name="trade_route_northern_ports_name">Nördliche Häfen</string>
+    <string name="trade_route_local_market_desc">Handelt mit gewöhnlichen Gütern auf dem lokalen Markt. Die Erträge sind bescheiden, aber variabel.</string>
+    <string name="trade_route_river_trading_post_desc">Befördert Waren entlang der Flusshandelsroute. Die Gewinne sind unvorhersehbar, aber oft lohnend.</string>
+    <string name="trade_route_eastern_caravan_desc">Schließt euch einer Kaufmannskarawane nach Osten an. Die lange Reise zahlt sich aus, wenn der Deal klappt.</string>
+    <string name="trade_route_grand_exchange_desc">Handelt an der legendären Großen Börse, wo Vermögen gemacht und verloren werden.</string>
+    <string name="trade_route_merchants_quarter_desc">Handelt mit seltenen Gütern im prestigeträchtigen Händlerviertel.</string>
+    <string name="trade_route_northern_ports_desc">Bringt wertvolle Fracht in die nördlichen Hafenstädte. Hohes Risiko, hohe Belohnung.</string>
+    <string name="crafting_cat_bar">Barren</string>
+    <string name="crafting_cat_component">Komponente</string>
+    <string name="crafting_cat_tool">Werkzeug</string>
+    <string name="crafting_cat_weapon">Waffe</string>
+    <string name="crafting_cat_armour">Rüstung</string>
+    <string name="crafting_cat_equipment">Ausrüstung</string>
+    <string name="crafting_cat_food">Nahrung</string>
+    <string name="crafting_cat_ammunition">Munition</string>
+    <string name="crafting_cat_jewellery">Schmuck</string>
+    <string name="crafting_cat_potion">Trank</string>
+
+    <!-- Crafting tier filter chips -->
+    <string name="crafting_tier_adamantite">Adamantit</string>
+    <string name="crafting_tier_arrow">Pfeil</string>
+    <string name="crafting_tier_bronze">Bronze</string>
+    <string name="crafting_tier_gold">Gold</string>
+    <string name="crafting_tier_iron">Eisen</string>
+    <string name="crafting_tier_magic">Magisch</string>
+    <string name="crafting_tier_maple">Ahorn</string>
+    <string name="crafting_tier_mithril">Mithril</string>
+    <string name="crafting_tier_oak">Eiche</string>
+    <string name="crafting_tier_platinum">Platin</string>
+    <string name="crafting_tier_runite">Runite</string>
+    <string name="crafting_tier_shortbow">Kurzbogen</string>
+    <string name="crafting_tier_silver">Silber</string>
+    <string name="crafting_tier_staff">Stab</string>
+    <string name="crafting_tier_steel">Stahl</string>
+    <string name="crafting_tier_willow">Weide</string>
+    <string name="crafting_tier_yew">Eibe</string>
+
+    <!-- Firemaking rework + ash catalyst + fertilizer -->
+    <string name="firemaking_logs_in_inventory">im Inventar</string>
+    <string name="firemaking_burns_to">Verbrennt zu %1$s</string>
+    <string name="firemaking_burn">Verbrennen</string>
+    <string name="farming_fertilizer">Dünger</string>
+    <string name="farming_fertilizer_optional">Dünger hinzufügen (opt.)</string>
+    <string name="farming_fertilizer_yield">+%1$d%% Ertrag</string>
+    <string name="farming_fertilized">Gedüngt</string>
+    <string name="catalyst_optional">Aschen-Katalysator (opt.)</string>
+    <string name="catalyst_enhanced_output">Produziert verbesserten Trank</string>
+    <string name="catalyst_rune_bonus">+%1$d Rune pro Essenz</string>
+    <string name="catalyst_none">Kein Katalysator</string>
 </resources>
