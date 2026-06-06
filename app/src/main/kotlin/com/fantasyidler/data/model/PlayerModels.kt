@@ -121,6 +121,16 @@ data class QueuedAction(
     @SerialName("coin_refund") val coinRefund: Long = 0L,
     /** Ash item key used as a catalyst for herblore or runecrafting. Null = no catalyst. */
     @SerialName("catalyst_key") val catalystKey: String? = null,
+    /** Potion item key to consume and apply when this queued combat session starts. */
+    @SerialName("potion_key") val potionKey: String? = null,
+    /** JSON snapshot of Map<String,String?> (equipped gear) captured at queue time for combat/boss sessions. */
+    @SerialName("equipped_snapshot") val equippedSnapshot: String? = null,
+    /** Arrow item key captured at queue time. */
+    @SerialName("arrows_key") val arrowsKey: String? = null,
+    /** Rune item key captured at queue time (magic only). */
+    @SerialName("runes_key") val runesKey: String? = null,
+    /** Spell name captured at queue time. */
+    @SerialName("spell_name") val spellName: String? = null,
 )
 
 // ---------------------------------------------------------------------------
