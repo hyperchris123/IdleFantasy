@@ -264,15 +264,17 @@ class HomeViewModel @Inject constructor(
                         val allFoodConsumed   = mutableMapOf<String, Int>()
                         val allArrowsConsumed = mutableMapOf<String, Int>()
                         val allRunesConsumed  = mutableMapOf<String, Int>()
+                        val bossXpBySkill     = mutableMapOf<String, Long>()
                         for (f in frames) {
                             f.foodConsumed.forEach   { (k, v) -> allFoodConsumed[k]   = (allFoodConsumed[k] ?: 0) + v }
                             f.arrowsConsumed.forEach { (k, v) -> allArrowsConsumed[k] = (allArrowsConsumed[k] ?: 0) + v }
                             f.runesConsumed.forEach  { (k, v) -> allRunesConsumed[k]  = (allRunesConsumed[k] ?: 0) + v }
+                            f.xpBySkill.forEach      { (k, v) -> bossXpBySkill[k]     = (bossXpBySkill[k] ?: 0L) + v }
                         }
                         val bossSkillLvls    = playerRepo.getSkillLevels()
                         val bossArrowsRec    = allArrowsConsumed.mapValues { (_, qty) -> (qty * reclaimChance(bossSkillLvls[Skills.RANGED] ?: 1)).toInt() }.filterValues { it > 0 }
                         val bossRunesRec     = allRunesConsumed.mapValues  { (_, qty) -> (qty * reclaimChance(bossSkillLvls[Skills.MAGIC]  ?: 1)).toInt() }.filterValues { it > 0 }
-                        awardedCapes += playerRepo.applyMultiSkillResults(frame.xpBySkill, loot, coins)
+                        awardedCapes += playerRepo.applyMultiSkillResults(bossXpBySkill, loot, coins)
                         if (allFoodConsumed.isNotEmpty())   playerRepo.consumeItems(allFoodConsumed)
                         if (allArrowsConsumed.isNotEmpty()) playerRepo.consumeItems(allArrowsConsumed)
                         if (bossArrowsRec.isNotEmpty())     playerRepo.addItems(bossArrowsRec)
@@ -289,11 +291,11 @@ class HomeViewModel @Inject constructor(
                                 loot         = loot,
                             )
                             playerRepo.recordDailyKills(mapOf(session.activityKey to 1))
-                            guildRepo.recordGuildCombat(mapOf(session.activityKey to 1), detectCombatStyle(frame.xpBySkill))
+                            guildRepo.recordGuildCombat(mapOf(session.activityKey to 1), detectCombatStyle(bossXpBySkill))
                             for ((item, qty) in loot) combinedItems[item] = (combinedItems[item] ?: 0) + qty
                             combinedCoins += coins
                         }
-                        for ((skill, xp) in frame.xpBySkill) combinedXpBySkill[skill] = (combinedXpBySkill[skill] ?: 0L) + xp
+                        for ((skill, xp) in bossXpBySkill) combinedXpBySkill[skill] = (combinedXpBySkill[skill] ?: 0L) + xp
                     }
                     "combat" -> {
                         val xpPerSkill = mutableMapOf<String, Long>()
@@ -700,6 +702,7 @@ class HomeViewModel @Inject constructor(
 
     fun collectWorkerSession() {
         viewModelScope.launch {
+            sessionRepo.markAllExpiredWorkerSessions()
             for (slot in 1..2) {
                 val latest = sessionRepo.getActiveWorkerSession(slot)
                 if (latest != null && !latest.completed && System.currentTimeMillis() >= latest.endsAt) {
@@ -743,13 +746,15 @@ class HomeViewModel @Inject constructor(
                             val coins = its.remove("coins")?.toLong() ?: 0L
                             val pets  = its.filterKeys { it in petIds }
                             val loot  = its.filterKeys { it !in petIds }
-                            awardedCapes += playerRepo.applyMultiSkillResults(frame.xpBySkill, loot, coins, mult)
+                            val workerBossXp = mutableMapOf<String, Long>()
+                            for (f in frames) f.xpBySkill.forEach { (k, v) -> workerBossXp[k] = (workerBossXp[k] ?: 0L) + v }
+                            awardedCapes += playerRepo.applyMultiSkillResults(workerBossXp, loot, coins, mult)
                             for ((id, _) in pets) {
                                 val pd = gameData.pets[id] ?: continue
                                 if (playerRepo.addPetIfNew(id, pd.boostPercent))
                                     petMessage = "You found a pet: ${pd.displayName}!"
                             }
-                            for ((skill, xp) in frame.xpBySkill) combinedXpBySkill[skill] = (combinedXpBySkill[skill] ?: 0L) + xp
+                            for ((skill, xp) in workerBossXp) combinedXpBySkill[skill] = (combinedXpBySkill[skill] ?: 0L) + xp
                             for ((item, qty) in loot) combinedItems[item] = (combinedItems[item] ?: 0) + qty
                             combinedCoins += coins
                         }
