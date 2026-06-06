@@ -1,0 +1,10 @@
+• Fix: Worker session quest tracking no longer misattributes progress between the two worker slots; a race in the alarm receiver caused slot 2 completions to incorrectly advance slot 1's queue
+• Fix: App no longer crashes on startup when 900+ bones were queued for prayer burial; malformed or overlong sessions are now ended gracefully instead of triggering an exception
+• Fix: Boss sessions stuck at 0 HP after a force-close and restart are now automatically ended when the pre-simulated frames confirm the boss was already killed
+• Fix: Prestiges that drop your combat skill below a weapon's requirements no longer leave you gear-less; bronze starter gear is granted and equipped automatically if no valid alternative exists in your inventory
+• Fix: Selecting a potion before queuing a combat dungeon or boss session now correctly consumes and applies it when that session starts, rather than being silently ignored
+• New: 5 rare boss drops now have full equipment stats: Dragon Amulet, Ring of Dragon's Might (King Black Dragon), Kraken Tentacle, Amulet of the Kraken, Ring of the Seas (Kraken)
+• Fix: Gear picker now shows all stat requirements for items with multiple requirements (e.g. Flame Heart Amulet requiring both Attack 75 and Magic 75 now shows both, not just the first)
+• Fix: Mages Guild quest "Defeat the Kraken using Magic" now correctly counts magic boss kills even when the boss is killed in an early simulation frame
+• Fix: Tangleroot farming pet is now obtainable; patch harvests now correctly roll for the pet drop (1/1000 chance per harvest)
+• Fix: Queuing a combat session with a different weapon, spell, or arrows than the active session no longer pollutes the active session's stats display or causes the next queued session to inherit wrong gear

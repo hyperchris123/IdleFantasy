@@ -3,7 +3,7 @@
     <!-- ===== Skill names and descriptions ===== -->
 
     <!-- Gathering skills -->
-    <string name="skill_mining_name">Miniera</string>
+    <string name="skill_mining_name">Estrazione</string>
     <string name="skill_mining_desc">Estrai minerali preziosi e gemme dalla terra.</string>
     <string name="skill_fishing_name">Pesca</string>
     <string name="skill_fishing_desc">Cattura pesci e tesori marini.</string>
@@ -21,9 +21,9 @@
     <string name="skill_smithing_desc">Fondi lingotti di metallo dai minerali grezzi e forgia potenti equipaggiamenti di metallo.</string>
     <string name="skill_cooking_name">Cucina</string>
     <string name="skill_cooking_desc">Prepara dagli ingredienti grezzi cibo per recuperare HP in combattimento.</string>
-    <string name="skill_fletching_name">Fletching</string>
+    <string name="skill_fletching_name">Frecciaio</string>
     <string name="skill_fletching_desc">Costruisci archi e frecce da legno e componenti di metallo.</string>
-    <string name="skill_crafting_name">Crafting</string>
+    <string name="skill_crafting_name">Oreficeria</string>
     <string name="skill_crafting_desc">Crea gioielli e altri oggetti di artigianato da metalli preziosi.</string>
     <string name="skill_runecrafting_name">Incisione di Rune</string>
     <string name="skill_runecrafting_desc">Dall\'essenza di rune, incidi rune per lanciare incantesimi.</string>
@@ -53,7 +53,7 @@
     <string name="label_hp_scales">I PS massimi aumentano ogni livello</string>
     <string name="label_hp_max">PS massimi: %1$d</string>
     <string name="label_xp_per_bone">%1$s (%2$d XP/osso)</string>
-    <string name="label_xp_per_kill">%1$s (%2$d XP/uccisione)</string>
+    <string name="label_xp_per_kill">%1$s (%2$d XP/scalpo)</string>
 
     <!-- ===== Agility course names and descriptions ===== -->
     <string name="agility_beginner_course_name">Percorso per Principianti</string>

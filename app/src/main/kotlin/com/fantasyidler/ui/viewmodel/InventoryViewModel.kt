@@ -140,12 +140,12 @@ class InventoryViewModel @Inject constructor(
         viewModelScope.launch {
             val requirements = gameData.equipment[itemKey]?.requirements ?: emptyMap()
             val skillLevels  = uiState.value.skillLevels
-            val unmet = requirements.entries.firstOrNull { (skill, lvl) -> (skillLevels[skill] ?: 1) < lvl }
-            if (unmet != null) {
-                val (skill, lvl) = unmet
-                _extra.update {
-                    it.copy(snackbarMessage = "Requires ${skill.replaceFirstChar { c -> c.uppercase() }} $lvl to equip.")
+            val unmetReqs = requirements.entries.filter { (skill, lvl) -> (skillLevels[skill] ?: 1) < lvl }
+            if (unmetReqs.isNotEmpty()) {
+                val msg = unmetReqs.joinToString(", ") { (skill, lvl) ->
+                    "${skill.replaceFirstChar { c -> c.uppercase() }} $lvl"
                 }
+                _extra.update { it.copy(snackbarMessage = "Requires $msg to equip.") }
                 return@launch
             }
             val current = playerRepo.getEquipped().toMutableMap()
@@ -189,7 +189,15 @@ class InventoryViewModel @Inject constructor(
                         }
                     }
 
-                if (best != null) newEquipped[slot] = best.name
+                val currentItemKey = newEquipped[slot]
+                val currentItemValid = currentItemKey == null || run {
+                    val it = equipment[currentItemKey]
+                    it != null && it.requirements.all { (skill, lvl) -> (skillLevels[skill] ?: 1) >= lvl }
+                }
+                when {
+                    best != null -> newEquipped[slot] = best.name
+                    !currentItemValid -> newEquipped[slot] = null
+                }
             }
 
             playerRepo.updateEquipped(newEquipped)

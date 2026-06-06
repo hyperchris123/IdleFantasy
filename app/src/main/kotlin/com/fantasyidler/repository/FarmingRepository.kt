@@ -100,6 +100,11 @@ class FarmingRepository @Inject constructor(
             itemsGained = items,
         )
 
+        val farmingPet = gameData.pets.values.firstOrNull { it.boostedSkill == Skills.FARMING }
+        if (farmingPet != null && Random.nextDouble() < 1.0 / 1000.0) {
+            playerRepo.addPetIfNew(farmingPet.id, farmingPet.boostPercent)
+        }
+
         if (ashKey != null) {
             playerRepo.updateFlags(flags.copy(
                 farmingFertilizer = flags.farmingFertilizer - patchNumber.toString()
