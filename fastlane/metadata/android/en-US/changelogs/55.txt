@@ -1,0 +1,9 @@
+• New: Bone Altar — tap to bury bones for instant Prayer XP without starting a timed session; build a tap combo of 10 or more to earn a 50% XP bonus; accessible from the Prayer skill panel
+• Fix: Notifications now only fire at the end of an entire session queue again, not after every individual session
+• Fix: Mining Guild quest "Gold Standard" now appears before "Mithril Mandate" in the quest list, matching the correct progression order
+• Fix: Expedition notes now correctly increment each time one is found; previously a second database write was clobbering the note count
+• Fix: The Completionist achievement now correctly unlocks when all real skills reach level 99; old save data containing internal keys no longer permanently blocks it
+• Fix: Starting an expedition now shows a confirmation snackbar, matching the behaviour when adding one to the queue
+• Fix: Town menu labels in non-English locales no longer squeeze the location name off-screen; long descriptions are now truncated with an ellipsis
+• Fix: Combat log hit and miss messages are now fully translatable format strings, allowing non-English locales to reorder words naturally
+• Fix: Quest objective descriptions now use translated item, enemy, and dungeon names instead of hardcoded English text; all quest types generate their description dynamically so non-English locales see fully localised objectives

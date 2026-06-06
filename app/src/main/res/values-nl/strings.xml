@@ -402,6 +402,11 @@
     <string name="combat_log_dmg">schade</string>
     <string name="combat_log_missed">miste</string>
     <string name="combat_log_you_missed">Je miste</string>
+    <string name="combat_log_kill">☠ %1$s verslagen</string>
+    <string name="combat_log_player_hit">→ Je raakt %1$s: %2$d schade</string>
+    <string name="combat_log_player_miss">→ Je miste %1$s</string>
+    <string name="combat_log_enemy_hit">← %1$s raakt jou: %2$d schade</string>
+    <string name="combat_log_enemy_miss">← %1$s miste</string>
     <string name="combat_rec_level">Aanbevolen gevechtslevel</string>
     <string name="combat_your_level">Jouw gevechtslevel</string>
     <string name="combat_no_strength_bonus">Geen (geen krachtbonus)</string>
@@ -926,4 +931,15 @@
     <string name="catalyst_enhanced_output">Produceert verbeterd drankje</string>
     <string name="catalyst_rune_bonus">%1$d runen per essentie</string>
     <string name="catalyst_none">Geen katalysator</string>
+    <string name="bone_altar_title">Beenaltaar</string>
+    <string name="bone_altar_open">Gebruik Altaar</string>
+    <string name="bone_altar_select_prompt">Selecteer een bot om te begraven</string>
+    <string name="bone_altar_tap">Tik om te Begraven</string>
+    <string name="bone_altar_change_bone">Wijzigen</string>
+    <string name="bone_altar_combo_count">Combo ×%d</string>
+    <string name="bone_altar_bonus_active">+50%% XP-bonus!</string>
+    <string name="bone_altar_session_xp">+%s XP deze sessie</string>
+    <string name="bone_altar_buried_count">%d begraven</string>
+    <string name="bone_altar_no_bones">Geen botten in inventaris</string>
+    <string name="bone_altar_cape_awarded">Gebedscape verdiend!</string>
 </resources>

@@ -415,4 +415,30 @@
     <string name="quest_daily_kill_bandit_name">Bandieten Breker</string>
     <string name="quest_daily_kill_demon_name">Demonenjager</string>
     <string name="quest_daily_kill_dragon_name">Drakenslachter</string>
+
+    <!-- Quest objective verb strings for craft skills -->
+    <string name="daily_verb_crafting">Vervaardigen</string>
+    <string name="daily_verb_firemaking">Verbranden</string>
+    <string name="daily_verb_fletching">Bevederd</string>
+    <string name="daily_verb_herblore">Brouwen</string>
+    <string name="daily_verb_runecrafting">Runewerk</string>
+    <string name="daily_verb_prayer">Begraven</string>
+
+    <!-- Quest objective format strings -->
+    <string name="quest_obj_gather">%1$s %2$d %3$s</string>
+    <string name="quest_obj_craft">%1$s %2$d %3$s</string>
+    <string name="quest_obj_prayer">Begraaf %1$d botten van elk type</string>
+    <string name="quest_obj_kill">Versla %1$d vijanden</string>
+    <string name="quest_obj_kill_enemy">Versla %1$d %2$s</string>
+    <string name="quest_obj_dungeon">Voltooi %1$s %2$d keer</string>
+    <string name="quest_obj_dungeon_once">Voltooi %1$s</string>
+    <string name="quest_obj_boss">Versla %1$s %2$d keer</string>
+    <string name="quest_obj_boss_once">Versla %1$s</string>
+    <string name="quest_obj_dungeon_melee_only">Voltooi %1$s met alleen melee</string>
+    <string name="quest_obj_dungeon_ranged_only">Voltooi %1$s met alleen afstand</string>
+    <string name="quest_obj_dungeon_magic_only">Voltooi %1$s met alleen magie</string>
+    <string name="quest_obj_dungeon_no_food">Voltooi %1$s zonder voedsel</string>
+    <string name="quest_obj_collect">Verzamel %1$d %2$s in gevecht</string>
+    <string name="quest_obj_slayer_task">Voltooi %1$d Slayer-taken</string>
+
 </resources>

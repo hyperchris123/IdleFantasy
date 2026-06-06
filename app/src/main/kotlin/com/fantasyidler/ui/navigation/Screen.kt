@@ -133,6 +133,12 @@ sealed class Screen(
         icon     = Icons.Filled.Shield,
     )
 
+    object BoneAltar : Screen(
+        route    = "bone_altar",
+        labelRes = R.string.bone_altar_title,
+        icon     = Icons.Filled.Star,
+    )
+
     companion object {
         val bottomNavItems = listOf(Skills, Combat, Home, Quests, Profile)
     }

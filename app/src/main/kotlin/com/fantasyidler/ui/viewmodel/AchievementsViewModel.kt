@@ -70,7 +70,7 @@ class AchievementsViewModel @Inject constructor(
             ach("total_1000", R.string.achievement_total_1000_name, R.string.achievement_total_1000_desc, "🌟",  totalLevel >= 1000),
             ach("total_1500", R.string.achievement_total_1500_name, R.string.achievement_total_1500_desc, "👑",  totalLevel >= 1500),
             ach("skill_99",   R.string.achievement_skill_99_name,   R.string.achievement_skill_99_desc,   "💯",  levels.values.any { it >= 99 }),
-            ach("all_99",     R.string.achievement_all_99_name,     R.string.achievement_all_99_desc,     "🏆",  levels.values.all { it >= 99 }),
+            ach("all_99",     R.string.achievement_all_99_name,     R.string.achievement_all_99_desc,     "🏆",  Skills.ALL.all { (levels[it] ?: 1) >= 99 }),
         )
 
         groups["Combat"] = listOf(

@@ -427,9 +427,10 @@ class HomeViewModel @Inject constructor(
                                 unlockMessage  = unlockMsg,
                                 boostWasActive = boostActive,
                             )
+                        } else {
+                            // No note this run — persist the incremented pity counter.
+                            playerRepo.updateFlags(currentFlags.copy(expeditionPityRuns = newPityRuns))
                         }
-                        // No note this run — persist the incremented pity counter.
-                        playerRepo.updateFlags(currentFlags.copy(expeditionPityRuns = newPityRuns))
                     }
                     Skills.MERCANTILE -> {
                         val totalXp    = frames.sumOf { it.xpGain.toLong() }

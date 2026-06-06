@@ -607,4 +607,7 @@
     <string name="item_enhanced_super_ranging_potion_name">Super Ranging Potion</string>
     <string name="item_enhanced_super_magic_potion_name">Super Magic Potion</string>
     <string name="item_enhanced_overload_potion_name">Overload Potion</string>
+
+    <string name="item_any_fish_name">fish (any type)</string>
+
 </resources>

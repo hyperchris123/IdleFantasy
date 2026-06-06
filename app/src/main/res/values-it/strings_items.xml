@@ -607,4 +607,7 @@
     <string name="item_enhanced_super_ranging_potion_name">Pozione Super Mira Potenziata</string>
     <string name="item_enhanced_super_magic_potion_name">Pozione Super Magia Potenziata</string>
     <string name="item_enhanced_overload_potion_name">Pozione Sovraccarica Potenziata</string>
+
+    <string name="item_any_fish_name">pesce (qualsiasi tipo)</string>
+
 </resources>

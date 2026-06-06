@@ -348,6 +348,11 @@
     <string name="combat_log_dmg">daño</string>
     <string name="combat_log_missed">fallo</string>
     <string name="combat_log_you_missed">Has fallado</string>
+    <string name="combat_log_kill">☠ %1$s derrotado</string>
+    <string name="combat_log_player_hit">→ Has golpeado %1$s: %2$d daño</string>
+    <string name="combat_log_player_miss">→ Has fallado a %1$s</string>
+    <string name="combat_log_enemy_hit">← %1$s te golpea: %2$d daño</string>
+    <string name="combat_log_enemy_miss">← %1$s fallo</string>
     <string name="combat_rec_level">Nivel de combate recomendado</string>
     <string name="combat_your_level">Tu nivel de combate</string>
     <string name="combat_no_strength_bonus">Ninguno (sin bonificación de fuerza)</string>
@@ -960,4 +965,15 @@
     <string name="catalyst_enhanced_output">Produce poción mejorada</string>
     <string name="catalyst_rune_bonus">%1$d runas por esencia</string>
     <string name="catalyst_none">Sin catalizador</string>
+    <string name="bone_altar_title">Altar de Huesos</string>
+    <string name="bone_altar_open">Usar Altar</string>
+    <string name="bone_altar_select_prompt">Selecciona un hueso para enterrar</string>
+    <string name="bone_altar_tap">Toca para Enterrar</string>
+    <string name="bone_altar_change_bone">Cambiar</string>
+    <string name="bone_altar_combo_count">Combo ×%d</string>
+    <string name="bone_altar_bonus_active">+50%% bono de XP!</string>
+    <string name="bone_altar_session_xp">+%s XP esta sesión</string>
+    <string name="bone_altar_buried_count">%d enterrados</string>
+    <string name="bone_altar_no_bones">No hay huesos en el inventario</string>
+    <string name="bone_altar_cape_awarded">¡Capa de Oración conseguida!</string>
 </resources>

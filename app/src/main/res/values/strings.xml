@@ -408,6 +408,11 @@
     <string name="combat_log_dmg">dmg</string>
     <string name="combat_log_missed">missed</string>
     <string name="combat_log_you_missed">You missed</string>
+    <string name="combat_log_kill">☠ %1$s defeated</string>
+    <string name="combat_log_player_hit">→ You hit %1$s: %2$d dmg</string>
+    <string name="combat_log_player_miss">→ You missed %1$s</string>
+    <string name="combat_log_enemy_hit">← %1$s hit you: %2$d dmg</string>
+    <string name="combat_log_enemy_miss">← %1$s missed</string>
     <string name="combat_rec_level">Recommended combat level</string>
     <string name="combat_your_level">Your combat level</string>
     <string name="combat_no_strength_bonus">None (no strength bonus)</string>
@@ -974,6 +979,19 @@
     <string name="crafting_tier_steel">Steel</string>
     <string name="crafting_tier_willow">Willow</string>
     <string name="crafting_tier_yew">Yew</string>
+
+    <!-- Bone Altar -->
+    <string name="bone_altar_title">Bone Altar</string>
+    <string name="bone_altar_open">Use Altar</string>
+    <string name="bone_altar_select_prompt">Select a bone to bury at the altar</string>
+    <string name="bone_altar_tap">Tap to Bury</string>
+    <string name="bone_altar_change_bone">Change</string>
+    <string name="bone_altar_combo_count">Combo ×%d</string>
+    <string name="bone_altar_bonus_active">+50%% XP bonus!</string>
+    <string name="bone_altar_session_xp">+%s XP this session</string>
+    <string name="bone_altar_buried_count">%d buried</string>
+    <string name="bone_altar_no_bones">No bones in inventory</string>
+    <string name="bone_altar_cape_awarded">Prayer cape earned!</string>
 
     <!-- Firemaking rework + ash catalyst + fertilizer -->
     <string name="firemaking_logs_in_inventory">in inventory</string>

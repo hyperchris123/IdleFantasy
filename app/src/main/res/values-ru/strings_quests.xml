@@ -419,4 +419,30 @@
     <string name="quest_daily_kill_bandit_name">Истребитель бандитов</string>
     <string name="quest_daily_kill_demon_name">Охотник на демонов</string>
     <string name="quest_daily_kill_dragon_name">Драконий убийца</string>
+
+    <!-- Quest objective verb strings for craft skills -->
+    <string name="daily_verb_crafting">Изготовьте</string>
+    <string name="daily_verb_firemaking">Сожгите</string>
+    <string name="daily_verb_fletching">Оперяйте</string>
+    <string name="daily_verb_herblore">Варите</string>
+    <string name="daily_verb_runecrafting">Создайте</string>
+    <string name="daily_verb_prayer">Закопайте</string>
+
+    <!-- Quest objective format strings -->
+    <string name="quest_obj_gather">%1$s %2$d %3$s</string>
+    <string name="quest_obj_craft">%1$s %2$d %3$s</string>
+    <string name="quest_obj_prayer">Похороните %1$d костей любого вида</string>
+    <string name="quest_obj_kill">Победите %1$d врагов</string>
+    <string name="quest_obj_kill_enemy">Победите %1$d %2$s</string>
+    <string name="quest_obj_dungeon">Пройдите %1$s %2$d раз</string>
+    <string name="quest_obj_dungeon_once">Пройдите %1$s</string>
+    <string name="quest_obj_boss">Победите %1$s %2$d раз</string>
+    <string name="quest_obj_boss_once">Победите %1$s</string>
+    <string name="quest_obj_dungeon_melee_only">Пройдите %1$s только ближним боем</string>
+    <string name="quest_obj_dungeon_ranged_only">Пройдите %1$s только дальним боем</string>
+    <string name="quest_obj_dungeon_magic_only">Пройдите %1$s только магией</string>
+    <string name="quest_obj_dungeon_no_food">Пройдите %1$s без еды</string>
+    <string name="quest_obj_collect">Соберите %1$d %2$s в бою</string>
+    <string name="quest_obj_slayer_task">Выполните %1$d задания Убийцы</string>
+
 </resources>

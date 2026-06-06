@@ -165,6 +165,7 @@ class ExpeditionsViewModel @Inject constructor(
                 durationMs       = result.durationMs,
                 skillDisplayName = dungeon.displayName,
             )
+            _extra.update { it.copy(snackbarMessage = "${dungeon.displayName} started.") }
         }
     }
 

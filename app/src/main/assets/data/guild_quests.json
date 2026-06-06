@@ -82,7 +82,7 @@
   "mining_guild_5": {
     "id": "mining_guild_5",
     "guild": "mining",
-    "guild_level_required": 4,
+    "guild_level_required": 5,
     "name": "Mithril Mandate",
     "type": "gather",
     "target": "mithril_ore",
@@ -102,7 +102,7 @@
   "mining_guild_6": {
     "id": "mining_guild_6",
     "guild": "mining",
-    "guild_level_required": 5,
+    "guild_level_required": 4,
     "name": "Gold Standard",
     "type": "gather",
     "target": "gold_ore",

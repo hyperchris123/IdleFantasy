@@ -408,6 +408,11 @@
     <string name="combat_log_dmg">danno</string>
     <string name="combat_log_missed">manca il bersaglio</string>
     <string name="combat_log_you_missed">Hai mancato</string>
+    <string name="combat_log_kill">☠ %1$s sconfitto</string>
+    <string name="combat_log_player_hit">→ Hai colpito %1$s: %2$d danno</string>
+    <string name="combat_log_player_miss">→ Hai mancato %1$s</string>
+    <string name="combat_log_enemy_hit">← %1$s ti ha colpito: %2$d danno</string>
+    <string name="combat_log_enemy_miss">← %1$s manca il bersaglio</string>
     <string name="combat_rec_level">Livello di combattimento consigliato</string>
     <string name="combat_your_level">Il tuo livello di combattimento</string>
     <string name="combat_no_strength_bonus">Nessuno (nessun bonus sulla forza)</string>
@@ -987,4 +992,15 @@
     <string name="catalyst_enhanced_output">Produce pozione potenziata</string>
     <string name="catalyst_rune_bonus">%1$d rune per essenza</string>
     <string name="catalyst_none">Nessun catalizzatore</string>
+    <string name="bone_altar_title">Altare delle Ossa</string>
+    <string name="bone_altar_open">Usa Altare</string>
+    <string name="bone_altar_select_prompt">Seleziona un osso da seppellire</string>
+    <string name="bone_altar_tap">Tocca per Seppellire</string>
+    <string name="bone_altar_change_bone">Cambia</string>
+    <string name="bone_altar_combo_count">Combo ×%d</string>
+    <string name="bone_altar_bonus_active">+50%% bonus XP!</string>
+    <string name="bone_altar_session_xp">+%s XP questa sessione</string>
+    <string name="bone_altar_buried_count">%d sepolti</string>
+    <string name="bone_altar_no_bones">Nessun osso nell\'inventario</string>
+    <string name="bone_altar_cape_awarded">Mantello della Preghiera ottenuto!</string>
 </resources>

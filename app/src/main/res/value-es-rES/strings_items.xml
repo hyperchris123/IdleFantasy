@@ -607,4 +607,5 @@
     <string name="item_enhanced_super_ranging_potion_name">Poción de súper combate a distancia mejorada</string>
     <string name="item_enhanced_super_magic_potion_name">Poción de súper magia mejorada</string>
     <string name="item_enhanced_overload_potion_name">Poción de sobrecarga mejorada</string>
+    <string name="item_any_fish_name">fish (any type)</string>
 </resources>

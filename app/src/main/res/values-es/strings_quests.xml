@@ -400,4 +400,30 @@
     <string name="quest_daily_kill_bandit_name">Cazador de Bandidos</string>
     <string name="quest_daily_kill_demon_name">Cazador de Demonios</string>
     <string name="quest_daily_kill_dragon_name">Cazador de Dragones</string>
+
+    <!-- Quest objective verb strings for craft skills -->
+    <string name="daily_verb_crafting">Fabricar</string>
+    <string name="daily_verb_firemaking">Quemar</string>
+    <string name="daily_verb_fletching">Flechar</string>
+    <string name="daily_verb_herblore">Elaborar</string>
+    <string name="daily_verb_runecrafting">Tallar</string>
+    <string name="daily_verb_prayer">Enterrar</string>
+
+    <!-- Quest objective format strings -->
+    <string name="quest_obj_gather">%1$s %2$d %3$s</string>
+    <string name="quest_obj_craft">%1$s %2$d %3$s</string>
+    <string name="quest_obj_prayer">Enterrar %1$d huesos de cualquier tipo</string>
+    <string name="quest_obj_kill">Derrota %1$d enemigos</string>
+    <string name="quest_obj_kill_enemy">Derrota %1$d %2$s</string>
+    <string name="quest_obj_dungeon">Completa %1$s %2$d veces</string>
+    <string name="quest_obj_dungeon_once">Completa %1$s</string>
+    <string name="quest_obj_boss">Derrota a %1$s %2$d veces</string>
+    <string name="quest_obj_boss_once">Derrota a %1$s</string>
+    <string name="quest_obj_dungeon_melee_only">Completa %1$s usando solo cuerpo a cuerpo</string>
+    <string name="quest_obj_dungeon_ranged_only">Completa %1$s usando solo distancia</string>
+    <string name="quest_obj_dungeon_magic_only">Completa %1$s usando solo magia</string>
+    <string name="quest_obj_dungeon_no_food">Completa %1$s sin usar comida</string>
+    <string name="quest_obj_collect">Recoge %1$d %2$s en combate</string>
+    <string name="quest_obj_slayer_task">Completa %1$d tareas del Cazador</string>
+
 </resources>

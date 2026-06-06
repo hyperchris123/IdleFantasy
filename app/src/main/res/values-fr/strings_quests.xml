@@ -402,4 +402,30 @@
     <string name="quest_daily_kill_bandit_name">Briseur de bandits</string>
     <string name="quest_daily_kill_demon_name">Chasseur de démons</string>
     <string name="quest_daily_kill_dragon_name">Tueur de dragons</string>
+
+    <!-- Quest objective verb strings for craft skills -->
+    <string name="daily_verb_crafting">Fabriquer</string>
+    <string name="daily_verb_firemaking">Brûler</string>
+    <string name="daily_verb_fletching">Empenner</string>
+    <string name="daily_verb_herblore">Brasser</string>
+    <string name="daily_verb_runecrafting">Runes</string>
+    <string name="daily_verb_prayer">Enterrer</string>
+
+    <!-- Quest objective format strings -->
+    <string name="quest_obj_gather">%1$s %2$d %3$s</string>
+    <string name="quest_obj_craft">%1$s %2$d %3$s</string>
+    <string name="quest_obj_prayer">Enterrer %1$d os de tout type</string>
+    <string name="quest_obj_kill">Vaincre %1$d ennemis</string>
+    <string name="quest_obj_kill_enemy">Vaincre %1$d %2$s</string>
+    <string name="quest_obj_dungeon">Terminer %1$s %2$d fois</string>
+    <string name="quest_obj_dungeon_once">Terminer %1$s</string>
+    <string name="quest_obj_boss">Vaincre %1$s %2$d fois</string>
+    <string name="quest_obj_boss_once">Vaincre %1$s</string>
+    <string name="quest_obj_dungeon_melee_only">Terminer %1$s en corps à corps uniquement</string>
+    <string name="quest_obj_dungeon_ranged_only">Terminer %1$s à distance uniquement</string>
+    <string name="quest_obj_dungeon_magic_only">Terminer %1$s en magie uniquement</string>
+    <string name="quest_obj_dungeon_no_food">Terminer %1$s sans nourriture</string>
+    <string name="quest_obj_collect">Collecter %1$d %2$s en combat</string>
+    <string name="quest_obj_slayer_task">Terminer %1$d tâches du Tueur</string>
+
 </resources>
