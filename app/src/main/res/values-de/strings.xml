@@ -400,9 +400,9 @@
     <string name="combat_log_you_missed">Daneben</string>
     <string name="combat_log_kill">☠ %1$s besiegt</string>
     <string name="combat_log_player_hit">→ Ihr habt %1$s getroffen: %2$d SCH</string>
-    <string name="combat_log_player_miss">→ Daneben: %1$s</string>
+    <string name="combat_log_player_miss">→ Ihr habt %1$s verfehlt</string>
     <string name="combat_log_enemy_hit">← %1$s traf Euch: %2$d SCH</string>
-    <string name="combat_log_enemy_miss">← %1$s daneben</string>
+    <string name="combat_log_enemy_miss">← %1$s verfehlte Euch</string>
     <string name="combat_rec_level">Empfohlenes Kampflevel</string>
     <string name="combat_your_level">Euer Kampflevel</string>
     <string name="combat_no_strength_bonus">Keine (kein Stärkebonus)</string>
