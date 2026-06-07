@@ -15,8 +15,8 @@ android {
         applicationId = "com.tristinbaker.idlefantasy"
         minSdk = 26
         targetSdk = 35
-        versionCode = 56
-        versionName = "1.7.16"
+        versionCode = 55
+        versionName = "1.7.15"
     }
 
     dependenciesInfo {
@@ -102,4 +102,8 @@ dependencies {
 
     // kotlinx.serialization
     implementation(libs.kotlinx.serialization.json)
+
+    // Unit testing (JVM, no device required)
+    testImplementation(libs.junit)
+    testImplementation(libs.kotlin.test.junit)
 }
