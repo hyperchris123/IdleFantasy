@@ -57,6 +57,15 @@ android {
         compose = true
         buildConfig = true
     }
+
+    lint {
+        // Existing issues are captured in lint-baseline.xml so CI fails only on
+        // NEW problems introduced by future changes, without forcing a cleanup of
+        // the pre-existing backlog. Regenerate by deleting the baseline and
+        // running `./gradlew lintDebug`.
+        baseline = file("lint-baseline.xml")
+        warningsAsErrors = false
+    }
 }
 
 // Export Room schema files so migrations can be verified and reviewed in version control.
