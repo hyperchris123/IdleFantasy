@@ -856,6 +856,9 @@
     <string name="slayer_lamp_large_desc">+50,000 XP to any skill</string>
     <string name="slayer_found_in">Found in: %1$s</string>
     <string name="slayer_requires">Requires: %1$s</string>
+    <string name="slayer_add_dungeon_to_queue">Añadir Mazmorra a la Cola</string>
+    <string name="slayer_queue_added">Añadido a la cola: %1$s.</string>
+    <string name="slayer_queue_full">La cola está llena (3/3).</string>
     <string name="item_slayer_helm_name">Slayer Helm</string>
     <string name="item_slayer_helm_desc">A sturdy helm worn by veteran slayers.</string>
     <string name="item_abyssal_whip_name">Abyssal Whip</string>

@@ -966,4 +966,7 @@
     <string name="bone_altar_buried_count">%d buried</string>
     <string name="bone_altar_no_bones">No bones in inventory</string>
     <string name="bone_altar_cape_awarded">Prayer cape earned!</string>
+    <string name="slayer_add_dungeon_to_queue">Add Dungeon to Queue</string>
+    <string name="slayer_queue_added">Added to queue: %1$s.</string>
+    <string name="slayer_queue_full">Queue is full (3/3).</string>
 </resources>

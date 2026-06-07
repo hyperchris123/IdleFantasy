@@ -891,6 +891,9 @@
     <string name="slayer_lamp_large_desc">+50,000 XP to any skill</string>
     <string name="slayer_found_in">Found in: %1$s</string>
     <string name="slayer_requires">Requires: %1$s</string>
+    <string name="slayer_add_dungeon_to_queue">Add Dungeon to Queue</string>
+    <string name="slayer_queue_added">Added to queue: %1$s.</string>
+    <string name="slayer_queue_full">Queue is full (3/3).</string>
 
     <!-- Prestige system -->
     <string name="prestige">Prestige</string>
