@@ -167,7 +167,7 @@ fun AppNavigation(
                     onNavigateToSettings     = { navController.navigate(Screen.Settings.route) },
                     onNavigateToShop         = { navController.navigate(Screen.Shop.route) },
                     onNavigateToInn          = { navController.navigate(Screen.Inn.route) },
-                    onNavigateToWorkerSkills = { navController.navigate(Screen.WorkerSkills.route) },
+                    onNavigateToWorkerSkills = { slot -> navController.navigate(Screen.WorkerSkills.routeWithSlot(slot)) },
                     onNavigateToGuildHall    = { navController.navigate(Screen.GuildHall.route) },
                     onNavigateToChurch       = { navController.navigate(Screen.Church.route) },
                     onNavigateToSlayer       = { navController.navigate(Screen.Slayer.route) },
