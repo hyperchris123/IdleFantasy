@@ -98,7 +98,6 @@ import com.fantasyidler.ui.viewmodel.xpToNextLevel
 import com.fantasyidler.simulator.SkillSimulator
 import com.fantasyidler.simulator.XpTable
 import com.fantasyidler.util.GameStrings
-import com.fantasyidler.util.toTitleCase
 import com.fantasyidler.util.formatDurationMs
 import com.fantasyidler.util.formatXp
 import com.fantasyidler.util.toCountdown
@@ -323,18 +322,13 @@ private fun SkillsTabContent(
         state.activeSession?.let { session ->
             item {
                 ActiveSessionBanner(
-                    skillName     = GameStrings.skillName(context, session.skillName),
-                    activityLabel = when (session.skillName) {
-                        "combat"     -> GameStrings.dungeonName(context, session.activityKey)
-                        "boss"       -> GameStrings.bossName(context, session.activityKey)
-                        "expedition" -> GameStrings.skillingDungeonName(context, session.activityKey, session.activityKey.toTitleCase())
-                        else         -> GameStrings.itemName(context, session.activityKey)
-                    }.takeIf { session.activityKey.isNotEmpty() },
-                    endsAt        = session.endsAt,
-                    completed     = session.completed,
-                    onCollect     = viewModel::collectSession,
-                    onAbandon     = viewModel::abandonSession,
-                    onDebugFinish = viewModel::debugFinishSession,
+                    skillName      = GameStrings.skillName(context, session.skillName),
+                    activityKey    = session.activityKey,
+                    endsAt         = session.endsAt,
+                    completed      = session.completed,
+                    onCollect      = viewModel::collectSession,
+                    onAbandon      = viewModel::abandonSession,
+                    onDebugFinish  = viewModel::debugFinishSession,
                 )
             }
         }
@@ -408,7 +402,7 @@ private fun SkillsTabContent(
 @Composable
 private fun ActiveSessionBanner(
     skillName: String,
-    activityLabel: String?,
+    activityKey: String,
     endsAt: Long,
     completed: Boolean,
     onCollect: () -> Unit,
@@ -443,9 +437,9 @@ private fun ActiveSessionBanner(
             Text(
                 text = buildString {
                     append(skillName)
-                    if (activityLabel != null) {
+                    if (activityKey.isNotEmpty()) {
                         append(" — ")
-                        append(activityLabel)
+                        append(activityKey.replace('_', ' ').replaceFirstChar { it.uppercase() })
                     }
                 },
                 style      = MaterialTheme.typography.titleMedium,
