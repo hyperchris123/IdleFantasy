@@ -90,7 +90,7 @@
     <string name="game_dig_cooldown">Oggi hai già scavato. Torna domani.</string>
 
     <!-- ===== Equipment slot names ===== -->
-    <string name="equip_slot_weapon_atk">Arma (Attacco)</string>
+    <string name="equip_slot_weapon_atk">Arma (Mischia)</string>
     <string name="equip_slot_weapon_str">Arma (Forza)</string>
     <string name="equip_slot_weapon_ranged">Arma (Distanza)</string>
     <string name="equip_slot_weapon_magic">Arma (Magia)</string>
