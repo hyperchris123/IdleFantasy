@@ -55,7 +55,7 @@ class QuestRepository @Inject constructor(
 
             when (quest.type) {
                 "craft" -> {
-                    val count = items[quest.target] ?: continue
+                    val count = (items[quest.target] ?: 0) + (items["enhanced_${quest.target}"] ?: 0)
                     if (count > 0) addProgress(questId, quest.amount, count, quest.requiresPrevious)
                 }
                 "craft_any" -> {
