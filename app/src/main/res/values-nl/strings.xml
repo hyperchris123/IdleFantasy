@@ -937,7 +937,7 @@
     <string name="bone_altar_tap">Tik om te Begraven</string>
     <string name="bone_altar_change_bone">Wijzigen</string>
     <string name="bone_altar_combo_count">Combo ×%d</string>
-    <string name="bone_altar_bonus_active">+50%% XP-bonus!</string>
+    <string name="bone_altar_bonus_active">+50% XP-bonus!</string>
     <string name="bone_altar_session_xp">+%s XP deze sessie</string>
     <string name="bone_altar_buried_count">%d begraven</string>
     <string name="bone_altar_no_bones">Geen botten in inventaris</string>

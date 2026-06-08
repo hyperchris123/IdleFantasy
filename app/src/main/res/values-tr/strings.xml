@@ -979,7 +979,7 @@
     <string name="bone_altar_tap">Gömmek için Dokun</string>
     <string name="bone_altar_change_bone">Değiştir</string>
     <string name="bone_altar_combo_count">Kombo ×%d</string>
-    <string name="bone_altar_bonus_active">+50%% XP bonusu!</string>
+    <string name="bone_altar_bonus_active">+50% XP bonusu!</string>
     <string name="bone_altar_session_xp">+%s XP bu oturumda</string>
     <string name="bone_altar_buried_count">%d gömüldü</string>
     <string name="bone_altar_no_bones">Envanterde kemik yok</string>

@@ -377,13 +377,14 @@ class QueuedSessionStarter @Inject constructor(
                 val frameMs        = SkillSimulator.sessionDurationMs(agilityLevel) / 60L
                 val bossDurationMs = boss.durationMinutes * frameMs
                 val animPerFrameMs = bossDurationMs / 60L
+                val queueHasMore   = playerRepo.getQueue().isNotEmpty()
                 sessionRepo.startSession(
                     skillName         = "boss",
                     activityKey       = bossKey,
                     frames            = encodeFrames(bossFrames),
                     durationMs        = bossDurationMs,
                     skillDisplayName  = action.skillDisplayName,
-                    alarmOffsetMs     = if (bossFrames.size < boss.durationMinutes)
+                    alarmOffsetMs     = if (!queueHasMore && bossFrames.size < boss.durationMinutes)
                         (bossFrames.size - 1) * animPerFrameMs + 5_000L else null,
                     insertAsCompleted = offline,
                     backdateMs        = backdateMs,
