@@ -12,6 +12,7 @@ import com.fantasyidler.data.model.SlayerTask
 import com.fantasyidler.simulator.SkillSimulator
 import com.fantasyidler.repository.GameDataRepository
 import com.fantasyidler.repository.PlayerRepository
+import com.fantasyidler.repository.QueuedSessionStarter
 import com.fantasyidler.repository.SlayerRepository
 import com.fantasyidler.util.GameStrings
 import android.content.Context
@@ -56,6 +57,7 @@ class SlayerViewModel @Inject constructor(
     private val playerRepo: PlayerRepository,
     private val slayerRepo: SlayerRepository,
     val gameData: GameDataRepository,
+    private val queuedSessionStarter: QueuedSessionStarter,
     @ApplicationContext private val context: Context,
     private val json: Json,
 ) : ViewModel() {
@@ -213,6 +215,7 @@ class SlayerViewModel @Inject constructor(
                     weaponSlot          = weaponSlot,
                 )
             )
+            if (enqueued) queuedSessionStarter.startNextQueued()
             _extra.update {
                 it.copy(
                     snackbarMessage = if (enqueued) context.getString(R.string.slayer_queue_added, dungeonName)

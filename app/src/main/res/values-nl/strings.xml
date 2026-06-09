@@ -431,6 +431,18 @@
     <string name="profile_no_pets">Geen huisdieren beschikbaar</string>
     <string name="profile_pet_collected">Verzameld</string>
     <string name="profile_pet_not_found">Nog niet gevonden</string>
+    <string-array name="profile_pet_happy_messages">
+        <item>%1$s is blij!</item>
+        <item>%1$s kwispelt met zijn staart!</item>
+        <item>%1$s nestelt zich affectioneel tegen je aan.</item>
+        <item>%1$s geeft een vrolijk gepiep!</item>
+        <item>%1$s doet een klein blij dansje!</item>
+        <item>%1$s geeft je een grote glimlach.</item>
+        <item>%1$s wil meer knuffels!</item>
+        <item>%1$s is uitbundig blij!</item>
+        <item>%1$s houdt van de aandacht!</item>
+        <item>%1$s belooft hard voor je te blijven werken.</item>
+    </string-array>
     <string name="profile_equip_best">Beste uitrusting aantrekken</string>
     <string name="profile_weapons">Wapens</string>
     <string name="profile_combat_gear">Gevechtsuitrusting</string>
@@ -456,6 +468,7 @@
     <!-- ===== SkillsScreen ===== -->
     <!-- Translator note: %1$d = session duration in minutes -->
     <string name="skills_session_duration">Sessie: %1$dm</string>
+    <string name="skill_mining_qty_estimate">~%1$d ertsen/sessie</string>
     <string name="skills_only_craftable">Alleen maakbaar</string>
     <string name="skills_filter_all">Alles</string>
     <string name="skills_add_to_queue">Toevoegen aan wachtrij</string>

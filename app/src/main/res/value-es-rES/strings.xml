@@ -969,4 +969,17 @@
     <string name="slayer_add_dungeon_to_queue">Add Dungeon to Queue</string>
     <string name="slayer_queue_added">Added to queue: %1$s.</string>
     <string name="slayer_queue_full">Queue is full (3/3).</string>
+    <string-array name="profile_pet_happy_messages">
+        <item>%1$s is happy!</item>
+        <item>%1$s wags its tail!</item>
+        <item>%1$s nuzzles you affectionately.</item>
+        <item>%1$s lets out a happy chirp!</item>
+        <item>%1$s does a little happy dance!</item>
+        <item>%1$s gives you a huge smile.</item>
+        <item>%1$s wants more pets!</item>
+        <item>%1$s is overjoyed!</item>
+        <item>%1$s loves the attention!</item>
+        <item>%1$s promises to keep working hard for you.</item>
+    </string-array>
+    <string name="skill_mining_qty_estimate">~%1$d ores/session</string>
 </resources>

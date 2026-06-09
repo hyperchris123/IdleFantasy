@@ -1,5 +1,6 @@
 package com.fantasyidler.ui.screen
 
+import android.widget.Toast
 import kotlin.math.roundToInt
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
@@ -882,9 +883,14 @@ private fun PetsTab(
 @Composable
 private fun PetRow(pet: com.fantasyidler.data.json.PetData, owned: Boolean) {
     val alpha = if (owned) 1f else 0.38f
+    val context = LocalContext.current
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .then(if (owned) Modifier.clickable {
+                val messages = context.resources.getStringArray(R.array.profile_pet_happy_messages)
+                Toast.makeText(context, String.format(messages.random(), pet.displayName), Toast.LENGTH_SHORT).show()
+            } else Modifier)
             .padding(horizontal = 16.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {

@@ -718,6 +718,12 @@ internal fun MiningSheet(
                 text     = stringResource(R.string.skills_session_duration, sessionDurationMs / 60_000),
                 style    = MaterialTheme.typography.bodySmall,
                 color    = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 2.dp),
+            )
+            Text(
+                text     = stringResource(R.string.skill_mining_qty_estimate, SkillSimulator.estimateGatheringQty(efficiency)),
+                style    = MaterialTheme.typography.bodySmall,
+                color    = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
             )
         }

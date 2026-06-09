@@ -377,6 +377,18 @@
     <string name="profile_no_pets">No hay mascotas disponibles</string>
     <string name="profile_pet_collected">Obtenidas</string>
     <string name="profile_pet_not_found">Aún no encontrado</string>
+    <string-array name="profile_pet_happy_messages">
+        <item>¡%1$s está feliz!</item>
+        <item>¡%1$s mueve la cola!</item>
+        <item>%1$s te frota cariñosamente.</item>
+        <item>¡%1$s emite un gorjeo alegre!</item>
+        <item>¡%1$s hace un pequeño baile feliz!</item>
+        <item>%1$s te da una enorme sonrisa.</item>
+        <item>¡%1$s quiere más mimos!</item>
+        <item>¡%1$s está eufórico!</item>
+        <item>¡%1$s adora la atención!</item>
+        <item>%1$s promete seguir trabajando duro para ti.</item>
+    </string-array>
     <string name="profile_equip_best">Equipa el mejor equipo</string>
     <string name="profile_combat_gear">Equipo de combate</string>
     <string name="profile_gathering_tools">Herramientas de recolección</string>
@@ -401,6 +413,7 @@
     <!-- ===== SkillsScreen ===== -->
     <!-- Translator note: %1$d = session duration in minutes -->
     <string name="skills_session_duration">Sesion: %1$dm</string>
+    <string name="skill_mining_qty_estimate">~%1$d minerales/sesión</string>
     <string name="skills_only_craftable">Solo se puede fabricar</string>
     <string name="skills_filter_all">All</string>
     <string name="skills_add_to_queue">Agregar a la fila de actividades</string>

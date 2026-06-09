@@ -401,6 +401,18 @@
     <string name="profile_no_pets">Aucun familier disponible</string>
     <string name="profile_pet_collected">Collecté</string>
     <string name="profile_pet_not_found">Pas encore trouvé</string>
+    <string-array name="profile_pet_happy_messages">
+        <item>%1$s est heureux !</item>
+        <item>%1$s remue la queue !</item>
+        <item>%1$s se blottit affectueusement contre vous.</item>
+        <item>%1$s pousse un gazouillis joyeux !</item>
+        <item>%1$s fait une petite danse de joie !</item>
+        <item>%1$s vous offre un grand sourire.</item>
+        <item>%1$s en veut encore !</item>
+        <item>%1$s est aux anges !</item>
+        <item>%1$s adore l\'attention !</item>
+        <item>%1$s promet de continuer à travailler dur pour vous.</item>
+    </string-array>
     <string name="profile_equip_best">Équiper le meilleur équipement</string>
     <string name="profile_combat_gear">Équipement de combat</string>
     <string name="profile_gathering_tools">Outils de récolte</string>
@@ -425,6 +437,7 @@
     <!-- Écran des compétences -->
     <!-- Note : %1$d = durée de la session en minutes -->
     <string name="skills_session_duration">Session : %1$dm</string>
+    <string name="skill_mining_qty_estimate">~%1$d minerais/session</string>
     <string name="skills_only_craftable">Seulement réalisable</string>
     <string name="skills_filter_all">Tout</string>
     <string name="skills_add_to_queue">Ajouter à la file d’attente</string>

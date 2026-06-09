@@ -427,6 +427,18 @@
     <string name="profile_no_pets">Haustiere sind nicht verfügbar</string>
     <string name="profile_pet_collected">Gesammelt</string>
     <string name="profile_pet_not_found">Noch nicht gefunden</string>
+    <string-array name="profile_pet_happy_messages">
+        <item>%1$s ist glücklich!</item>
+        <item>%1$s wedelt mit dem Schwanz!</item>
+        <item>%1$s schmust sich liebevoll an.</item>
+        <item>%1$s gibt einen fröhlichen Laut von sich!</item>
+        <item>%1$s macht einen kleinen Freudentanz!</item>
+        <item>%1$s strahlt dich an.</item>
+        <item>%1$s will mehr Streicheleinheiten!</item>
+        <item>%1$s ist überglücklich!</item>
+        <item>%1$s liebt die Aufmerksamkeit!</item>
+        <item>%1$s verspricht, weiter fleißig für dich zu arbeiten.</item>
+    </string-array>
     <string name="profile_equip_best">Beste Ausrüstung ausstatten</string>
     <string name="profile_weapons">Waffen</string>
     <string name="profile_combat_gear">Kampfausrüstung</string>
@@ -450,6 +462,7 @@
 
     <!-- ===== translate — SkillsScreen ===== -->
     <string name="skills_session_duration">Dauer: %1$dm</string>
+    <string name="skill_mining_qty_estimate">~%1$d Erze/Sitzung</string>
     <string name="skills_only_craftable">Nur herstellbare</string>
     <string name="skills_filter_all">Alle</string>
     <string name="skills_add_to_queue">Aktivität einreihen</string>
