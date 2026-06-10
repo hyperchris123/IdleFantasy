@@ -657,7 +657,7 @@
     <string name="inn_slot2_header">Specializzato</string>
 
     <!-- ===== Combat difficulty ratings ===== -->
-    <string name="combat_difficulty_likely">Sembra gestibile</string>
+    <string name="combat_difficulty_likely">You\'ve got this</string>
     <string name="combat_difficulty_risky">Rischioso con questo equipaggiamento</string>
     <string name="combat_difficulty_unlikely">Moriresti quasi sicuramente</string>
 
@@ -1060,6 +1060,9 @@
     <string name="item_yew_wardrobe_name">Armadio di Tasso</string>
     <string name="item_magic_throne_name">Trono Magico</string>
     <string name="town_upgrade_section_title">Edificio della Città</string>
+    <string name="town_building_inn_name">Inn</string>
+    <string name="town_building_guild_hall_name">Guild Hall</string>
+    <string name="town_building_church_name">Church</string>
     <string name="town_building_current_tier">Livello %1$d / 3</string>
     <string name="town_building_maxed_label">Completamente Potenziato</string>
     <string name="town_upgrade_next_label">Prossimo Potenziamento</string>

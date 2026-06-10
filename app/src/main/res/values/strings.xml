@@ -658,7 +658,7 @@
     <string name="inn_slot2_header">Skilled Worker</string>
 
     <!-- ===== Combat difficulty ratings ===== -->
-    <string name="combat_difficulty_likely">Looks manageable</string>
+    <string name="combat_difficulty_likely">You\'ve got this</string>
     <string name="combat_difficulty_risky">Risky with current setup</string>
     <string name="combat_difficulty_unlikely">Likely to die</string>
 
@@ -1071,6 +1071,9 @@
 
     <!-- Town building upgrade UI -->
     <string name="town_upgrade_section_title">Town Building</string>
+    <string name="town_building_inn_name">Inn</string>
+    <string name="town_building_guild_hall_name">Guild Hall</string>
+    <string name="town_building_church_name">Church</string>
     <string name="town_building_current_tier">Tier %1$d / 3</string>
     <string name="town_building_maxed_label">Fully Upgraded</string>
     <string name="town_upgrade_next_label">Next Upgrade</string>
@@ -1098,4 +1101,5 @@
     <string name="achievement_town_one_maxed_desc">Upgrade any single town building to the maximum tier</string>
     <string name="achievement_town_all_maxed_name">Town of Legend</string>
     <string name="achievement_town_all_maxed_desc">Upgrade all three town buildings to the maximum tier</string>
+
 </resources>

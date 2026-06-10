@@ -18,6 +18,8 @@ import com.fantasyidler.data.json.RuneData
 import com.fantasyidler.data.json.SkillingDungeonData
 import com.fantasyidler.data.json.SlayerTaskData
 import com.fantasyidler.data.json.SmithingRecipe
+import com.fantasyidler.data.json.ConstructionRecipe
+import com.fantasyidler.data.json.ThievingNpcData
 import com.fantasyidler.data.json.TradeRouteData
 import com.fantasyidler.data.json.TreeData
 import android.content.Context
@@ -245,6 +247,8 @@ class InventoryViewModel @Inject constructor(
     val slayerTaskData: Map<String, SlayerTaskData> get() = gameData.slayerTasks
     val bones: Map<String, BoneData> get() = gameData.bones
     val agilityCourses: Map<String, AgilityCourseData> get() = gameData.agilityCourses
+    val thievingNpcs: Map<String, ThievingNpcData> get() = gameData.thievingNpcs
+    val constructionRecipes: Map<String, ConstructionRecipe> get() = gameData.constructionRecipes
 
     fun categoryFor(key: String): InventoryCategory {
         val equip = gameData.equipment[key]

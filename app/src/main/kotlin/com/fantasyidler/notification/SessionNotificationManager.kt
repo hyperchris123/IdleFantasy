@@ -24,12 +24,15 @@ class SessionNotificationManager @Inject constructor(
     companion object {
         const val CHANNEL_ID_SESSIONS = "fantasy_idler_sessions"
         const val CHANNEL_ID_FARMING  = "fantasy_idler_farming"
+        const val CHANNEL_ID_BUFFS    = "fantasy_idler_buffs"
 
         const val EXTRA_NAVIGATE_TO  = "navigate_to"
         const val NAVIGATE_FARMING   = "farming"
 
         private const val NOTIF_ID_SESSION_COMPLETE = 1001
         private const val NOTIF_ID_FARMING_READY    = 2001
+        private const val NOTIF_ID_XP_BOOST_EXPIRED = 3001
+        private const val NOTIF_ID_BLESSING_EXPIRED  = 3002
     }
 
     fun localizedContext(): Context {
@@ -56,6 +59,13 @@ class SessionNotificationManager @Inject constructor(
                 .Builder(CHANNEL_ID_FARMING, NotificationManagerCompat.IMPORTANCE_DEFAULT)
                 .setName(context.getString(R.string.notif_channel_farming_name))
                 .setDescription(context.getString(R.string.notif_channel_farming_desc))
+                .build()
+        )
+        mgr.createNotificationChannel(
+            NotificationChannelCompat
+                .Builder(CHANNEL_ID_BUFFS, NotificationManagerCompat.IMPORTANCE_DEFAULT)
+                .setName(context.getString(R.string.notif_channel_buffs_name))
+                .setDescription(context.getString(R.string.notif_channel_buffs_desc))
                 .build()
         )
     }
@@ -109,6 +119,34 @@ class SessionNotificationManager @Inject constructor(
             .build()
 
         postIfPermitted(NOTIF_ID_FARMING_READY, notification)
+    }
+
+    /** Show "Your 2x XP boost has run out" notification. */
+    fun showXpBoostExpired() {
+        val lc = localizedContext()
+        val notification = NotificationCompat.Builder(context, CHANNEL_ID_BUFFS)
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setContentTitle(lc.getString(R.string.notif_xp_boost_expired_title))
+            .setContentText(lc.getString(R.string.notif_xp_boost_expired_body))
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setContentIntent(launchIntent())
+            .setAutoCancel(true)
+            .build()
+        postIfPermitted(NOTIF_ID_XP_BOOST_EXPIRED, notification)
+    }
+
+    /** Show "Your church blessing has faded" notification. */
+    fun showBlessingExpired() {
+        val lc = localizedContext()
+        val notification = NotificationCompat.Builder(context, CHANNEL_ID_BUFFS)
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setContentTitle(lc.getString(R.string.notif_blessing_expired_title))
+            .setContentText(lc.getString(R.string.notif_blessing_expired_body))
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setContentIntent(launchIntent())
+            .setAutoCancel(true)
+            .build()
+        postIfPermitted(NOTIF_ID_BLESSING_EXPIRED, notification)
     }
 
     private fun postIfPermitted(id: Int, notification: android.app.Notification) {

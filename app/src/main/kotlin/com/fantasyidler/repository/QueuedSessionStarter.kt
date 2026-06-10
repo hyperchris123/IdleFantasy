@@ -11,6 +11,7 @@ import com.fantasyidler.simulator.CombatSimulator
 import com.fantasyidler.simulator.MercantileSimulator
 import com.fantasyidler.simulator.SkillingDungeonSimulator
 import com.fantasyidler.simulator.SkillSimulator
+import com.fantasyidler.simulator.ThievingSimulator
 import com.fantasyidler.simulator.XpTable
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -179,6 +180,29 @@ class QueuedSessionStarter @Inject constructor(
                     petBoostPct  = gatheringPetBoost(player.pets, Skills.AGILITY),
                 )
                 startSession(action, result, offline, backdateMs)
+            }
+            Skills.THIEVING -> {
+                val npcKey  = action.activityKey
+                val npc     = gameData.thievingNpcs[npcKey] ?: return
+                val result  = ThievingSimulator.simulate(
+                    npcKey        = npcKey,
+                    npc           = npc,
+                    startXp       = xpMap[Skills.THIEVING] ?: 0L,
+                    thievingLevel = levels[Skills.THIEVING] ?: 1,
+                    agilityLevel  = agilityLevel,
+                    petBoostPct   = gatheringPetBoost(player.pets, Skills.THIEVING),
+                    petDropKey    = petDropKey(Skills.THIEVING),
+                    petDropChance = petDropChance(Skills.THIEVING),
+                )
+                sessionRepo.startSession(
+                    skillName         = Skills.THIEVING,
+                    activityKey       = npcKey,
+                    frames            = encodeFrames(result.frames),
+                    durationMs        = result.durationMs,
+                    skillDisplayName  = action.skillDisplayName,
+                    insertAsCompleted = offline,
+                    backdateMs        = backdateMs,
+                )
             }
             Skills.FIREMAKING -> {
                 val logKey  = action.activityKey
