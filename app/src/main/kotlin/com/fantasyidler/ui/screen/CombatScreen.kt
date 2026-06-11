@@ -81,7 +81,6 @@ import com.fantasyidler.data.model.SessionFrame
 import com.fantasyidler.data.model.SkillSession
 import com.fantasyidler.data.model.Skills
 import com.fantasyidler.ui.theme.GoldPrimary
-import com.fantasyidler.ui.theme.SuccessGreen
 import com.fantasyidler.ui.viewmodel.CombatSessionResult
 import com.fantasyidler.ui.viewmodel.CombatViewModel
 import com.fantasyidler.ui.viewmodel.InventoryViewModel
@@ -158,7 +157,7 @@ fun CombatScreen(
 
         val combatSession = state.combatSession
         if (combatSession != null) {
-            val pagerState = rememberPagerState(initialPage = if (startOnGear) 2 else 0, pageCount = { 4 })
+            val pagerState = rememberPagerState(initialPage = if (startOnGear) 2 else 0, pageCount = { 3 })
             val scope = rememberCoroutineScope()
             Column(Modifier.padding(padding).fillMaxSize()) {
                 TabRow(selectedTabIndex = pagerState.currentPage) {
@@ -176,11 +175,6 @@ fun CombatScreen(
                         selected = pagerState.currentPage == 2,
                         onClick  = { scope.launch { pagerState.animateScrollToPage(2) } },
                         text     = { Text(stringResource(R.string.label_equipment)) },
-                    )
-                    Tab(
-                        selected = pagerState.currentPage == 3,
-                        onClick  = { scope.launch { pagerState.animateScrollToPage(3) } },
-                        text     = { Text(stringResource(R.string.label_skills)) },
                     )
                 }
                 HorizontalPager(state = pagerState, modifier = Modifier.weight(1f)) { page ->
@@ -210,7 +204,7 @@ fun CombatScreen(
                             onDungeon        = viewModel::selectDungeon,
                             onBoss           = viewModel::selectBoss,
                         )
-                        2 -> CombatGearTab(
+                        else -> CombatGearTab(
                             equipped       = invState.equipped,
                             inventory      = invState.inventory,
                             equippedFood   = invState.equippedFood,
@@ -223,15 +217,6 @@ fun CombatScreen(
                             onEquipBest    = inventoryVm::equipBestGear,
                             onEquipFood    = inventoryVm::equipFood,
                             onUnequipFood  = inventoryVm::unequipFood,
-                        )
-                        else -> CombatSkillsTab(
-                            skillLevels        = state.skillLevels,
-                            skillXp            = state.skillXp,
-                            totalAttackBonus   = state.totalAttackBonus,
-                            totalStrengthBonus = state.totalStrengthBonus,
-                            totalDefenseBonus  = state.totalDefenseBonus,
-                            skillPrestige      = state.skillPrestige,
-                            onPrestige         = viewModel::prestigeSkill,
                         )
                     }
                 }
@@ -771,16 +756,12 @@ private fun BossRow(
             .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Box(
-            modifier         = Modifier.size(36.dp),
-            contentAlignment = Alignment.Center,
-        ) {
-            Text(
-                text  = boss.emoji,
-                style = MaterialTheme.typography.titleLarge,
-                color = if (unlocked) MaterialTheme.colorScheme.onSurface else dimColor,
-            )
-        }
+        Text(
+            text     = boss.emoji,
+            style    = MaterialTheme.typography.titleLarge,
+            modifier = Modifier.width(36.dp),
+            color    = if (unlocked) MaterialTheme.colorScheme.onSurface else dimColor,
+        )
         Spacer(Modifier.width(8.dp))
         Column(Modifier.weight(1f)) {
             Text(
@@ -844,7 +825,7 @@ private fun DungeonRow(
             )
             if (unlocked && survivalRating != null) {
                 val (ratingText, ratingColor) = when (survivalRating) {
-                    CombatSimulator.SurvivalRating.LIKELY   -> stringResource(R.string.combat_difficulty_likely)   to SuccessGreen
+                    CombatSimulator.SurvivalRating.LIKELY   -> stringResource(R.string.combat_difficulty_likely)   to MaterialTheme.colorScheme.primary
                     CombatSimulator.SurvivalRating.RISKY    -> stringResource(R.string.combat_difficulty_risky)    to MaterialTheme.colorScheme.tertiary
                     CombatSimulator.SurvivalRating.UNLIKELY -> stringResource(R.string.combat_difficulty_unlikely) to MaterialTheme.colorScheme.error
                 }

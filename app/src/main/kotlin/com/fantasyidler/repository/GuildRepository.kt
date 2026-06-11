@@ -17,7 +17,6 @@ data class GuildQuestWithProgress(
     val quest: GuildQuestData,
     val progress: Int,
     val completed: Boolean,
-    val effectiveAmount: Int,
 )
 
 data class GuildDailyWithProgress(
@@ -104,10 +103,9 @@ class GuildRepository @Inject constructor(
         return guildQuestsForGuild(guild).map { quest ->
             val row = allProgress[quest.id]
             GuildQuestWithProgress(
-                quest           = quest,
-                progress        = row?.progress ?: 0,
-                completed       = row?.completed ?: false,
-                effectiveAmount = effectiveQuestAmount(quest),
+                quest     = quest,
+                progress  = row?.progress ?: 0,
+                completed = row?.completed ?: false,
             )
         }
     }
@@ -121,7 +119,7 @@ class GuildRepository @Inject constructor(
 
     /** Called when a gathering or firemaking session is collected. */
     suspend fun recordGuildGathering(skillName: String, items: Map<String, Int>) {
-        var flags = playerRepo.getFlags()
+        var flags = getRefreshedGuildDailyFlags()
         val completedIds = loadCompletedQuestIds()
         val currentLevel = guildLevel(skillName, flags.guildReputation[skillName] ?: 0L, completedIds)
         for ((questId, quest) in gameData.guildQuests) {
@@ -136,7 +134,7 @@ class GuildRepository @Inject constructor(
 
     /** Called when a crafting session is collected (smithing, cooking, fletching, crafting, runecrafting, herblore). */
     suspend fun recordGuildCrafting(skillName: String, items: Map<String, Int>) {
-        var flags = playerRepo.getFlags()
+        var flags = getRefreshedGuildDailyFlags()
         val completedIds = loadCompletedQuestIds()
         val currentLevel = guildLevel(skillName, flags.guildReputation[skillName] ?: 0L, completedIds)
         for ((questId, quest) in gameData.guildQuests) {
@@ -153,7 +151,7 @@ class GuildRepository @Inject constructor(
     suspend fun recordGuildCombat(killsByEnemy: Map<String, Int>, combatStyle: String) {
         val guild = combatStyleToGuild(combatStyle)
         val totalKills = killsByEnemy.values.sum()
-        var flags = playerRepo.getFlags()
+        var flags = getRefreshedGuildDailyFlags()
         if (totalKills > 0) {
             val completedIds = loadCompletedQuestIds()
             val currentLevel = guildLevel(guild, flags.guildReputation[guild] ?: 0L, completedIds)
@@ -169,7 +167,7 @@ class GuildRepository @Inject constructor(
 
     /** Called when a prayer session is collected. */
     suspend fun recordGuildPrayer(totalBuried: Int) {
-        var flags = playerRepo.getFlags()
+        var flags = getRefreshedGuildDailyFlags()
         if (totalBuried > 0) {
             val completedIds = loadCompletedQuestIds()
             val currentLevel = guildLevel("prayer", flags.guildReputation["prayer"] ?: 0L, completedIds)
@@ -209,7 +207,7 @@ class GuildRepository @Inject constructor(
 
     /** Called when a mercantile trade route session is collected. */
     suspend fun recordGuildTrade(coinsEarned: Long = 0L) {
-        var flags = playerRepo.getFlags()
+        var flags = getRefreshedGuildDailyFlags()
         val completedIds = loadCompletedQuestIds()
         val currentLevel = guildLevel("mercantile", flags.guildReputation["mercantile"] ?: 0L, completedIds)
         for ((questId, quest) in gameData.guildQuests) {
@@ -224,7 +222,7 @@ class GuildRepository @Inject constructor(
 
     /** Called when an agility session is collected (counts completed sessions, not items). */
     suspend fun recordGuildSessions() {
-        var flags = playerRepo.getFlags()
+        var flags = getRefreshedGuildDailyFlags()
         val completedIds = loadCompletedQuestIds()
         val currentLevel = guildLevel("agility", flags.guildReputation["agility"] ?: 0L, completedIds)
         for ((questId, quest) in gameData.guildQuests) {
@@ -359,13 +357,12 @@ class GuildRepository @Inject constructor(
 
     /** Selects up to 2 daily templates per guild for today, filtered by current guild level.
      *  Uses a date-seeded RNG so the same dailies are shown all day. */
-    fun buildRefreshedGuildDailyFlags(flags: PlayerFlags, completedQuestIds: Set<String>, skillLevels: Map<String, Int> = emptyMap()): PlayerFlags {
+    fun buildRefreshedGuildDailyFlags(flags: PlayerFlags, completedQuestIds: Set<String>): PlayerFlags {
         val today = Calendar.getInstance().let {
             it.get(Calendar.YEAR) * 10000 + it.get(Calendar.MONTH) * 100 + it.get(Calendar.DAY_OF_MONTH)
         }
         val rng = Random(today.toLong())
         val selectedIds = mutableListOf<String>()
-        val farmingLevel = skillLevels["farming"] ?: 1
 
         for (guild in ALL_GUILDS) {
             val guildRep = flags.guildReputation[guild] ?: 0L
@@ -374,12 +371,6 @@ class GuildRepository @Inject constructor(
             val effectiveLevel = maxOf(guildLevel, 1)
             val eligible = gameData.guildDailyPool
                 .filter { it.guild == guild && effectiveLevel >= it.guildLevelMin && effectiveLevel <= it.guildLevelMax }
-                .filter { template ->
-                    if (template.guild == "farming" && template.type == "gather") {
-                        val cropLevel = gameData.crops[template.target]?.levelRequired ?: 1
-                        farmingLevel >= cropLevel
-                    } else true
-                }
                 .shuffled(rng)
             selectedIds.addAll(eligible.take(2).map { it.id })
         }
@@ -415,8 +406,7 @@ class GuildRepository @Inject constructor(
             .map { it.questId }
             .toSet()
         return if (shouldRefreshGuildDailies(flags.guildDailyGeneratedAt) || hasNewlyUnlockedGuild(flags, completedQuestIds)) {
-            val skillLevels = playerRepo.getSkillLevels()
-            val refreshed = buildRefreshedGuildDailyFlags(flags, completedQuestIds, skillLevels)
+            val refreshed = buildRefreshedGuildDailyFlags(flags, completedQuestIds)
             playerRepo.updateFlags(refreshed)
             refreshed
         } else flags

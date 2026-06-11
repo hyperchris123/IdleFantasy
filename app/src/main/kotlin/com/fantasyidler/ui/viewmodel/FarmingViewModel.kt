@@ -46,8 +46,6 @@ data class FarmingUiState(
     val isLoading:      Boolean                = true,
     /** Non-null when the plant sheet should be open for a specific patch number. */
     val plantingPatchNumber: Int?              = null,
-    /** Ash key last used as fertilizer; pre-selected when the plant sheet opens. */
-    val lastFertilizerKey: String?             = null,
     /** Just-harvested result, shown briefly then cleared. */
     val harvestResult: HarvestResult?          = null,
 )
@@ -104,16 +102,15 @@ class FarmingViewModel @Inject constructor(
             .sortedBy { it.levelRequired }
 
         extra.copy(
-            isLoading        = false,
-            farmingLevel     = farmingLevel,
-            farmingXp        = farmingXp,
-            patchCount       = patchCount,
-            patches          = patches,
-            inventory        = inv,
-            availableCrops   = availableCrops,
-            fertilizer       = flags.farmingFertilizer,
-            lastFertilizerKey = flags.lastFertilizerKey,
-            now              = now,
+            isLoading      = false,
+            farmingLevel   = farmingLevel,
+            farmingXp      = farmingXp,
+            patchCount     = patchCount,
+            patches        = patches,
+            inventory      = inv,
+            availableCrops = availableCrops,
+            fertilizer     = flags.farmingFertilizer,
+            now            = now,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), FarmingUiState())
 
@@ -156,10 +153,6 @@ class FarmingViewModel @Inject constructor(
     fun plantCrop(patchNumber: Int, crop: CropData, ashKey: String? = null) {
         viewModelScope.launch {
             closePlantSheet()
-            val flags = playerRepo.getFlags()
-            if (flags.lastFertilizerKey != ashKey) {
-                playerRepo.updateFlags(flags.copy(lastFertilizerKey = ashKey))
-            }
             val seedName = crop.seedName.replace('_', ' ')
 
             if (patchNumber == -1) {

@@ -49,14 +49,8 @@ fun BuildingUpgradeCard(
         modifier = modifier.fillMaxWidth(),
     ) {
         Column(Modifier.padding(16.dp)) {
-            val titleRes = when (buildingKey) {
-                "inn"        -> R.string.town_building_inn_name
-                "guild_hall" -> R.string.town_building_guild_hall_name
-                "church"     -> R.string.town_building_church_name
-                else         -> R.string.town_upgrade_section_title
-            }
             Text(
-                text       = stringResource(titleRes),
+                text       = stringResource(R.string.town_upgrade_section_title),
                 style      = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
             )

@@ -157,11 +157,10 @@ fun FarmingScreen(
             dragHandle       = { BottomSheetDefaults.DragHandle() },
         ) {
             PlantSheet(
-                crops          = state.availableCrops,
-                inventory      = state.inventory,
-                onPlant        = { crop, ashKey -> viewModel.plantCrop(patchNum, crop, ashKey) },
-                onDismiss      = viewModel::closePlantSheet,
-                initialAshKey  = state.lastFertilizerKey,
+                crops     = state.availableCrops,
+                inventory = state.inventory,
+                onPlant   = { crop, ashKey -> viewModel.plantCrop(patchNum, crop, ashKey) },
+                onDismiss = viewModel::closePlantSheet,
             )
         }
     }
@@ -270,11 +269,10 @@ fun FarmingSheetContent(
             dragHandle       = { BottomSheetDefaults.DragHandle() },
         ) {
             PlantSheet(
-                crops          = state.availableCrops,
-                inventory      = state.inventory,
-                onPlant        = { crop, ashKey -> viewModel.plantCrop(patchNum, crop, ashKey) },
-                onDismiss      = viewModel::closePlantSheet,
-                initialAshKey  = state.lastFertilizerKey,
+                crops     = state.availableCrops,
+                inventory = state.inventory,
+                onPlant   = { crop, ashKey -> viewModel.plantCrop(patchNum, crop, ashKey) },
+                onDismiss = viewModel::closePlantSheet,
             )
         }
     }
@@ -515,12 +513,11 @@ private fun PlantSheet(
     inventory: Map<String, Int>,
     onPlant: (CropData, String?) -> Unit,
     onDismiss: () -> Unit,
-    initialAshKey: String? = null,
 ) {
     val context = LocalContext.current
     val ashTiers = listOf("ashes","oak_ashes","willow_ashes","maple_ashes","yew_ashes","magic_ashes","redwood_ashes")
     val availableAshes = ashTiers.filter { (inventory[it] ?: 0) > 0 }
-    var selectedAshKey by remember { mutableStateOf(initialAshKey?.takeIf { it in availableAshes }) }
+    var selectedAshKey by remember { mutableStateOf<String?>(null) }
 
     Column(
         modifier = Modifier

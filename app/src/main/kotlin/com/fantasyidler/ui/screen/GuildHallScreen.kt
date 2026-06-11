@@ -46,11 +46,11 @@ private data class GuildGroup(val headerRes: Int, val keys: List<String>)
 private val GUILD_GROUPS = listOf(
     GuildGroup(
         headerRes = R.string.label_gathering_skills,
-        keys = listOf("mining", "fishing", "woodcutting", "farming", "agility"),
+        keys = listOf("mining", "fishing", "woodcutting", "farming", "firemaking", "agility"),
     ),
     GuildGroup(
         headerRes = R.string.label_crafting_skills,
-        keys = listOf("smithing", "cooking", "fletching", "crafting", "runecrafting", "herblore", "firemaking"),
+        keys = listOf("smithing", "cooking", "fletching", "crafting", "runecrafting", "herblore"),
     ),
     GuildGroup(
         headerRes = R.string.label_combat,
