@@ -5,13 +5,14 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.Configuration
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.NotificationChannelCompat
 import com.fantasyidler.MainActivity
 import com.fantasyidler.R
-import com.fantasyidler.util.withAppLocale
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -34,7 +35,14 @@ class SessionNotificationManager @Inject constructor(
         private const val NOTIF_ID_BLESSING_EXPIRED  = 3002
     }
 
-    fun localizedContext(): Context = context.withAppLocale()
+    fun localizedContext(): Context {
+        val locales = AppCompatDelegate.getApplicationLocales()
+        if (locales.isEmpty) return context
+        val locale = locales[0] ?: return context
+        val config = Configuration(context.resources.configuration)
+        config.setLocale(locale)
+        return context.createConfigurationContext(config)
+    }
 
     /** Call once on app startup to register notification channels (idempotent). */
     fun createChannels() {
