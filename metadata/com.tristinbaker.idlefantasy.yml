@@ -440,9 +440,37 @@ Builds:
     gradle:
       - yes
 
+  - versionName: '1.8.1'
+    versionCode: 62
+    commit: 64a61d44966bc054210ef053fcc472b91b01bf09
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.8.2'
+    versionCode: 63
+    commit: e81db50eae800658224d7b8da861823f9381f381
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.8.3'
+    versionCode: 64
+    commit: 8f7cdd427d65bb866359b5190b3b22da324cec1b
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: '1.8.4'
+    versionCode: 65
+    commit: 487f021f83a984f6e45639ef6e713b7dd488aed3
+    subdir: app
+    gradle:
+      - yes
+
 AllowedAPKSigningKeys: 99a980a934cb0149bfbdd5f4358471ffe69302e0467bae4d8574d4feeda34010
 
 AutoUpdateMode: Version
 UpdateCheckMode: Tags
-CurrentVersion: 1.8.0
-CurrentVersionCode: 61
+CurrentVersion: 1.8.4
+CurrentVersionCode: 65

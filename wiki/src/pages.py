@@ -82,6 +82,7 @@ def add_static_pages():
         ]],
         ["Town", [
             ("shop", PageInfo("Shop", "Shop.md", gen_shop)),
+            ("workers", PageInfo("Workers", "Workers.md", gen_workers))
         ]],
         ["Miscellaneous", [
             ("pets", PageInfo("Pets", "Pets.md", gen_pets)),
@@ -197,7 +198,7 @@ def title(key: str) -> str:
 
 
 def fmt_materials(mats: dict) -> str:
-    return ", ".join(f"{qty}× {title(item)}" for item, qty in mats.items())
+    return ", ".join(f"{qty}× {item_link(item)}" for item, qty in mats.items())
 
 
 def fmt_pct(chance: float) -> str:
@@ -233,6 +234,69 @@ def _tool_table(slot: str, efficiency_key: str) -> str:
     )
     rows = [[t["display_name"], list(t.get("requirements", {}).values() or [1])[0], f"{t[efficiency_key]:.2f}×"] for t in tools]
     return table(["Tool", "Level Required", "Efficiency"], rows)
+
+_ITEM_PAGE_MAP: dict[str, str] | None = None
+
+
+def build_item_page_map() -> dict[str, str]:
+    global _ITEM_PAGE_MAP
+    if _ITEM_PAGE_MAP is not None:
+        return _ITEM_PAGE_MAP
+
+    m: dict[str, str] = {}
+
+    def _add(keys: list[str], page_id: str):
+        for k in keys:
+            if k and k not in m:
+                m[k] = page_id
+
+    # Equipment first — specific named items, highest priority
+    _add(list(load("equipment.json").keys()), "equipment")
+    # Bones and ashes → prayer
+    _add(list(load("bones.json").keys()), "prayer")
+    # Ores (including coal, rune_essence) → mining
+    _add(list(load("ores.json").keys()), "mining")
+    # Logs → woodcutting (keys from logs.json + log_name fields from trees.json)
+    tree_log_names = [t["log_name"] for t in load("trees.json").values()]
+    _add(list(load("logs.json").keys()) + tree_log_names, "woodcutting")
+    # Runes → runecrafting
+    _add(list(load("runes.json").keys()), "runecrafting")
+    # Smithing outputs → smithing
+    _add(list(load("recipes/smithing.json").keys()), "smithing")
+    # Fish and raw fishing drops → fishing (before cooking so raw fish link here, not to cooking)
+    fishing_data = load("skills/fishing.json")
+    fish_items: list[str] = []
+    for dt in fishing_data.get("drop_tables", {}).values():
+        entries = dt if isinstance(dt, list) else dt.get("items", [])
+        for drop in entries:
+            if isinstance(drop, dict) and "item" in drop:
+                fish_items.append(drop["item"])
+    _add(fish_items, "fishing")
+    # Cooked food outputs → cooking (raw ingredients intentionally excluded so raw fish link to fishing)
+    _add(list(load("recipes/cooking.json").keys()), "cooking")
+    # Fletching outputs → fletching
+    _add(list(load("recipes/fletching.json").keys()), "fletching")
+    # Crafting outputs → crafting
+    _add(list(load("recipes/crafting.json").keys()), "crafting")
+    # Herblore outputs → herblore
+    _add(list(load("recipes/herblore.json").keys()), "herblore")
+    # Crops and seeds → farming
+    crops = load("crops.json")
+    seed_keys = [c["seed_name"] for c in crops.values() if "seed_name" in c]
+    _add(list(crops.keys()) + seed_keys, "farming")
+
+    _ITEM_PAGE_MAP = m
+    return m
+
+
+def item_link(key: str) -> str:
+    """Returns a markdown link to the page where this item is documented, or plain title if unknown."""
+    page_id = build_item_page_map().get(key)
+    if page_id:
+        page = PAGE_DIRECTORY[page_id]
+        return f"[{title(key)}]({page.url.removesuffix('.md')})"
+    return title(key)
+
 
 # ---------------------------------------------------------------------------
 # Page Creation
@@ -286,7 +350,21 @@ def gen_skills() -> str:
     ]
     rows = [[link(skill.lower()) if skill.lower() in PAGE_DIRECTORY else skill, cat, desc] for skill, cat, desc
             in skill_list]
-    return get_template("skills/skills").format(skills_table=table(["Skill", "Category", "Description"], rows))
+
+    prestige_rows = [
+        ["Attack",    "+5 Attack per prestige level (up to +15 at prestige 3)"],
+        ["Strength",  "+5 Strength per prestige level (up to +15 at prestige 3)"],
+        ["Defense",   "+5 Defense per prestige level (up to +15 at prestige 3)"],
+        ["Ranged",    "+5 Ranged per prestige level (up to +15 at prestige 3)"],
+        ["Magic",     "+5 Magic per prestige level (up to +15 at prestige 3)"],
+        ["Hitpoints", "+5 Hitpoints per prestige level (+50 max HP per level, up to +150 at prestige 3)"],
+        ["All other skills", "XP bonus only"],
+    ]
+
+    return get_template("skills/skills").format(
+        skills_table=table(["Skill", "Category", "Description"], rows),
+        prestige_table=table(["Skill", "Bonus (in addition to +10% XP)"], prestige_rows),
+    )
 
 
 def gen_mining() -> str:
@@ -425,7 +503,7 @@ def gen_cooking() -> str:
     recipes = load("recipes/cooking.json")
     assert isinstance(recipes, dict)
     rows = sorted(
-        [[r["display_name"], r["level_required"], title(r["raw_item"]), r["xp_per_item"], r.get("healing_value", "—")]
+        [[r["display_name"], r["level_required"], item_link(r["raw_item"]), r["xp_per_item"], r.get("healing_value", "—")]
          for r in recipes.values()],
         key=lambda r: r[1]
     )
@@ -563,7 +641,7 @@ def gen_slayer() -> str:
     assert isinstance(tasks, dict)
     rows = sorted(
         [
-            [title(enemy), t["slayer_level"], f"{t['min_kills']}–{t['max_kills']}", t["xp_per_kill"]]
+            [f"[{title(enemy)}](Enemies)", t["slayer_level"], f"{t['min_kills']}–{t['max_kills']}", t["xp_per_kill"]]
             for enemy, t in tasks.items()
         ],
         key=lambda r: r[1],
@@ -652,12 +730,12 @@ def _enemy_drop_rows(enemy: dict) -> list[list]:
     drop_rows = []
     for drop in enemy.get("always_drops", []):
         qty = drop.get("quantity", drop.get("quantity_min", 1))
-        drop_rows.append([title(drop["item"]), "100%", qty])
+        drop_rows.append([item_link(drop["item"]), "100%", qty])
     for drop in enemy.get("drop_table", []):
         qty_min = drop.get("quantity_min", 1)
         qty_max = drop.get("quantity_max", qty_min)
         qty_str = str(qty_min) if qty_min == qty_max else f"{qty_min}–{qty_max}"
-        drop_rows.append([title(drop["item"]), fmt_pct(drop["chance"]), qty_str])
+        drop_rows.append([item_link(drop["item"]), fmt_pct(drop["chance"]), qty_str])
     return drop_rows
 
 
@@ -680,7 +758,7 @@ def gen_enemies() -> str:
             drop_table=table(["Item", "Chance", "Qty"], drop_rows) if drop_rows else "_No drops._",
         ))
 
-    return get_template("combat/enemies").format(enemy_sections="\n\n".join(sections))
+    return get_template("combat/enemies").format(boss_link=link("bosses"), enemy_sections="\n\n".join(sections))
 
 
 def gen_spells() -> str:
@@ -749,6 +827,44 @@ def gen_pets() -> str:
     )
 
 
+def gen_workers() -> str:
+    # Worker tier stats (mirrored from WorkerTier enum)
+    tiers = [
+        ("Long Laborer", 8,  0.5,  5_000,  4.0,  "Uncapped (2 min/item)"),
+        ("Apprentice",   8,  1.0,  10_000, 8.0,  "480 items"),
+        ("Journeyman",   6,  1.25, 20_000, 7.5,  "360 items"),
+        ("Master",       4,  2.0,  50_000, 8.0,  "240 items"),
+    ]
+    tier_rows = [
+        [name, f"{dur}h", f"{eff:.2f}×", f"{cost:,}", f"{gather:.1f}×", craft]
+        for name, dur, eff, cost, gather, craft in tiers
+    ]
+    tier_table = table(
+        ["Tier", "Session Duration", "Efficiency", "Hire Cost", "Gathering Output", "Crafting Output"],
+        tier_rows,
+    )
+
+    # Allowed skills (mirrors WorkerSkillsScreen: GATHERING minus FARMING, all CRAFTING_SKILLS, Prayer)
+    gathering_skills = ["Mining", "Fishing", "Woodcutting", "Agility", "Thieving"]
+    crafting_skills  = ["Smithing", "Cooking", "Fletching", "Crafting", "Firemaking", "Runecrafting", "Herblore", "Construction"]
+    skill_rows = (
+        [["Gathering", s] for s in gathering_skills] +
+        [["Crafting",  s] for s in crafting_skills] +
+        [["Support",   "Prayer"]]
+    )
+    skill_table = table(["Category", "Skill"], skill_rows)
+
+    # Inn upgrade XP bonuses (tier 0–3: +0%, +10%, +20%, +30%)
+    inn_rows = [[tier, f"×{1.0 + tier * 0.10:.2f}"] for tier in range(4)]
+    inn_bonus_table = table(["Inn Tier", "Worker XP Multiplier"], inn_rows)
+
+    return get_template("town/workers").format(
+        tier_table=tier_table,
+        skill_table=skill_table,
+        inn_bonus_table=inn_bonus_table,
+    )
+
+
 def _quest_rewards(rewards: dict) -> str:
     parts = []
     if rewards.get("coins"):
@@ -797,20 +913,21 @@ def gen_boss(boss: dict) -> str:
             max_loot = info.get('max', 1)
         else:
             min_loot = max_loot = str(info)
-        common_loot_rows.append([title(item), min_loot, max_loot])
+        common_loot_rows.append([item_link(item), min_loot, max_loot])
 
     # Add rare drops
     rare_loot_rows = []
     for drop in boss.get("rare_drops", []):
         rare_loot_rows.append([
-            title(drop.get("item", "?")),
+            item_link(drop.get("item", "?")),
             fmt_pct(drop.get("chance", 0.005)),
         ])
+    # Add pet chance
     pet = boss.get("pet")
     assert isinstance(pet, dict)
     if pet:
-        pet_label = f"{pet.get('emoji', '')} {pet.get('display_name', 'Pet')}".strip()
-        rare_loot_rows.append([pet_label, fmt_pct(pet.get("chance", 0.005))])
+        pet_name = f"{pet.get('emoji', '')} {pet.get('display_name', 'Pet')}".strip()
+        rare_loot_rows.append([f"[{pet_name}](Pets)", fmt_pct(pet.get("chance", 0.005))])
 
     defensive_rows = [
         ["Melee (Attack or Strength)", defensive_stats.get("attack_defense", "—")],

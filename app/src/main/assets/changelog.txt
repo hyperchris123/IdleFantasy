@@ -1,3 +1,33 @@
+v1.8.4
+• Fix: Guild Hall discount now correctly applies to the "Claim Reward" button and progress display on guild quests
+• Fix: Daily fishing quests for lobster and swordfish now only appear when you have the required fishing level to catch them
+• Queue items now show a subtitle: combat style (Attack/Strength/Ranged/Magic) for dungeon and boss sessions, and quantity (×40) for crafting, firemaking, prayer, and runecrafting sessions
+• Farming: the plant sheet now remembers your last-used fertilizer and pre-selects it (only if you still have it in inventory)
+
+v1.8.3
+• Fixed farming guild daily quests generating crops above the player's current farming level
+• Fixed the Skills tab disappearing from the combat screen during an active session
+• Fixed construction materials not being returned when cancelling a queued or active construction session
+• Fixed thieving sessions collected from the home screen not counting toward pickpocket quests
+v1.8.2
+• Fixed Firemaking appearing under Gathering instead of Crafting in the Guild Hall
+• Fixed guild daily quest progress being silently dropped when a daily refresh triggered during session collection
+• Fixed skill names in the Slayer lamp skill picker showing raw keys instead of translated names
+• Fixed all three town buildings showing "Town Building" as their title instead of their actual names
+• Fixed workers occasionally being assigned the same name
+• Added English names for equipment, food, and bosses for translators
+• Fixed Thieving and Construction missing from the skills tab on the profile screen
+• Dungeon difficulty label "Looks manageable" renamed to "You\'ve got this" and changed from gold to green
+• Fixed pet, boss, and achievement icons not being centered in their rows
+• Added notifications for when the XP boost and Church blessing expire
+• Fixed Thieving sessions queued after another skill disappearing instead of starting
+• Fixed missing Russian translations for town building names and buff notifications
+v1.8.1
+• Fixed prayer "Start Burying" button being hidden behind the keyboard
+• Fixed construction sessions disappearing from the queue without starting
+• Fixed iron, steel, and mithril nails not appearing under the Components filter in Smithing
+• Fixed wooden racks and other constructed items not counting toward Construction quests when collected from the home screen
+• Fixed agility sessions not counting toward agility guild quests when collected from the skills screen
 v1.8.0
 • New skill: Construction (Crafting) — build furniture from planks and nails to train up
 • New skill: Thieving (Gathering) — pickpocket NPCs each session; success rate scales with your level
