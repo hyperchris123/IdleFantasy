@@ -1,21 +1,25 @@
-# {icon} {name}
+# {name}
 
-<table>
-    <tr>
-        <td colspan="2" style="text-align: center; vertical-align: middle;">{icon}</td>
-    </tr>
-    <tr>
-        <td>Combat level</td>
-        <td>Lvl {combat_level}</td>
-    </tr>
-    <tr>
-        <td>HP</td>
-        <td>{hp} ♥</td>
-    </tr>
-    <tr>
-        <td>Max duration</td>
-        <td>{duration} mins</td>
-    </tr>
+<table class="summary">
+    <thead>
+        <tr>
+            <th colspan="2" style="text-align: center; vertical-align: middle; font-size: 8em;">{icon}</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th>Combat level</th>
+            <td>Lvl {combat_level}</td>
+        </tr>
+        <tr>
+            <th>HP</th>
+            <td>{hp} ♥</td>
+        </tr>
+        <tr>
+            <th>Max duration</th>
+            <td>{duration} mins</td>
+        </tr>
+    </tbody>
 </table>
 
 {description}
