@@ -219,7 +219,7 @@ def title(key: str) -> str:
 
 
 def fmt_materials(mats: dict) -> str:
-    return ", ".join(f"{qty}× {title(item)}" for item, qty in mats.items())
+    return ", ".join(f"{qty}× {item_link(item)}" for item, qty in mats.items())
 
 
 def fmt_pct(chance: float) -> str:
@@ -254,6 +254,69 @@ def _tool_table(slot: str, efficiency_key: str) -> str:
     )
     rows = [[t["display_name"], list(t.get("requirements", {}).values() or [1])[0], f"{t[efficiency_key]:.2f}×"] for t in tools]
     return table(["Tool", "Level Required", "Efficiency"], rows)
+
+_ITEM_PAGE_MAP: dict[str, str] | None = None
+
+
+def build_item_page_map() -> dict[str, str]:
+    global _ITEM_PAGE_MAP
+    if _ITEM_PAGE_MAP is not None:
+        return _ITEM_PAGE_MAP
+
+    m: dict[str, str] = {}
+
+    def _add(keys: list[str], page_id: str):
+        for k in keys:
+            if k and k not in m:
+                m[k] = page_id
+
+    # Equipment first — specific named items, highest priority
+    _add(list(load("equipment.json").keys()), "equipment")
+    # Bones and ashes → prayer
+    _add(list(load("bones.json").keys()), "prayer")
+    # Ores (including coal, rune_essence) → mining
+    _add(list(load("ores.json").keys()), "mining")
+    # Logs → woodcutting (keys from logs.json + log_name fields from trees.json)
+    tree_log_names = [t["log_name"] for t in load("trees.json").values()]
+    _add(list(load("logs.json").keys()) + tree_log_names, "woodcutting")
+    # Runes → runecrafting
+    _add(list(load("runes.json").keys()), "runecrafting")
+    # Smithing outputs → smithing
+    _add(list(load("recipes/smithing.json").keys()), "smithing")
+    # Fish and raw fishing drops → fishing (before cooking so raw fish link here, not to cooking)
+    fishing_data = load("skills/fishing.json")
+    fish_items: list[str] = []
+    for dt in fishing_data.get("drop_tables", {}).values():
+        entries = dt if isinstance(dt, list) else dt.get("items", [])
+        for drop in entries:
+            if isinstance(drop, dict) and "item" in drop:
+                fish_items.append(drop["item"])
+    _add(fish_items, "fishing")
+    # Cooked food outputs → cooking (raw ingredients intentionally excluded so raw fish link to fishing)
+    _add(list(load("recipes/cooking.json").keys()), "cooking")
+    # Fletching outputs → fletching
+    _add(list(load("recipes/fletching.json").keys()), "fletching")
+    # Crafting outputs → crafting
+    _add(list(load("recipes/crafting.json").keys()), "crafting")
+    # Herblore outputs → herblore
+    _add(list(load("recipes/herblore.json").keys()), "herblore")
+    # Crops and seeds → farming
+    crops = load("crops.json")
+    seed_keys = [c["seed_name"] for c in crops.values() if "seed_name" in c]
+    _add(list(crops.keys()) + seed_keys, "farming")
+
+    _ITEM_PAGE_MAP = m
+    return m
+
+
+def item_link(key: str) -> str:
+    """Returns a wiki link to the page where this item is documented, or plain title if unknown."""
+    page_id = build_item_page_map().get(key)
+    if page_id:
+        page = PAGE_DIRECTORY[page_id]
+        return f"[[{title(key)}|{page.url.removesuffix('.md')}]]"
+    return title(key)
+
 
 # ---------------------------------------------------------------------------
 # Page Creation
@@ -453,7 +516,7 @@ def gen_smithing() -> str:
 def gen_cooking() -> str:
     recipes = load("recipes/cooking.json")
     rows = sorted(
-        [[r["display_name"], r["level_required"], title(r["raw_item"]), r["xp_per_item"], r.get("healing_value", "—")]
+        [[r["display_name"], r["level_required"], item_link(r["raw_item"]), r["xp_per_item"], r.get("healing_value", "—")]
          for r in recipes.values()],
         key=lambda r: r[1]
     )
@@ -640,16 +703,16 @@ def _boss_loot_rows(boss) -> list[list]:
     # Add loot
     for item, info in loot.get("items", {}).items():
         qty = f"{info.get('min',1)}–{info.get('max',1)}" if "min" in info else str(info.get("quantity", 1))
-        loot_rows.append([title(item), "100%", qty])
+        loot_rows.append([item_link(item), "100%", qty])
     # Add rare drops
     for drop in boss.get("rare_drops", []):
         chance = fmt_pct(drop.get("chance", 0.005))
-        loot_rows.append([title(drop.get("item", "?")), chance, drop.get("quantity", 1)])
-    # Add pet chance
+        loot_rows.append([item_link(drop.get("item", "?")), chance, drop.get("quantity", 1)])
+    # Add pet chance — link to Pets page
     pet = boss.get("pet")
     if pet:
-        pet_label = f"{pet.get("emoji", "")} {pet.get("display_name", "Pet")} (pet)".strip()
-        loot_rows.append([pet_label, fmt_pct(pet.get("chance", 0.005)), 1])
+        pet_name = f"{pet.get('emoji', '')} {pet.get('display_name', 'Pet')}".strip()
+        loot_rows.append([f"[[{pet_name}|Pets]]", fmt_pct(pet.get("chance", 0.005)), 1])
     # Return rows
     return loot_rows
 
@@ -661,6 +724,8 @@ def gen_bosses() -> str:
     for boss in sorted(bosses.values(), key=lambda x: x.get("combat_level_required", 0)):
         hp = boss.get("hp", "—")
         xp = boss.get("xp_rewards", {})
+        cs = boss.get("combat_stats", {})
+        ds = boss.get("defensive_stats", {})
         loot_rows = _boss_loot_rows(boss)
         sections.append(section_template.format(
             name=f"{boss.get('emoji', '')} {boss['display_name']}".strip(),
@@ -668,6 +733,14 @@ def gen_bosses() -> str:
             hp=f"{hp:,}" if isinstance(hp, int) else hp,
             duration=boss.get("duration_minutes", "—"),
             description=boss.get("description", ""),
+            attack_level=cs.get("attack_level", "—"),
+            strength_level=cs.get("strength_level", "—"),
+            defense_level=cs.get("defense_level", "—"),
+            attack_bonus=cs.get("attack_bonus", "—"),
+            strength_bonus=cs.get("strength_bonus", "—"),
+            atk_def=ds.get("attack_defense", "—"),
+            range_def=ds.get("ranged_defense", "—"),
+            magic_def=ds.get("magic_defense", "—"),
             xp_rewards=", ".join(f"{title(sk)} {v:,}" for sk, v in xp.items()) if xp else "—",
             loot_table=table(["Item", "Chance", "Qty"], loot_rows) if loot_rows else "_No loot defined._",
         ))
@@ -703,12 +776,12 @@ def _enemy_drop_rows(enemy: dict) -> list[list]:
     drop_rows = []
     for drop in enemy.get("always_drops", []):
         qty = drop.get("quantity", drop.get("quantity_min", 1))
-        drop_rows.append([title(drop["item"]), "100%", qty])
+        drop_rows.append([item_link(drop["item"]), "100%", qty])
     for drop in enemy.get("drop_table", []):
         qty_min = drop.get("quantity_min", 1)
         qty_max = drop.get("quantity_max", qty_min)
         qty_str = str(qty_min) if qty_min == qty_max else f"{qty_min}–{qty_max}"
-        drop_rows.append([title(drop["item"]), fmt_pct(drop["chance"]), qty_str])
+        drop_rows.append([item_link(drop["item"]), fmt_pct(drop["chance"]), qty_str])
     return drop_rows
 
 
