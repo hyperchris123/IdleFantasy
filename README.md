@@ -54,7 +54,7 @@ Rare enemies drop **collectible pets** that grant permanent passive XP bonuses. 
 
 ## Getting the app
 
-[Download F-Droid](https://f-droid.org/), and set up the official [Idle Fantasy Repository](https://github.com/tristinbaker/IdleFantasy/discussions/47)
+[Download F-Droid](https://f-droid.org/), and set up the official [Idle Fantasy Repository](https://github.com/tristinbaker/IdleFantasy/discussions/516)
 
 Or grab the latest APK from the [Releases page](https://github.com/tristinbaker/IdleFantasy/releases).
 
