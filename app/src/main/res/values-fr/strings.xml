@@ -541,6 +541,7 @@
     <string name="character_gender_male">Masculin</string>
     <string name="character_gender_female">Féminin</string>
     <string name="character_gender_other">Autre</string>
+    <string name="character_gender_custom_hint">Décrivez votre genre</string>
     <string name="character_race">Race</string>
     <string name="character_race_human">Humain</string>
     <string name="character_race_elf">Elfe</string>

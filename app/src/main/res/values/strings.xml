@@ -584,6 +584,7 @@
     <string name="character_gender_male">Male</string>
     <string name="character_gender_female">Female</string>
     <string name="character_gender_other">Other</string>
+    <string name="character_gender_custom_hint">Describe your gender</string>
     <string name="character_race">Race</string>
     <string name="character_race_human">Human</string>
     <string name="character_race_elf">Elf</string>

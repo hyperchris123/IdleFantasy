@@ -1,3 +1,7 @@
+v1.8.7
+• Selecting "Other" for gender now shows a text field to enter a custom gender description
+• Cancelling a repeated mercantile job from the queue now correctly refunds the coin cost
+• XP shown in the queue for gathering skills and agility now matches the Choose Activity screen
 v1.8.6
 • Fix: crash loop on startup when a very large quantity of bones or crafting items was queued (e.g. 5,000+ bones)
 • Fix: guild hall upgrade appeared to reduce your quest progress instead of just lowering the target

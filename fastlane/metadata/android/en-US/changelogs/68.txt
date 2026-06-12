@@ -1,0 +1,3 @@
+• Selecting "Other" for gender now shows a text field to enter a custom gender description
+• Cancelling a repeated mercantile job from the queue now correctly refunds the coin cost
+• XP shown in the queue for gathering skills and agility now matches the Choose Activity screen

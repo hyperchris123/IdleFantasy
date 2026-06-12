@@ -44,7 +44,9 @@ fun CharacterSetupSheet(
     onDismiss: () -> Unit,
 ) {
     var draftName   by remember { mutableStateOf(initialName) }
-    var draftGender by remember { mutableStateOf(initialGender) }
+    val isCustomGender = initialGender.isNotBlank() && initialGender !in CHARACTER_GENDERS
+    var draftGender by remember { mutableStateOf(if (isCustomGender) "Other" else initialGender) }
+    var customGenderText by remember { mutableStateOf(if (isCustomGender) initialGender else "") }
     var draftRace   by remember { mutableStateOf(initialRace) }
     val sheetState  = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
@@ -92,6 +94,15 @@ fun CharacterSetupSheet(
                         )
                     }
                 }
+                if (draftGender == "Other") {
+                    OutlinedTextField(
+                        value         = customGenderText,
+                        onValueChange = { customGenderText = it },
+                        label         = { Text(stringResource(R.string.character_gender_custom_hint)) },
+                        singleLine    = true,
+                        modifier      = Modifier.fillMaxWidth(),
+                    )
+                }
             }
 
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -129,7 +140,11 @@ fun CharacterSetupSheet(
                 }
                 Spacer(Modifier.width(8.dp))
                 Button(
-                    onClick  = { onSave(draftName.trim(), draftGender, draftRace) },
+                    onClick  = {
+                        val gender = if (draftGender == "Other" && customGenderText.isNotBlank())
+                            customGenderText.trim() else draftGender
+                        onSave(draftName.trim(), gender, draftRace)
+                    },
                     enabled  = draftName.isNotBlank(),
                 ) {
                     Text(stringResource(R.string.btn_confirm))

@@ -527,6 +527,7 @@
     <string name="character_gender_male">Erkek</string>
     <string name="character_gender_female">Kadın</string>
     <string name="character_gender_other">Diğer</string>
+    <string name="character_gender_custom_hint">Cinsiyetinizi açıklayın</string>
     <string name="character_race">Irk</string>
     <string name="character_race_human">İnsan</string>
     <string name="character_race_elf">Elf</string>
