@@ -28,26 +28,28 @@ Each entry is a `PageInfo` with the display title, output filename, and content 
 The same `pages` list defines where the page appears in navigation (home page and `_Sidebar.md`). `_gen_page_listing()` walks `PAGE_HIERARCHY` to build markdown links and headings.
 
 - A **page** is a tuple `(page_id, PageInfo(...))`.
-- A **section** is a list `[section_name, children]`, where `section_name` is a display-only heading and `children` is a list of further entries. Sections can be nested to any depth.
+- A **section** is a list `[section_name, collapsible, children]`, where `section_name` is a display-only heading, `collapsible` marks whether the section can be expanded/collapsed in navigation, and `children` is a list of further entries. Sections can be nested to any depth.
 
 ```python
 pages = [
     ("home", PageInfo("Home", "Home.md", gen_home)),
-    ["Skills", [
+    ["Skills", False, [
         ("skills", PageInfo("Skills", "Skills.md", gen_skills)),
-        ["Gathering", [
+        ["Gathering", False, [
             ("mining", PageInfo("Mining", "Mining.md", gen_mining)),
             ("fishing", PageInfo("Fishing", "Fishing.md", gen_fishing)),
         ]],
     ]],
-    ["Combat", [
+    ["Combat", False, [
         ("bosses", PageInfo("Bosses", "Bosses.md", gen_bosses)),
         ("dungeons", PageInfo("Dungeons", "Dungeons.md", gen_dungeons)),
     ]],
 ]
 ```
 
-Section names are display-only headings — link text for pages comes from `PageInfo.title`. The same section name can appear in more than one place (e.g. Combat under Skills and as a top-level section); existing sections are merged when the name already exists.
+Section names are display-only headings — link text for pages comes from `PageInfo.title`. The same section name can appear in more than one place (e.g. Combat under Skills and as a top-level section); existing sections are merged when the name already exists. When merging into an existing section, the `collapsible` flag on the incoming section is ignored.
+
+Static sections are usually `False`. Use `True` for sections that will hold many dynamically generated child pages once those pages are merged into the hierarchy — see [Adding dynamic wiki pages](ADDING_DYNAMIC_WIKI_PAGES.md#2-place-pages-in-the-hierarchy).
 
 Every static page should appear at least once in the `pages` list. Pages with underscore-prefixed filenames (e.g. `_Sidebar.md`) are excluded from this requirement.
 
