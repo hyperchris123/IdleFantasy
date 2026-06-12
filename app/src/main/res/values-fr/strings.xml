@@ -240,6 +240,7 @@
     <string name="label_shop_desc">Acheter et vendre des objets</string>
     <string name="label_no_session_hint">Allez dans Compétences ou Combat pour commencer l’entraînement.</string>
     <string name="label_recent_activity">Activité Récente</string>
+    <string name="settings_recent_activity">Journal d’activité récente</string>
     <string name="settings_recent_activity_desc">Afficher le bouton Activité Récente dans l’en-tête de l’écran d’accueil</string>
     <string name="label_no_sessions_yet">Aucune session terminée pour l’instant.</string>
 
