@@ -9,3 +9,5 @@ More information about specific bosses can be found on their particular pages
 ## Bosses
 
 {boss_table}
+
+{combat_footer}
