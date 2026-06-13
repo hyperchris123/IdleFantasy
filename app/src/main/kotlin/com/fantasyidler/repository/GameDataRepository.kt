@@ -22,6 +22,7 @@ import com.fantasyidler.data.json.MarketplaceJson
 import com.fantasyidler.data.json.OreData
 import com.fantasyidler.data.json.PetData
 import com.fantasyidler.data.json.DailyQuestTemplate
+import com.fantasyidler.data.json.WeeklyQuestTemplate
 import com.fantasyidler.data.json.GuildDailyTemplate
 import com.fantasyidler.data.json.GuildQuestData
 import com.fantasyidler.data.json.QuestData
@@ -75,6 +76,17 @@ class GameDataRepository @Inject constructor(
         asset("data/enemies.json")
     }
 
+    /** Maps each enemy key to the dungeon display names it appears in. */
+    val enemyLocations: Map<String, List<String>> by lazy {
+        val map = mutableMapOf<String, MutableList<String>>()
+        dungeons.values.forEach { dungeon ->
+            dungeon.enemySpawns.forEach { spawn ->
+                map.getOrPut(spawn.enemy) { mutableListOf() }.add(dungeon.displayName)
+            }
+        }
+        map.mapValues { (_, v) -> v.sorted() }
+    }
+
     // ------------------------------------------------------------------ dungeons
 
     /** All dungeon files in assets/data/dungeons/, keyed by dungeon name. */
@@ -112,6 +124,10 @@ class GameDataRepository @Inject constructor(
 
     val dailyQuestPool: List<DailyQuestTemplate> by lazy {
         asset("data/daily_quests.json")
+    }
+
+    val weeklyQuestPool: List<WeeklyQuestTemplate> by lazy {
+        asset("data/weekly_quests.json")
     }
 
     val guildQuests: Map<String, GuildQuestData> by lazy {

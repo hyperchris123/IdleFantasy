@@ -1,0 +1,302 @@
+[
+  {
+    "id": "weekly_iron_miner",
+    "display_name": "Iron Prospector",
+    "skill": "mining",
+    "type": "gather",
+    "target": "iron_ore",
+    "amount": 750,
+    "description": "Mine 750 iron ore this week.",
+    "level_required": 10
+  },
+  {
+    "id": "weekly_coal_miner",
+    "display_name": "Coal Baron",
+    "skill": "mining",
+    "type": "gather",
+    "target": "coal",
+    "amount": 450,
+    "description": "Mine 450 coal this week.",
+    "level_required": 30
+  },
+  {
+    "id": "weekly_mithril_miner",
+    "display_name": "Mithril Seeker",
+    "skill": "mining",
+    "type": "gather",
+    "target": "mithril_ore",
+    "amount": 300,
+    "description": "Mine 300 mithril ore this week.",
+    "level_required": 55
+  },
+  {
+    "id": "weekly_runite_miner",
+    "display_name": "Deep Core Miner",
+    "skill": "mining",
+    "type": "gather",
+    "target": "runite_ore",
+    "amount": 150,
+    "description": "Mine 150 runite ore this week.",
+    "level_required": 85
+  },
+  {
+    "id": "weekly_oak_logger",
+    "display_name": "Oak Harvester",
+    "skill": "woodcutting",
+    "type": "gather",
+    "target": "oak_log",
+    "amount": 600,
+    "description": "Chop 600 oak logs this week.",
+    "level_required": 15
+  },
+  {
+    "id": "weekly_yew_logger",
+    "display_name": "Yew Feller",
+    "skill": "woodcutting",
+    "type": "gather",
+    "target": "yew_log",
+    "amount": 300,
+    "description": "Chop 300 yew logs this week.",
+    "level_required": 60
+  },
+  {
+    "id": "weekly_magic_logger",
+    "display_name": "Arcane Lumberjack",
+    "skill": "woodcutting",
+    "type": "gather",
+    "target": "magic_log",
+    "amount": 150,
+    "description": "Chop 150 magic logs this week.",
+    "level_required": 75
+  },
+  {
+    "id": "weekly_trout_fisher",
+    "display_name": "River Angler",
+    "skill": "fishing",
+    "type": "gather",
+    "target": "raw_trout",
+    "amount": 600,
+    "description": "Catch 600 raw trout this week.",
+    "level_required": 20
+  },
+  {
+    "id": "weekly_swordfish_fisher",
+    "display_name": "Deep Sea Fisher",
+    "skill": "fishing",
+    "type": "gather",
+    "target": "raw_swordfish",
+    "amount": 300,
+    "description": "Catch 300 raw swordfish this week.",
+    "level_required": 50
+  },
+  {
+    "id": "weekly_shark_hunter",
+    "display_name": "Shark Hunter",
+    "skill": "fishing",
+    "type": "gather",
+    "target": "raw_shark",
+    "amount": 150,
+    "description": "Catch 150 raw shark this week.",
+    "level_required": 76
+  },
+  {
+    "id": "weekly_steel_smith",
+    "display_name": "Steel Forger",
+    "skill": "smithing",
+    "type": "craft",
+    "target": "steel_bar",
+    "amount": 300,
+    "description": "Smelt 300 steel bars this week.",
+    "level_required": 30
+  },
+  {
+    "id": "weekly_mithril_smith",
+    "display_name": "Mithril Founder",
+    "skill": "smithing",
+    "type": "craft",
+    "target": "mithril_bar",
+    "amount": 150,
+    "description": "Smelt 150 mithril bars this week.",
+    "level_required": 55
+  },
+  {
+    "id": "weekly_runite_smith",
+    "display_name": "Master Smelter",
+    "skill": "smithing",
+    "type": "craft",
+    "target": "runite_bar",
+    "amount": 75,
+    "description": "Smelt 75 runite bars this week.",
+    "level_required": 85
+  },
+  {
+    "id": "weekly_cook_trout",
+    "display_name": "Camp Cook",
+    "skill": "cooking",
+    "type": "craft",
+    "target": "trout",
+    "amount": 300,
+    "description": "Cook 300 trout this week.",
+    "level_required": 15
+  },
+  {
+    "id": "weekly_cook_lobster",
+    "display_name": "Harbour Chef",
+    "skill": "cooking",
+    "type": "craft",
+    "target": "lobster",
+    "amount": 225,
+    "description": "Cook 225 lobster this week.",
+    "level_required": 40
+  },
+  {
+    "id": "weekly_cook_shark",
+    "display_name": "Master Chef",
+    "skill": "cooking",
+    "type": "craft",
+    "target": "shark",
+    "amount": 110,
+    "description": "Cook 110 shark this week.",
+    "level_required": 80
+  },
+  {
+    "id": "weekly_fletch_mithril",
+    "display_name": "Arrow Crafter",
+    "skill": "fletching",
+    "type": "craft",
+    "target": "mithril_arrow",
+    "amount": 450,
+    "description": "Fletch 450 mithril arrows this week.",
+    "level_required": 45
+  },
+  {
+    "id": "weekly_fletch_runite",
+    "display_name": "Master Fletcher",
+    "skill": "fletching",
+    "type": "craft",
+    "target": "runite_arrow",
+    "amount": 300,
+    "description": "Fletch 300 runite arrows this week.",
+    "level_required": 75
+  },
+  {
+    "id": "weekly_goblin_slayer",
+    "display_name": "Goblin Exterminator",
+    "skill": "combat",
+    "type": "kill_enemy",
+    "target": "goblin",
+    "amount": 750,
+    "description": "Kill 750 goblins this week.",
+    "level_required": 1
+  },
+  {
+    "id": "weekly_skeleton_hunter",
+    "display_name": "Bone Breaker",
+    "skill": "combat",
+    "type": "kill_enemy",
+    "target": "skeleton",
+    "amount": 450,
+    "description": "Kill 450 skeletons this week.",
+    "level_required": 20
+  },
+  {
+    "id": "weekly_monster_hunter",
+    "display_name": "Monster Hunter",
+    "skill": "combat",
+    "type": "kill_enemy",
+    "target": "any",
+    "amount": 1500,
+    "description": "Kill 1,500 enemies of any kind this week.",
+    "level_required": 1
+  },
+  {
+    "id": "weekly_demon_slayer",
+    "display_name": "Demon Slayer",
+    "skill": "combat",
+    "type": "kill_enemy",
+    "target": "demon",
+    "amount": 225,
+    "description": "Kill 225 demons this week.",
+    "level_required": 60
+  },
+  {
+    "id": "weekly_boss_hunter",
+    "display_name": "Boss Hunter",
+    "skill": "combat",
+    "type": "boss",
+    "target": "any",
+    "amount": 10,
+    "description": "Defeat 10 raid bosses this week.",
+    "level_required": 50
+  },
+  {
+    "id": "weekly_kbd_slayer",
+    "display_name": "Dragon Bane",
+    "skill": "combat",
+    "type": "boss",
+    "target": "king_black_dragon",
+    "amount": 5,
+    "description": "Defeat the King Black Dragon 5 times.",
+    "level_required": 60
+  },
+  {
+    "id": "weekly_void_champion",
+    "display_name": "Void Champion",
+    "skill": "combat",
+    "type": "boss",
+    "target": "void_sovereign",
+    "amount": 5,
+    "description": "Defeat the Void Sovereign 5 times.",
+    "level_required": 110
+  },
+  {
+    "id": "weekly_slayer_novice",
+    "display_name": "Task Taker",
+    "skill": "combat",
+    "type": "slayer_task",
+    "target": "any",
+    "amount": 15,
+    "description": "Complete 15 Slayer tasks this week.",
+    "level_required": 10
+  },
+  {
+    "id": "weekly_slayer_master",
+    "display_name": "Slayer Champion",
+    "skill": "combat",
+    "type": "slayer_task",
+    "target": "any",
+    "amount": 30,
+    "description": "Complete 30 Slayer tasks this week.",
+    "level_required": 40
+  },
+  {
+    "id": "weekly_devout",
+    "display_name": "Devoted",
+    "skill": "prayer",
+    "type": "prayer",
+    "target": "any",
+    "amount": 450,
+    "description": "Bury 450 bones this week.",
+    "level_required": 1
+  },
+  {
+    "id": "weekly_farmer",
+    "display_name": "Season's Harvest",
+    "skill": "farming",
+    "type": "farming",
+    "target": "any",
+    "amount": 30,
+    "description": "Harvest 30 crops this week.",
+    "level_required": 1
+  },
+  {
+    "id": "weekly_guild_supporter",
+    "display_name": "Guild Contributor",
+    "skill": "combat",
+    "type": "guild_daily",
+    "target": "any",
+    "amount": 20,
+    "description": "Complete 20 guild daily requests this week.",
+    "level_required": 1
+  }
+]

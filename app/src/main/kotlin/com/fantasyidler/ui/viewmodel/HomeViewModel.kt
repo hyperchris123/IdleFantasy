@@ -494,6 +494,7 @@ class HomeViewModel @Inject constructor(
                         awardedCapes += playerRepo.applySessionResults(Skills.MERCANTILE, totalXp, emptyMap())
                         playerRepo.addCoins(coinReturnBoosted)
                         guildRepo.recordGuildTrade(coinReturnBoosted)
+                        playerRepo.recordWeeklyProgress("mercantile", session.activityKey, frames.size)
                         combinedXpBySkill[Skills.MERCANTILE] = (combinedXpBySkill[Skills.MERCANTILE] ?: 0L) + totalXp
                         combinedCoins += coinReturnBoosted
                     }
@@ -512,7 +513,10 @@ class HomeViewModel @Inject constructor(
                                 questRepo.recordGathering(session.skillName, regular)
                                 playerRepo.recordDailyGathering(regular)
                                 when (session.skillName) {
-                                    Skills.AGILITY      -> guildRepo.recordGuildSessions()
+                                    Skills.AGILITY      -> {
+                                        guildRepo.recordGuildSessions()
+                                        playerRepo.recordWeeklyProgress("agility", session.activityKey, frames.size)
+                                    }
                                     Skills.RUNECRAFTING -> guildRepo.recordGuildCrafting(session.skillName, regular)
                                     else                -> guildRepo.recordGuildGathering(session.skillName, regular)
                                 }
@@ -525,6 +529,7 @@ class HomeViewModel @Inject constructor(
                             Skills.THIEVING    -> {
                                 val successCount = frames.count { it.success }
                                 questRepo.recordThieving(session.activityKey, successCount, regular.filterKeys { it != "coins" })
+                                guildRepo.recordGuildThieving(session.activityKey, successCount)
                             }
                             Skills.PRAYER      -> {
                                 val buried = frames.sumOf { it.kills }

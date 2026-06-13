@@ -12,6 +12,9 @@ import com.fantasyidler.repository.DailyReward
 import com.fantasyidler.repository.GameDataRepository
 import com.fantasyidler.repository.PlayerRepository
 import com.fantasyidler.repository.QuestRepository
+import com.fantasyidler.repository.WeeklyBonusReward
+import com.fantasyidler.repository.WeeklyQuestRepository
+import com.fantasyidler.repository.WeeklyQuestWithProgress
 import com.fantasyidler.util.formatCoins
 import com.fantasyidler.util.formatXp
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -47,6 +50,8 @@ data class QuestsUiState(
     val completedCount: Int = 0,
     val dailyQuests: List<DailyQuestWithProgress> = emptyList(),
     val nextDailyReset: Long = 0L,
+    val weeklyQuests: List<WeeklyQuestWithProgress> = emptyList(),
+    val nextWeeklyReset: Long = 0L,
     val snackbarMessage: String? = null,
     val hideCompleted: Boolean = false,
 )
@@ -61,6 +66,7 @@ class QuestsViewModel @Inject constructor(
     private val gameData: GameDataRepository,
     private val playerRepo: PlayerRepository,
     private val dailyQuestRepo: DailyQuestRepository,
+    private val weeklyQuestRepo: WeeklyQuestRepository,
     private val json: Json,
 ) : ViewModel() {
 
@@ -72,7 +78,12 @@ class QuestsViewModel @Inject constructor(
             _extra.update { it.copy(hideCompleted = flags.hideCompletedQuests) }
             // Trigger a DB refresh if daily quests have rolled over, and seed nextDailyReset.
             playerRepo.getRefreshedDailyFlags()
-            _extra.update { it.copy(nextDailyReset = dailyQuestRepo.nextResetMs()) }
+            _extra.update { 
+                it.copy(
+                    nextDailyReset = dailyQuestRepo.nextResetMs(),
+                    nextWeeklyReset = weeklyQuestRepo.nextResetMs()
+                )
+            }
         }
     }
 
@@ -113,12 +124,19 @@ class QuestsViewModel @Inject constructor(
             extra.dailyQuests
         }
 
+        val weeklyQuests = if (player != null) {
+            weeklyQuestRepo.getActiveWeeklyQuests(flags)
+        } else {
+            extra.weeklyQuests
+        }
+
         extra.copy(
             isLoading      = false,
             questsByGroup  = questsByGroup,
             claimableCount = claimable,
             completedCount = completed,
             dailyQuests    = dailyQuests,
+            weeklyQuests   = weeklyQuests,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), QuestsUiState())
 
@@ -209,6 +227,40 @@ class QuestsViewModel @Inject constructor(
                 is DailyReward.DwarvenItemReward -> {
                     playerRepo.addItem(reward.itemKey, 1)
                     "Daily quest complete! You found dwarven gear!"
+                }
+            }
+            _extra.update { it.copy(snackbarMessage = message) }
+        }
+    }
+
+    fun claimWeeklyQuest(templateId: String) {
+        viewModelScope.launch {
+            val flags = playerRepo.getFlags()
+            val (newFlags, rewardCoins) = weeklyQuestRepo.claimQuest(flags, templateId)
+            playerRepo.updateFlags(newFlags)
+            playerRepo.addCoins(rewardCoins)
+            _extra.update { it.copy(snackbarMessage = "Weekly challenge complete! +${rewardCoins.formatCoins()} coins") }
+        }
+    }
+
+    fun claimWeeklyBonus() {
+        viewModelScope.launch {
+            val flags = playerRepo.getFlags()
+            if (flags.weeklyQuestClaimed.size < 5 || flags.weeklyBonusClaimed) return@launch
+
+            val ownedItems = playerRepo.getInventory().keys +
+                playerRepo.getEquipped().values.filterNotNull()
+            val (newFlags, reward) = weeklyQuestRepo.claimWeeklyBonus(flags, ownedItems.toSet())
+            playerRepo.updateFlags(newFlags)
+
+            val message = when (reward) {
+                is WeeklyBonusReward.CoinsReward -> {
+                    playerRepo.addCoins(reward.amount)
+                    "All weekly challenges complete! +${reward.amount.formatCoins()} coins"
+                }
+                is WeeklyBonusReward.DivineItemReward -> {
+                    playerRepo.addItem(reward.itemKey, 1)
+                    "All weekly challenges complete! You found divine gear!"
                 }
             }
             _extra.update { it.copy(snackbarMessage = message) }
