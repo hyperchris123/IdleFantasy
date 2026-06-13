@@ -181,8 +181,13 @@ class SessionRepository @Inject constructor(
             return
         }
         if (session.completed) {
-            val backdateMs = maxOf(0L, System.currentTimeMillis() - session.endsAt)
-            try { starter.startNextQueued(backdateMs = backdateMs) } catch (_: Exception) { markCompleted(session.sessionId) }
+            var catchUpMs = maxOf(0L, System.currentTimeMillis() - session.endsAt)
+            while (catchUpMs > 0) {
+                val used = try { starter.insertNextQueuedAsOffline(catchUpMs) } catch (_: Exception) { 0L }
+                if (used == 0L) break
+                catchUpMs -= used
+            }
+            try { starter.startNextQueued(backdateMs = catchUpMs) } catch (_: Exception) { markCompleted(session.sessionId) }
             return
         }
         // Boss sessions: endsAt is cosmetic (full duration). The session really ends

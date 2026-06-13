@@ -46,7 +46,13 @@ class SessionAlarmReceiver : BroadcastReceiver() {
                     val workerStarted = workerQueuedSessionStarter.startNextQueued(slot)
                     if (!workerStarted) notificationManager.showSessionComplete(skillDisplayName)
                 } else {
-                    val started = queuedSessionStarter.startNextQueued(backdateMs = backdateMs)
+                    var catchUpMs = backdateMs
+                    while (catchUpMs > 0) {
+                        val used = try { queuedSessionStarter.insertNextQueuedAsOffline(catchUpMs) } catch (_: Exception) { 0L }
+                        if (used == 0L) break
+                        catchUpMs -= used
+                    }
+                    val started = queuedSessionStarter.startNextQueued(backdateMs = catchUpMs)
                     if (!started) notificationManager.showSessionComplete(skillDisplayName)
                 }
             } finally {
