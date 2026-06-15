@@ -695,7 +695,7 @@
     <string name="worker_apprentice">Apprenti</string>
     <string name="worker_journeyman">Compagnon</string>
     <string name="worker_master">Maître</string>
-    <string name="inn_long_laborer_desc">8h de collecte, efficacité 0.5x. Pas d’artisanat ni de prière ni fabrication de runes. Mettez autant de travail que vous voulez. Il est lent, mais il fera tout.</string>
+    <string name="inn_long_laborer_desc">Un emploi par embauche, renvoyé après la collecte. 8h de collecte, efficacité 0,5x, quantité d’artisanat illimitée. Il est lent, mais il fait tout.</string>
     <string name="inn_apprentice_desc">8h de collecte, efficacité 1x. artisanat, prière et fabrication de runes plafonnés à 480 objets par session.</string>
     <string name="inn_journeyman_desc">6h de collecte, efficacité 1.25x. artisanat, prière et fabrication de runes plafonnés à 360 objets par session.</string>
     <string name="inn_master_desc">4h de collecte, efficacité 2x. artisanat, prière et fabrication de runes plafonnés à 240 objets par session.</string>

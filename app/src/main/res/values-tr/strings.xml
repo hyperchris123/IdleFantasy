@@ -690,7 +690,7 @@
     <string name="worker_apprentice">Apprentice</string>
     <string name="worker_journeyman">Journeyman</string>
     <string name="worker_master">Master</string>
-    <string name="inn_long_laborer_desc">8h gathering, 0.5x efficiency. No crafting, prayer, or runecrafting cap. Queue up as much as you like. He\'s slow, but he\'ll do anything.</string>
+    <string name="inn_long_laborer_desc">One job per hire, dismissed after collecting. 8h gathering, 0.5x efficiency, unlimited crafting qty. He\'s slow, but he\'ll do anything.</string>
     <string name="inn_apprentice_desc">8h gathering, 1x efficiency. Crafting, prayer, and runecrafting capped at 480 items per session.</string>
     <string name="inn_journeyman_desc">6h gathering, 1.25x efficiency. Crafting, prayer, and runecrafting capped at 360 items per session.</string>
     <string name="inn_master_desc">4h gathering, 2x efficiency. Crafting, prayer, and runecrafting capped at 240 items per session.</string>

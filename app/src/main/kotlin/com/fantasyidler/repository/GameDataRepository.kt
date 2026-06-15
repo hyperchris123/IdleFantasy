@@ -314,6 +314,7 @@ class GameDataRepository @Inject constructor(
             smithingRecipes.forEach { (k, r) -> add(k); addAll(r.materials.keys) }
             fletchingRecipes.forEach { (k, r) -> add(k); addAll(r.materials.keys) }
             craftingRecipes.forEach { (k, r) -> add(k); addAll(r.materials.keys) }
+            constructionRecipes.forEach { (k, r) -> add(k); addAll(r.materials.keys) }
             addAll(ores.keys)
             addAll(gems.keys)
             addAll(logs.keys)
