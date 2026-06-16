@@ -1174,9 +1174,14 @@
     <string name="farming_bean_climb">Klimmen</string>
     <string name="farming_bean_climbed">Je hebt de bonenrank beklommen. Iets wacht je...</string>
     <string name="farming_bean_picker_stats">\?\?\?  •  \?\?\?  •  \?\?\?</string>
+    <string name="farming_magic_bean_one_plot">Magische bonen kunnen slechts op één veld worden geplant</string>
 
     <!-- ===== Armory Tab ===== -->
     <string name="armory_tab">Arsenaal</string>
+    <string name="tab_bonuses">Bonussen</string>
+    <string name="bonus_none">Geen actieve XP-bonussen</string>
+    <string name="bonus_all_skills">Alle vaardigheden</string>
+    <string name="bonus_section_boosts">Actieve bonussen</string>
     <string name="armory_not_owned">Je bezit dit item niet.</string>
     <string name="armory_how_to_obtain">Hoe te verkrijgen</string>
     <string name="armory_no_stats">Geen statbonussen.</string>
@@ -1255,4 +1260,11 @@
     <string name="slayer_lamp_large_desc">+50.000 XP aan elke vaardigheid</string>
     <string name="slayer_lamp_pick_skill">Kies een vaardigheid</string>
     <string name="slayer_lamp_purchased">XP toegevoegd aan %1$s!</string>
+
+    <!-- Boss Descriptions -->
+    <string name="boss_king_black_dragon_desc">De legendarische driekoppige draak, gevreesd in het hele rijk.</string>
+    <string name="boss_demon_lord_desc">Een oeroude demon uit de afgrond, meester van duistere magie.</string>
+    <string name="boss_kraken_desc">De schrik van de diepzee, een kolossaal zeemonster.</string>
+    <string name="boss_balrog_desc">Een oeroude demon van vlam en schaduw, ontwaakt uit zijn sluimer diep onder de aarde.</string>
+    <string name="boss_void_sovereign_desc">De oorspronkelijke entiteit achter de leemtescheuren. Onmetelijk oud, bekijkt sterfelijke uitdagers met minachting.</string>
 </resources>
