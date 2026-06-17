@@ -581,6 +581,10 @@
     <string name="crafting_needed_have">%1$d (ne hai %2$d)</string>
     <!-- Translator note: %1$d = quantity in inventory -->
     <string name="crafting_in_inventory">Ne hai: ×%1$d</string>
+    <string name="crafting_quest_targets">Obiettivi missione</string>
+    <string name="quest_fill_daily">Giornaliero</string>
+    <string name="quest_fill_weekly">Settimanale</string>
+    <string name="quest_fill_guild">Gilda</string>
 
     <!-- ===== FarmingScreen ===== -->
     <!-- Translator note: %1$s = crop name -->
@@ -1266,6 +1270,16 @@
     <string name="bonus_none">Nessun bonus XP attivo</string>
     <string name="bonus_all_skills">Tutte le abilità</string>
     <string name="bonus_section_boosts">Bonus attivi</string>
+    <string name="bonus_section_skills">Skill Bonuses</string>
+    <string name="bonus_combat_stat_boost">Boosts combat stats</string>
+    <string name="snackbar_added_to_queue">Aggiunto alla coda: %1$s.</string>
+    <string name="snackbar_queue_full">La coda è piena (3/3).</string>
+    <string name="home_not_enough_coins_repeat">Monete insufficienti per ripetere %1$s.</string>
+    <string name="home_not_enough_materials_repeat">Materiali insufficienti per ripetere %1$s.</string>
+    <string name="combat_start_failed">Impossibile avviare: %1$s</string>
+    <string name="combat_select_spell">Select a spell before entering.</string>
+    <string name="combat_spell_level_required">Need Magic %1$d for %2$s.</string>
+    <string name="guild_daily_reward_claimed">Daily reward claimed!</string>
     <string name="armory_not_owned">Non possiedi questo oggetto.</string>
     <string name="armory_how_to_obtain">Come ottenere</string>
     <string name="armory_no_stats">Nessun bonus alle statistiche.</string>
@@ -1274,6 +1288,48 @@
     <string name="armory_filter_armor">Armatura</string>
     <string name="armory_filter_accessories">Accessori</string>
     <string name="armory_filter_tools">Strumenti</string>
+
+    <!-- Session / queue messages (issue #596) -->
+    <string name="skill_no_logs">Nessun tronco nell\'inventario</string>
+    <string name="skill_not_enough_rune_essence">Essenza di Rune insufficiente</string>
+    <string name="skill_not_enough_item">Non abbastanza %1$s</string>
+    <string name="skill_not_enough_materials">Materiali insufficienti</string>
+    <string name="skill_session_start_failed">Impossibile avviare la sessione: %1$s</string>
+    <string name="skill_added_to_queue_activity">Aggiunto alla coda: %1$s — %2$s.</string>
+    <string name="worker_already_busy">Il lavoratore è già occupato.</string>
+    <string name="worker_not_enough_logs">Non abbastanza tronchi.</string>
+    <string name="worker_not_enough_rune_essence">Essenza di Rune insufficiente.</string>
+    <string name="worker_not_enough_materials">Materiali insufficienti.</string>
+    <string name="shop_no_junk">Nessun oggetto da vendere</string>
+    <string name="shop_sold_junk">Oggetti venduti per %1$s monete</string>
+    <string name="shop_no_old_equipment">Nessun equipaggiamento obsoleto da vendere</string>
+    <string name="shop_sold_old_equipment">Equipaggiamento obsoleto venduto per %1$s monete</string>
+    <string name="shop_bulk_sell_total">Totale</string>
+    <string name="shop_bulk_sell_confirm">Vendi tutto</string>
+    <string name="shop_xp_boost_activated">Potenziamento XP 2× attivato per %1$d ore!</string>
+    <string name="shop_not_enough_in_inventory">Non abbastanza nell\'inventario</string>
+    <string name="shop_bought_item">Acquistato %1$d× %2$s</string>
+    <string name="shop_sold_item">%1$d× %2$s venduto per %3$d monete</string>
+    <string name="quest_complete_notification">Quest completata: %1$s!</string>
+    <string name="quest_complete_with_rewards">Quest completata: %1$s! Ottenuto: %2$s</string>
+    <string name="quest_daily_complete_coins">Quest giornaliera completata! +%1$s monete</string>
+    <string name="quest_daily_complete_dwarven">Quest giornaliera completata! Hai trovato equipaggiamento nanico!</string>
+    <string name="quest_weekly_complete">Sfida settimanale completata! +%1$s monete</string>
+    <string name="quest_weekly_bonus_complete_coins">Tutte le sfide settimanali completate! +%1$s monete</string>
+    <string name="quest_weekly_bonus_complete_divine">Tutte le sfide settimanali completate! Hai trovato equipaggiamento divino!</string>
+    <string name="guild_contributed_items">Contribuiti %1$d oggetti.</string>
+    <string name="mercantile_not_enough_coins">Monete insufficienti (servono %1$s monete).</string>
+    <string name="mercantile_route_start_failed">Impossibile avviare il percorso: %1$s</string>
+    <string name="mercantile_added_to_queue">Aggiunto alla coda: Commercio — %1$s.</string>
+    <string name="inventory_requires_to_equip">Richiede %1$s per equipaggiare.</string>
+    <string name="home_found_pet">Hai trovato un animale: %1$s!</string>
+    <string name="home_congratulations_received">Congratulazioni! Hai ricevuto: %1$s</string>
+    <string name="combat_no_food_title">Nessun cibo equipaggiato</string>
+    <string name="combat_no_food_body">Non hai cibo equipaggiato. Senza cibo potresti morire rapidamente e perdere la maggior parte delle ricompense. Iniziare comunque?</string>
+    <string name="combat_start_anyway">Inizia comunque</string>
+    <string name="combat_xp_consolation">XP (consolazione)</string>
+    <string name="bestiary_loot_item_header">Oggetto</string>
+    <string name="worker_no_mats">Nessun mat.</string>
 
     <!-- Boss Descriptions -->
     <string name="boss_king_black_dragon_desc">Il leggendario drago a tre teste, temuto in tutto il regno.</string>
