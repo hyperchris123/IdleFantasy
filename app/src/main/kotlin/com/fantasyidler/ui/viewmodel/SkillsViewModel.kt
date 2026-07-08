@@ -308,11 +308,7 @@ class SkillsViewModel @Inject constructor(
             val runeData = gameData.runes[runeKey] ?: return@launch
             val player   = playerRepo.getOrCreatePlayer()
             val inv: Map<String, Int> = json.decodeFromString(player.inventory)
-            val flags    = try { json.decodeFromString<PlayerFlags>(player.flags) } catch (_: Exception) { PlayerFlags() }
-            val reservedEssence = flags.sessionQueue
-                .filter { it.skillName == Skills.RUNECRAFTING }
-                .sumOf { action -> (gameData.runes[action.activityKey]?.essenceCost ?: 0) * action.qty }
-            val availableEssence = (inv["rune_essence"] ?: 0) - reservedEssence
+            val availableEssence = inv["rune_essence"] ?: 0
             if (availableEssence < runeData.essenceCost * qty) {
                 _uiState.update { it.copy(snackbarMessage = "Not enough Rune Essence") }
                 return@launch
@@ -331,6 +327,7 @@ class SkillsViewModel @Inject constructor(
                         estimatedDurationMs = qty.toLong() * perItemMs,
                     )
                 )
+                if (enqueued) playerRepo.consumeItems(mapOf("rune_essence" to runeData.essenceCost * qty))
                 _uiState.update {
                     it.copy(
                         snackbarMessage = if (enqueued) "Added to queue: Runecrafting — $actDisplay." else "Queue is full (3/3).",
@@ -383,6 +380,7 @@ class SkillsViewModel @Inject constructor(
                     json.serializersModule.serializer<List<SessionFrame>>(),
                     frames,
                 )
+                playerRepo.consumeItems(mapOf("rune_essence" to runeData.essenceCost * qty))
                 sessionRepo.startSession(
                     skillName        = Skills.RUNECRAFTING,
                     activityKey      = runeKey,
@@ -403,9 +401,7 @@ class SkillsViewModel @Inject constructor(
             val bone   = gameData.bones[boneKey] ?: return@launch
             val player = playerRepo.getOrCreatePlayer()
             val inv: Map<String, Int> = json.decodeFromString(player.inventory)
-            val flags  = try { json.decodeFromString<PlayerFlags>(player.flags) } catch (_: Exception) { PlayerFlags() }
-            val alreadyQueued = reservedQty(flags.sessionQueue, Skills.PRAYER)[boneKey] ?: 0
-            val available = (inv[boneKey] ?: 0) - alreadyQueued
+            val available = inv[boneKey] ?: 0
             if (available < qty) {
                 _uiState.update { it.copy(snackbarMessage = "Not enough ${bone.displayName}") }
                 return@launch
@@ -423,6 +419,7 @@ class SkillsViewModel @Inject constructor(
                         estimatedDurationMs = qty.toLong() * perBoneMs,
                     )
                 )
+                if (enqueued) playerRepo.consumeItems(mapOf(boneKey to qty))
                 _uiState.update {
                     it.copy(
                         snackbarMessage = if (enqueued) "Added to queue: Prayer — ${bone.displayName}." else "Queue is full (3/3).",
@@ -461,6 +458,7 @@ class SkillsViewModel @Inject constructor(
                     json.serializersModule.serializer<List<SessionFrame>>(),
                     frames,
                 )
+                playerRepo.consumeItems(mapOf(boneKey to qty))
                 sessionRepo.startSession(
                     skillName        = Skills.PRAYER,
                     activityKey      = boneKey,
@@ -593,25 +591,6 @@ class SkillsViewModel @Inject constructor(
                 Skills.PRAYER      -> questRepo.recordBuried(frames.sumOf { it.kills })
             }
 
-            // Consume input materials at collect time (mirrors HomeViewModel)
-            when (session.skillName) {
-                Skills.PRAYER -> playerRepo.consumeItems(mapOf(session.activityKey to frames.size))
-                Skills.RUNECRAFTING -> {
-                    val rune = gameData.runes[session.activityKey]
-                    if (rune != null) playerRepo.consumeItems(mapOf("rune_essence" to rune.essenceCost * frames.size))
-                }
-                in craftingSkills -> {
-                    val mats = when (session.skillName) {
-                        Skills.SMITHING  -> gameData.smithingRecipes[session.activityKey]?.materials
-                        Skills.COOKING   -> gameData.cookingRecipes[session.activityKey]?.let { mapOf(it.rawItem to 1) }
-                        Skills.FLETCHING -> gameData.fletchingRecipes[session.activityKey]?.materials
-                        Skills.CRAFTING  -> gameData.craftingRecipes[session.activityKey]?.materials
-                        else             -> null
-                    }
-                    if (mats != null) playerRepo.consumeItems(mats.mapValues { (_, needed) -> needed * frames.size })
-                }
-            }
-
             // Handle pet drops
             var petMessage: String? = null
             for ((petId, _) in petDrops) {
@@ -644,6 +623,9 @@ class SkillsViewModel @Inject constructor(
     fun abandonSession() {
         viewModelScope.launch {
             val session = sessionRepo.getActiveSession() ?: return@launch
+            val frames: List<com.fantasyidler.data.model.SessionFrame> = json.decodeFromString(session.frames)
+            playerSessionMaterials(session.skillName, session.activityKey, frames.sumOf { it.kills }, gameData)
+                ?.let { playerRepo.addItems(it) }
             sessionRepo.abandonSession(session.sessionId)
             queuedSessionStarter.startNextQueued()
         }

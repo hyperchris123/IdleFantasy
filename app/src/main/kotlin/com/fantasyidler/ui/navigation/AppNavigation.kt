@@ -32,12 +32,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.fantasyidler.ui.screen.CombatScreen
 import com.fantasyidler.ui.screen.FarmingScreen
 import com.fantasyidler.ui.screen.HomeScreen
+import com.fantasyidler.ui.screen.InnScreen
 import com.fantasyidler.ui.screen.OnboardingScreen
 import com.fantasyidler.ui.screen.ProfileScreen
 import com.fantasyidler.ui.screen.QuestsScreen
 import com.fantasyidler.ui.screen.SettingsScreen
 import com.fantasyidler.ui.screen.ShopScreen
 import com.fantasyidler.ui.screen.SkillsScreen
+import com.fantasyidler.ui.screen.WorkerSkillsScreen
 import com.fantasyidler.ui.viewmodel.OnboardingViewModel
 
 @Composable
@@ -57,7 +59,7 @@ fun AppNavigation() {
     val currentDestination = backStackEntry?.destination
 
     val tabSubScreens: Map<String, Set<String>> = mapOf(
-        "home"   to setOf("shop", "settings"),
+        "home"   to setOf("shop", "settings", "inn", "worker_skills"),
         "skills" to setOf("farming"),
     )
 
@@ -134,8 +136,10 @@ fun AppNavigation() {
             composable(Screen.Combat.route)   { CombatScreen() }
             composable(Screen.Home.route)     {
                 HomeScreen(
-                    onNavigateToSettings = { navController.navigate(Screen.Settings.route) },
-                    onNavigateToShop     = { navController.navigate(Screen.Shop.route) },
+                    onNavigateToSettings     = { navController.navigate(Screen.Settings.route) },
+                    onNavigateToShop         = { navController.navigate(Screen.Shop.route) },
+                    onNavigateToInn          = { navController.navigate(Screen.Inn.route) },
+                    onNavigateToWorkerSkills = { navController.navigate(Screen.WorkerSkills.route) },
                 )
             }
             composable(Screen.Quests.route)   { QuestsScreen() }
@@ -148,6 +152,18 @@ fun AppNavigation() {
             }
             composable(Screen.Shop.route) { entry ->
                 ShopScreen(onBack = { if (navController.currentBackStackEntry == entry) navController.popBackStack() })
+            }
+            composable(Screen.Inn.route) { entry ->
+                InnScreen(
+                    onBack = { if (navController.currentBackStackEntry == entry) navController.popBackStack() },
+                    onNavigateToWorkerSkills = {
+                        navController.popBackStack()
+                        navController.navigate(Screen.WorkerSkills.route)
+                    },
+                )
+            }
+            composable(Screen.WorkerSkills.route) { entry ->
+                WorkerSkillsScreen(onBack = { if (navController.currentBackStackEntry == entry) navController.popBackStack() })
             }
         }
     }

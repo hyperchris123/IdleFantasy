@@ -206,6 +206,8 @@ fun SettingsScreen(
                 trailing = {
                     Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                         listOf(
+                            0.7f  to stringResource(R.string.settings_font_tiny),
+                            0.85f to stringResource(R.string.settings_font_small),
                             1.0f  to stringResource(R.string.settings_font_normal),
                             1.25f to stringResource(R.string.settings_font_large),
                             1.5f  to stringResource(R.string.settings_font_huge),

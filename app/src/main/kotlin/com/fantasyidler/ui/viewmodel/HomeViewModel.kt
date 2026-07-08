@@ -3,6 +3,7 @@ package com.fantasyidler.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fantasyidler.BuildConfig
+import com.fantasyidler.data.model.HiredWorker
 import com.fantasyidler.data.model.PlayerFlags
 import com.fantasyidler.data.model.QueuedAction
 import com.fantasyidler.data.model.SessionFrame
@@ -13,6 +14,7 @@ import com.fantasyidler.repository.PlayerRepository
 import com.fantasyidler.repository.QuestRepository
 import com.fantasyidler.repository.QueuedSessionStarter
 import com.fantasyidler.repository.SessionRepository
+import com.fantasyidler.repository.WorkerQueuedSessionStarter
 import com.fantasyidler.simulator.SkillSimulator
 import com.fantasyidler.util.formatXp
 import com.fantasyidler.util.toTitleCase
@@ -66,6 +68,11 @@ data class HomeUiState(
     val showWhatsNew: Boolean = false,
     /** Epoch ms when the last queued task will finish; 0 if queue is empty. */
     val queueEndsAt: Long = 0L,
+    val workerSession: SkillSession? = null,
+    val workerPendingCollect: Boolean = false,
+    val hiredWorker: HiredWorker? = null,
+    val workerQueue: List<QueuedAction> = emptyList(),
+    val workerSummary: SessionSummary? = null,
 )
 
 @HiltViewModel
@@ -75,26 +82,26 @@ class HomeViewModel @Inject constructor(
     private val gameData: GameDataRepository,
     private val questRepo: QuestRepository,
     private val queuedSessionStarter: QueuedSessionStarter,
+    private val workerStarter: WorkerQueuedSessionStarter,
     private val json: Json,
 ) : ViewModel() {
 
     private val _extra = MutableStateFlow(HomeUiState())
 
     init {
-        // On every app open, ensure we didn't miss an alarm while the app was closed.
-        // If the active session has already passed its end time, complete it and advance
-        // the queue — mirrors what SessionAlarmReceiver would have done.
         viewModelScope.launch { sessionRepo.recoverActiveSession(queuedSessionStarter) }
+        viewModelScope.launch { sessionRepo.recoverActiveWorkerSession(workerStarter) }
         viewModelScope.launch { playerRepo.awardMissingCapes() }
     }
 
     val uiState: StateFlow<HomeUiState> = combine(
-        playerRepo.playerFlow,
-        sessionRepo.activeSessionFlow,
-        sessionRepo.completedCountFlow,
-        _extra,
-    ) { player, session, completedCount, extra ->
-        if (player == null) extra.copy(isLoading = true, activeSession = session, pendingCollectCount = completedCount)
+        combine(playerRepo.playerFlow, sessionRepo.activeSessionFlow, sessionRepo.completedCountFlow) { a, b, c -> Triple(a, b, c) },
+        combine(sessionRepo.activeWorkerSessionFlow, sessionRepo.workerCompletedCountFlow, _extra) { a, b, c -> Triple(a, b, c) },
+    ) { (player, session, completedCount), (workerSession, workerCompleted, extra) ->
+        if (player == null) extra.copy(
+            isLoading = true, activeSession = session, pendingCollectCount = completedCount,
+            workerSession = workerSession, workerPendingCollect = workerCompleted > 0,
+        )
         else {
             val flags: PlayerFlags = json.decodeFromString(player.flags)
             val levels: Map<String, Int> = json.decodeFromString(player.skillLevels)
@@ -122,6 +129,10 @@ class HomeViewModel @Inject constructor(
                 sessionQueue        = flags.sessionQueue,
                 showWhatsNew        = flags.lastSeenVersionCode < BuildConfig.VERSION_CODE,
                 queueEndsAt         = queueEndsAt,
+                workerSession       = workerSession,
+                workerPendingCollect = workerCompleted > 0,
+                hiredWorker         = flags.hiredWorker,
+                workerQueue         = flags.hiredWorker?.sessionQueue ?: emptyList(),
             )
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), HomeUiState())
@@ -166,24 +177,33 @@ class HomeViewModel @Inject constructor(
                 val frames: List<SessionFrame> = json.decodeFromString(session.frames)
                 when (session.skillName) {
                     "boss" -> {
-                        val frame = frames.firstOrNull() ?: continue
+                        val frame = frames.lastOrNull() ?: continue
                         val won = frame.kills > 0
                         bossWon = won
+                        val its   = frame.items.toMutableMap()
+                        val coins = if (won) its.remove("coins")?.toLong() ?: 0L else 0L
+                        val pets  = its.filterKeys { it in petIds }
+                        val loot  = if (won) its.filterKeys { it !in petIds } else emptyMap()
+                        val allFoodConsumed = mutableMapOf<String, Int>()
+                        for (f in frames) f.foodConsumed.forEach { (k, v) -> allFoodConsumed[k] = (allFoodConsumed[k] ?: 0) + v }
+                        awardedCapes += playerRepo.applyMultiSkillResults(frame.xpBySkill, loot, coins)
+                        if (allFoodConsumed.isNotEmpty()) playerRepo.consumeItems(allFoodConsumed)
                         if (won) {
-                            val its   = frame.items.toMutableMap()
-                            val coins = its.remove("coins")?.toLong() ?: 0L
-                            val pets  = its.filterKeys { it in petIds }
-                            val loot  = its.filterKeys { it !in petIds }
-                            awardedCapes += playerRepo.applyMultiSkillResults(frame.xpBySkill, loot, coins)
                             for ((id, _) in pets) {
                                 val pd = gameData.pets[id] ?: continue
                                 if (playerRepo.addPetIfNew(id, pd.boostPercent))
                                     petMessage = "You found a pet: ${pd.displayName}!"
                             }
-                            for ((skill, xp) in frame.xpBySkill) combinedXpBySkill[skill] = (combinedXpBySkill[skill] ?: 0L) + xp
+                            questRepo.recordCombat(
+                                dungeonKey   = session.activityKey,
+                                killsByEnemy = mapOf(session.activityKey to 1),
+                                loot         = loot,
+                            )
+                            playerRepo.recordDailyKills(mapOf(session.activityKey to 1))
                             for ((item, qty) in loot) combinedItems[item] = (combinedItems[item] ?: 0) + qty
                             combinedCoins += coins
                         }
+                        for ((skill, xp) in frame.xpBySkill) combinedXpBySkill[skill] = (combinedXpBySkill[skill] ?: 0L) + xp
                     }
                     "combat" -> {
                         val xpPerSkill = mutableMapOf<String, Long>()
@@ -252,25 +272,9 @@ class HomeViewModel @Inject constructor(
                                 playerRepo.recordDailyPrayer(buried)
                             }
                         }
-                        // Consume input materials at collect time (best-effort, like food)
-                        when (session.skillName) {
-                            Skills.PRAYER -> playerRepo.consumeItems(mapOf(session.activityKey to frames.sumOf { it.kills }))
-                            Skills.RUNECRAFTING -> {
-                                val rune = gameData.runes[session.activityKey]
-                                if (rune != null) playerRepo.consumeItems(mapOf("rune_essence" to rune.essenceCost * frames.sumOf { it.kills }))
-                            }
-                            in craftingSkills -> {
-                                val mats = when (session.skillName) {
-                                    Skills.SMITHING  -> gameData.smithingRecipes[session.activityKey]?.materials
-                                    Skills.COOKING   -> gameData.cookingRecipes[session.activityKey]?.let { mapOf(it.rawItem to 1) }
-                                    Skills.FLETCHING -> gameData.fletchingRecipes[session.activityKey]?.materials
-                                    Skills.CRAFTING  -> gameData.craftingRecipes[session.activityKey]?.materials
-                                    Skills.HERBLORE  -> gameData.herbloreRecipes[session.activityKey]?.materials
-                                    else             -> null
-                                }
-                                if (mats != null) playerRepo.consumeItems(mats.mapValues { (_, needed) -> needed * frames.sumOf { it.kills } })
-                            }
-                            Skills.FIREMAKING -> playerRepo.consumeItems(mapOf(session.activityKey to frames.size))
+                        // Firemaking logs consumed at collect time; all other input materials consumed at session start.
+                        if (session.skillName == Skills.FIREMAKING) {
+                            playerRepo.consumeItems(mapOf(session.activityKey to frames.size))
                         }
                         for ((id, _) in pets) {
                             val pd = gameData.pets[id] ?: continue
@@ -351,9 +355,37 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun repeatActiveSession() {
+        viewModelScope.launch {
+            val session = sessionRepo.getActiveSession() ?: return@launch
+            val craftingSkills = setOf(Skills.SMITHING, Skills.COOKING, Skills.FLETCHING,
+                Skills.CRAFTING, Skills.HERBLORE, Skills.RUNECRAFTING, Skills.PRAYER)
+            val qty = if (session.skillName in craftingSkills)
+                json.decodeFromString<List<SessionFrame>>(session.frames).size else 0
+            val displayName = when (session.skillName) {
+                "combat" -> gameData.dungeons[session.activityKey]?.displayName ?: session.activityKey
+                "boss"   -> gameData.bosses[session.activityKey]?.displayName ?: session.activityKey
+                else     -> session.activityKey.replace('_', ' ').replaceFirstChar { it.uppercase() }
+            }
+            val enqueued = playerRepo.enqueueAction(QueuedAction(
+                skillName           = session.skillName,
+                activityKey         = session.activityKey,
+                skillDisplayName    = displayName,
+                qty                 = qty,
+                estimatedDurationMs = session.endsAt - session.startedAt,
+            ))
+            _extra.update {
+                it.copy(snackbarMessage = if (enqueued) "Added to queue: $displayName." else "Queue is full (3/3).")
+            }
+        }
+    }
+
     fun abandonSession() {
         viewModelScope.launch {
             val session = sessionRepo.getActiveSession() ?: return@launch
+            val frames: List<SessionFrame> = json.decodeFromString(session.frames)
+            playerSessionMaterials(session.skillName, session.activityKey, frames.sumOf { it.kills }, gameData)
+                ?.let { playerRepo.addItems(it) }
             sessionRepo.abandonSession(session.sessionId)
             queuedSessionStarter.startNextQueued()
         }
@@ -366,8 +398,221 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun debugFinishWorkerSession() {
+        viewModelScope.launch {
+            val session = sessionRepo.getActiveWorkerSession() ?: return@launch
+            sessionRepo.markCompleted(session.sessionId)
+        }
+    }
+
+    fun onWorkerSessionExpiredLocally(sessionId: String) {
+        viewModelScope.launch {
+            val session = sessionRepo.getSession(sessionId) ?: return@launch
+            if (!session.completed) {
+                sessionRepo.markCompleted(sessionId)
+                workerStarter.startNextQueued()
+            }
+        }
+    }
+
+    fun collectWorkerSession() {
+        viewModelScope.launch {
+            val latest = sessionRepo.getActiveWorkerSession()
+            if (latest != null && !latest.completed && System.currentTimeMillis() >= latest.endsAt) {
+                sessionRepo.markCompleted(latest.sessionId)
+            }
+
+            val sessions = sessionRepo.getAllCompletedWorkerSessions()
+            if (sessions.isEmpty()) return@launch
+
+            val petIds = gameData.pets.keys
+            val flags: PlayerFlags = json.decodeFromString(playerRepo.getOrCreatePlayer().flags)
+            val boostActive = flags.xpBoostExpiresAt > System.currentTimeMillis()
+            val xpMult = if (boostActive) 2L else 1L
+
+            val combinedXpBySkill = mutableMapOf<String, Long>()
+            val combinedItems     = mutableMapOf<String, Int>()
+            val combinedKills     = mutableMapOf<String, Int>()
+            var combinedCoins     = 0L
+            var anyDied           = false
+            var petMessage: String? = null
+            val awardedCapes = mutableListOf<String>()
+
+            val gatheringSkills = setOf(Skills.MINING, Skills.WOODCUTTING, Skills.FISHING,
+                Skills.AGILITY, Skills.FIREMAKING, Skills.RUNECRAFTING)
+            val craftingSkills  = setOf(Skills.SMITHING, Skills.COOKING, Skills.FLETCHING, Skills.CRAFTING, Skills.HERBLORE)
+
+            for (session in sessions) {
+                val frames: List<SessionFrame> = json.decodeFromString(session.frames)
+                val mult = session.efficiencyMultiplier
+
+                when (session.skillName) {
+                    "boss" -> {
+                        val frame = frames.lastOrNull() ?: continue
+                        val won = frame.kills > 0
+                        if (won) {
+                            val its   = frame.items.toMutableMap()
+                            val coins = its.remove("coins")?.toLong() ?: 0L
+                            val pets  = its.filterKeys { it in petIds }
+                            val loot  = its.filterKeys { it !in petIds }
+                            awardedCapes += playerRepo.applyMultiSkillResults(frame.xpBySkill, loot, coins, mult)
+                            for ((id, _) in pets) {
+                                val pd = gameData.pets[id] ?: continue
+                                if (playerRepo.addPetIfNew(id, pd.boostPercent))
+                                    petMessage = "You found a pet: ${pd.displayName}!"
+                            }
+                            for ((skill, xp) in frame.xpBySkill) combinedXpBySkill[skill] = (combinedXpBySkill[skill] ?: 0L) + xp
+                            for ((item, qty) in loot) combinedItems[item] = (combinedItems[item] ?: 0) + qty
+                            combinedCoins += coins
+                        }
+                    }
+                    "combat" -> {
+                        val xpPerSkill = mutableMapOf<String, Long>()
+                        val its        = mutableMapOf<String, Int>()
+                        val kills      = mutableMapOf<String, Int>()
+                        val died       = frames.any { it.died }
+                        if (died) anyDied = true
+                        for (frame in frames) {
+                            for ((skill, xp) in frame.xpBySkill) xpPerSkill[skill] = (xpPerSkill[skill] ?: 0L) + xp
+                            for ((item, qty) in frame.items)      its[item]         = (its[item] ?: 0) + qty
+                            for ((e, k) in frame.killsByEnemy)    kills[e]          = (kills[e] ?: 0) + k
+                        }
+                        if (died) {
+                            xpPerSkill.replaceAll { _, xp -> maxOf(1L, (xp * 0.1).toLong()) }
+                            its.replaceAll { _, qty -> maxOf(0, (qty * 0.1).toInt()) }
+                            its.entries.removeIf { it.value == 0 }
+                        }
+                        val coins = (its.remove("coins")?.toLong() ?: 0L).let { if (died) maxOf(0L, (it * 0.1).toLong()) else it }
+                        val pets  = its.filterKeys { it in petIds }
+                        val loot  = its.filterKeys { it !in petIds }
+                        awardedCapes += playerRepo.applyMultiSkillResults(xpPerSkill, loot, coins, mult)
+                        for ((id, _) in pets) {
+                            val pd = gameData.pets[id] ?: continue
+                            if (playerRepo.addPetIfNew(id, pd.boostPercent))
+                                petMessage = "You found a pet: ${pd.displayName}!"
+                        }
+                        if (!died) {
+                            questRepo.recordCombat(
+                                dungeonKey        = session.activityKey,
+                                killsByEnemy      = kills,
+                                loot              = loot,
+                                combatStyle       = detectCombatStyle(xpPerSkill),
+                                foodConsumedTotal = 0,
+                            )
+                            playerRepo.incrementDungeonRun(session.activityKey)
+                        }
+                        for ((skill, xp) in xpPerSkill) combinedXpBySkill[skill] = (combinedXpBySkill[skill] ?: 0L) + xp
+                        for ((item, qty) in loot)        combinedItems[item]      = (combinedItems[item] ?: 0) + qty
+                        for ((e, k) in kills)            combinedKills[e]         = (combinedKills[e] ?: 0) + k
+                        combinedCoins += coins
+                    }
+                    else -> {
+                        val totalXp = frames.sumOf { it.xpGain.toLong() }
+                        val its     = mutableMapOf<String, Int>()
+                        for (frame in frames) for ((item, qty) in frame.items) its[item] = (its[item] ?: 0) + qty
+                        val pets    = its.filterKeys { it in petIds }
+                        val regular = its.filterKeys { it !in petIds }
+                        awardedCapes += playerRepo.applySessionResults(session.skillName, totalXp, regular, mult)
+                        when (session.skillName) {
+                            in gatheringSkills -> questRepo.recordGathering(session.skillName, regular)
+                            in craftingSkills  -> questRepo.recordCrafting(session.skillName, regular)
+                            Skills.PRAYER      -> questRepo.recordBuried(frames.sumOf { it.kills })
+                        }
+                        for ((id, _) in pets) {
+                            val pd = gameData.pets[id] ?: continue
+                            if (playerRepo.addPetIfNew(id, pd.boostPercent))
+                                petMessage = "You found a pet: ${pd.displayName}!"
+                        }
+                        val scaledXp      = if (mult == 1.0f) totalXp else (totalXp * mult).toLong()
+                        val scaledRegular = if (mult == 1.0f) regular
+                            else regular.mapValues { (_, v) -> (v * mult).toInt().coerceAtLeast(1) }
+                        combinedXpBySkill[session.skillName] = (combinedXpBySkill[session.skillName] ?: 0L) + scaledXp
+                        for ((item, qty) in scaledRegular) combinedItems[item] = (combinedItems[item] ?: 0) + qty
+                    }
+                }
+            }
+
+            for (session in sessions) sessionRepo.deleteSession(session.sessionId)
+            playerRepo.clearHiredWorker()
+
+            val n    = sessions.size
+            val last = sessions.last()
+            val title = when {
+                n > 1 -> "Worker: $n Sessions Complete!"
+                last.skillName == "boss" -> {
+                    val bossName = gameData.bosses[last.activityKey]?.displayName ?: last.activityKey
+                    "Worker: Defeated $bossName!"
+                }
+                last.skillName == "combat" -> {
+                    val dungeonName = gameData.dungeons[last.activityKey]?.displayName ?: last.activityKey
+                    if (anyDied) "Worker: $dungeonName — Died" else "Worker: $dungeonName Complete!"
+                }
+                else -> "Worker: ${last.skillName.toTitleCase()} Complete"
+            }
+
+            val useTotalLabel = n == 1 && combinedXpBySkill.size == 1 && combinedKills.isEmpty()
+            val singleXp = combinedXpBySkill.values.firstOrNull() ?: 0L
+
+            val summary = SessionSummary(
+                title          = title,
+                died           = anyDied,
+                xpLines        = if (useTotalLabel) emptyList()
+                                 else combinedXpBySkill.entries.sortedByDescending { it.value }
+                                     .map { (skill, xp) -> Pair(skill.toTitleCase(), "+${(xp * xpMult).formatXp()} XP") },
+                totalXpLabel   = if (useTotalLabel) "+${(singleXp * xpMult).formatXp()} XP" else "",
+                itemLines      = combinedItems.entries.sortedByDescending { it.value }
+                                     .map { (key, qty) -> Pair(gameData.itemDisplayName(key), "×$qty") },
+                coinsGained    = combinedCoins,
+                killLines      = combinedKills.entries.sortedByDescending { it.value }
+                                     .map { (enemy, kills) -> Pair(gameData.enemies[enemy]?.displayName ?: enemy.toTitleCase(), "×$kills") },
+                foodConsumedLines = emptyList(),
+                boostWasActive  = boostActive,
+            )
+
+            val capeMessage = if (awardedCapes.isNotEmpty()) {
+                val names = awardedCapes.joinToString(", ") { gameData.itemDisplayName(it) }
+                "Congratulations! You received: $names"
+            } else null
+            val snackbar = listOfNotNull(petMessage, capeMessage).joinToString(" • ").ifEmpty { null }
+            _extra.update { it.copy(workerSummary = summary, snackbarMessage = snackbar) }
+        }
+    }
+
+    fun dismissWorker() {
+        viewModelScope.launch {
+            val flags: PlayerFlags = json.decodeFromString(playerRepo.getOrCreatePlayer().flags)
+
+            val session = sessionRepo.getActiveWorkerSession()
+            if (session != null) {
+                val frames: List<SessionFrame> = json.decodeFromString(session.frames)
+                val qty = frames.sumOf { it.kills }
+                workerMaterialsFor(session.skillName, session.activityKey, qty)
+                    ?.let { playerRepo.addItems(it) }
+                sessionRepo.abandonSession(session.sessionId)
+            }
+
+            for (action in flags.hiredWorker?.sessionQueue ?: emptyList()) {
+                workerMaterialsFor(action.skillName, action.activityKey, action.qty)
+                    ?.let { playerRepo.addItems(it) }
+            }
+
+            playerRepo.clearHiredWorker()
+        }
+    }
+
+    private fun workerMaterialsFor(skillName: String, activityKey: String, qty: Int): Map<String, Int>? =
+        playerSessionMaterials(skillName, activityKey, qty, gameData)
+            ?: if (skillName == Skills.FIREMAKING && qty > 0) mapOf(activityKey to qty) else null
+
+    fun workerSummaryConsumed() = _extra.update { it.copy(workerSummary = null) }
+
     fun removeFromQueue(index: Int) {
-        viewModelScope.launch { playerRepo.removeFromQueue(index) }
+        viewModelScope.launch {
+            val action = playerRepo.getQueue().getOrNull(index) ?: return@launch
+            playerRepo.removeFromQueue(index)
+            playerSessionMaterials(action.skillName, action.activityKey, action.qty, gameData)
+                ?.let { playerRepo.addItems(it) }
+        }
     }
 
     fun saveCharacterProfile(name: String, gender: String, race: String) {
@@ -413,5 +658,24 @@ fun detectCombatStyle(xpPerSkill: Map<String, Long>): String {
         rangedXp > attackXp && rangedXp > strXp -> "ranged"
         magicXp  > attackXp && magicXp  > strXp -> "magic"
         else                                     -> "melee"
+    }
+}
+
+fun playerSessionMaterials(
+    skillName: String,
+    activityKey: String,
+    qty: Int,
+    gameData: GameDataRepository,
+): Map<String, Int>? {
+    if (qty <= 0) return null
+    return when (skillName) {
+        Skills.PRAYER       -> mapOf(activityKey to qty)
+        Skills.RUNECRAFTING -> gameData.runes[activityKey]?.let { mapOf("rune_essence" to it.essenceCost * qty) }
+        Skills.SMITHING     -> gameData.smithingRecipes[activityKey]?.materials?.mapValues { it.value * qty }
+        Skills.COOKING      -> gameData.cookingRecipes[activityKey]?.let { mapOf(it.rawItem to qty) }
+        Skills.FLETCHING    -> gameData.fletchingRecipes[activityKey]?.materials?.mapValues { it.value * qty }
+        Skills.CRAFTING     -> gameData.craftingRecipes[activityKey]?.materials?.mapValues { it.value * qty }
+        Skills.HERBLORE     -> gameData.herbloreRecipes[activityKey]?.materials?.mapValues { it.value * qty }
+        else                -> null
     }
 }

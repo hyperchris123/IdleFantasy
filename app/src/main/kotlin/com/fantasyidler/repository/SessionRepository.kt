@@ -20,8 +20,12 @@ class SessionRepository @Inject constructor(
 ) {
     val activeSessionFlow: Flow<SkillSession?> = sessionDao.observeActiveSession()
     val completedCountFlow: Flow<Int> = sessionDao.observeCompletedCount()
+    val activeWorkerSessionFlow: Flow<SkillSession?> = sessionDao.observeActiveWorkerSession()
+    val workerCompletedCountFlow: Flow<Int> = sessionDao.observeWorkerCompletedCount()
 
     suspend fun getActiveSession(): SkillSession? = sessionDao.getActiveSession()
+    suspend fun getActiveWorkerSession(): SkillSession? = sessionDao.getActiveWorkerSession()
+    suspend fun getAllCompletedWorkerSessions(): List<SkillSession> = sessionDao.getAllCompletedWorkerSessions()
 
     /**
      * Persist a new session and schedule an AlarmManager alarm for completion.
@@ -55,6 +59,30 @@ class SessionRepository @Inject constructor(
         return session
     }
 
+    suspend fun startWorkerSession(
+        skillName: String,
+        activityKey: String,
+        frames: String,
+        durationMs: Long,
+        skillDisplayName: String,
+        efficiencyMultiplier: Float,
+    ): SkillSession {
+        val now = System.currentTimeMillis()
+        val session = SkillSession(
+            sessionId           = UUID.randomUUID().toString(),
+            skillName           = skillName,
+            startedAt           = now,
+            endsAt              = now + durationMs,
+            frames              = frames,
+            activityKey         = activityKey,
+            isWorkerSession     = true,
+            efficiencyMultiplier = efficiencyMultiplier,
+        )
+        sessionDao.insert(session)
+        scheduleAlarm(session.sessionId, session.endsAt, skillDisplayName)
+        return session
+    }
+
     suspend fun markCompleted(sessionId: String) {
         sessionDao.markCompleted(sessionId)
     }
@@ -72,6 +100,18 @@ class SessionRepository @Inject constructor(
         if (now >= session.endsAt) {
             markCompleted(session.sessionId)
             starter.startNextQueued()
+        } else {
+            scheduleAlarm(session.sessionId, session.endsAt, session.skillName)
+        }
+    }
+
+    suspend fun recoverActiveWorkerSession(workerStarter: WorkerQueuedSessionStarter) {
+        val session = getActiveWorkerSession() ?: return
+        if (session.completed) return
+        val now = System.currentTimeMillis()
+        if (now >= session.endsAt) {
+            markCompleted(session.sessionId)
+            workerStarter.startNextQueued()
         } else {
             scheduleAlarm(session.sessionId, session.endsAt, session.skillName)
         }
@@ -127,11 +167,12 @@ class SessionRepository @Inject constructor(
 
     private fun scheduleAlarm(sessionId: String, endsAt: Long, skillDisplayName: String) {
         val am = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        am.setAndAllowWhileIdle(
-            AlarmManager.RTC_WAKEUP,
-            endsAt,
-            alarmIntent(sessionId, skillDisplayName),
-        )
+        val pi = alarmIntent(sessionId, skillDisplayName)
+        try {
+            am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, endsAt, pi)
+        } catch (_: SecurityException) {
+            am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, endsAt, pi)
+        }
     }
 
     private fun cancelAlarm(sessionId: String) {
