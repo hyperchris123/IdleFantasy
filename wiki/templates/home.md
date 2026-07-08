@@ -4,7 +4,7 @@ Welcome to the community wiki for **Idle Fantasy** — an idle RPG with skills, 
 
 All data on these pages is auto-generated from the game's data files and is always up to date with the latest release.
 
-Visit the [full-featured wiki site](https://idlefantasy.tristinbaker.xyz) for a designed, searchable version.
+Visit the [full-featured wiki site](https://idlefantasy.tristinbaker.xyz) for a styled, easy-to-navigate version.
 
 ## Pages
 
