@@ -225,8 +225,8 @@
 
     <!-- ===== Onboarding ===== -->
     <string name="onboarding_welcome_title">Willkommen zu Idle Fantasy</string>
-    <string name="onboarding_welcome_body">Beende Aktivitäten und beobachte, wie sich dein Charakter weiterentwickelt. Die Aktivitäten dauern eine Stunde, selbst wenn die App geschlossen ist.</string>
-    <string name="onboarding_first_session_hint">Tippe auf eine beliebige Fertigkeit, um loszulegen.</string>
+    <string name="onboarding_welcome_body">Beendet Aktivitäten und beobachte, wie sich Euer Charakter weiterentwickelt. Die Aktivitäten dauern eine Stunde, selbst wenn die App geschlossen ist.</string>
+    <string name="onboarding_first_session_hint">Tippt auf eine beliebige Fertigkeit, um loszulegen.</string>
 
     <!-- ===== Settings ===== -->
     <string name="settings_title">Einstellungen</string>
@@ -649,7 +649,7 @@
     <!-- Guild Hall -->
     <string name="guild_hall_title">Zunfthaus</string>
     <string name="guild_hall_desc">Tretet Gilden bei und verdient Euch Euren Ruf</string>
-    <string name="guild_hall_intro">Gilden belohnen Euch für Aktivitäten, die Ihr sowieso erledigt. Erledigt Missionen und Tagesaufgaben, um auch fähigkeitenübergreifend Materialien,Münzen und XP zu erhalten. So können selbst Spezialisten Ressourcen erhalten, in denen sie wenig bewandert sind.</string>
+    <string name="guild_hall_intro">Gilden belohnen Euch für Aktivitäten, die Ihr sowieso erledigt. Erledigt Missionen und Tagesaufgaben, um auch fähigkeitenübergreifend Materialien, Münzen und XP zu erhalten. So können selbst Spezialisten Ressourcen erhalten, in denen sie wenig bewandert sind.</string>
     <string name="guild_level_label">Level %1$d</string>
     <string name="guild_level_max">Level 10 (Max)</string>
     <string name="guild_tab_quests">Missionen</string>
