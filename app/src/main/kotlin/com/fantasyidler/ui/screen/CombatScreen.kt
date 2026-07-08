@@ -509,7 +509,7 @@ private fun CombatGearTab(
         item { SlotSectionHeader(stringResource(R.string.profile_weapons)) }
         items(EquipSlot.WEAPON_SLOTS) { slot ->
             EquipSlotRow(
-                slotName  = slotDisplayName(context, slot),
+                slotName  = slotDisplayName(slot),
                 itemKey   = equipped[slot],
                 xpLabel   = weaponXpLabel(allEquipment[equipped[slot]]?.combatStyle, context),
                 onTap     = { onSlotTap(slot) },
@@ -519,7 +519,7 @@ private fun CombatGearTab(
         item { SlotSectionHeader(stringResource(R.string.profile_combat_gear)) }
         items(EquipSlot.ARMOR_SLOTS) { slot ->
             EquipSlotRow(
-                slotName  = slotDisplayName(context, slot),
+                slotName  = slotDisplayName(slot),
                 itemKey   = equipped[slot],
                 onTap     = { onSlotTap(slot) },
                 onUnequip = { onUnequip(slot) },
@@ -747,7 +747,6 @@ private fun BossRow(
     unlocked: Boolean,
     onTap: () -> Unit,
 ) {
-    val context  = LocalContext.current
     val dimColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
     Row(
         modifier = Modifier
@@ -765,13 +764,13 @@ private fun BossRow(
         Spacer(Modifier.width(8.dp))
         Column(Modifier.weight(1f)) {
             Text(
-                text       = GameStrings.bossName(context, boss.id),
+                text       = boss.displayName,
                 style      = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Medium,
                 color      = if (unlocked) MaterialTheme.colorScheme.onSurface else dimColor,
             )
             Text(
-                text     = GameStrings.bossDesc(context, boss.id).takeIf { it.isNotBlank() } ?: boss.description,
+                text     = boss.description,
                 style    = MaterialTheme.typography.bodySmall,
                 color    = if (unlocked) MaterialTheme.colorScheme.onSurfaceVariant else dimColor,
                 maxLines = 1,
@@ -893,7 +892,7 @@ private fun CombatSessionBanner(
     val context = LocalContext.current
     val dungeonName = dungeons.firstOrNull { it.name == session.activityKey }
         ?.let { GameStrings.dungeonName(context, it.name) }
-        ?: bosses.firstOrNull { it.id == session.activityKey }?.let { "${it.emoji} ${GameStrings.bossName(context, it.id)}" }
+        ?: bosses.firstOrNull { it.id == session.activityKey }?.let { "${it.emoji} ${it.displayName}" }
         ?: session.activityKey
 
     var now by remember { mutableLongStateOf(System.currentTimeMillis()) }
@@ -1030,8 +1029,8 @@ private fun CombatSessionBanner(
                     buildList<CombatLogEntry> {
                         for (i in 0 until currentFrameIdx) {
                             val f = frames.getOrNull(i) ?: break
-                            val eName = bosses.firstOrNull { it.id == f.enemyKey }?.let { GameStrings.bossName(context, it.id) }
-                                ?: enemies[f.enemyKey]?.let { GameStrings.enemyName(context, f.enemyKey) } ?: f.enemyKey
+                            val eName = bosses.firstOrNull { it.id == f.enemyKey }?.displayName
+                                ?: enemies[f.enemyKey]?.displayName ?: f.enemyKey
                             val enemyHp = if (!isBoss) enemies[f.enemyKey]?.hp ?: Int.MAX_VALUE else Int.MAX_VALUE
                             var hp = enemyHp
                             for (t in 0 until maxOf(f.playerHits.size, f.enemyHits.size)) {
@@ -1044,8 +1043,8 @@ private fun CombatSessionBanner(
                             }
                         }
                         val f = frames.getOrNull(currentFrameIdx) ?: return@buildList
-                        val eName = bosses.firstOrNull { it.id == f.enemyKey }?.let { GameStrings.bossName(context, it.id) }
-                            ?: enemies[f.enemyKey]?.let { GameStrings.enemyName(context, f.enemyKey) } ?: f.enemyKey
+                        val eName = bosses.firstOrNull { it.id == f.enemyKey }?.displayName
+                            ?: enemies[f.enemyKey]?.displayName ?: f.enemyKey
                         val enemyHp = if (!isBoss) enemies[f.enemyKey]?.hp ?: Int.MAX_VALUE else Int.MAX_VALUE
                         var hp = enemyHp
                         for (t in 0..tickInFrame) {
@@ -1089,7 +1088,7 @@ private fun CombatSessionBanner(
                         // ── Enemy ──────────────────────────────────────────
                         if (currentBoss != null) {
                             Text(
-                                text       = "${currentBoss.emoji} ${GameStrings.bossName(context, currentBoss.id)}",
+                                text       = "${currentBoss.emoji} ${currentBoss.displayName}",
                                 style      = MaterialTheme.typography.titleSmall,
                                 fontWeight = FontWeight.Bold,
                                 color      = MaterialTheme.colorScheme.onSecondaryContainer,
@@ -1109,7 +1108,7 @@ private fun CombatSessionBanner(
                             )
                         } else if (currentEnemy != null) {
                             Text(
-                                text       = GameStrings.enemyName(context, currentEnemy.name),
+                                text       = currentEnemy.displayName,
                                 style      = MaterialTheme.typography.titleSmall,
                                 fontWeight = FontWeight.Bold,
                                 color      = MaterialTheme.colorScheme.onSecondaryContainer,
@@ -1211,7 +1210,7 @@ private fun CombatSessionBanner(
                                 text  = killsSoFar.entries
                                     .sortedByDescending { it.value }
                                     .joinToString(", ") { (k, v) ->
-                                        "$v ${bosses.firstOrNull { it.id == k }?.let { GameStrings.bossName(context, it.id) } ?: enemies[k]?.let { GameStrings.enemyName(context, k) } ?: k}"
+                                        "$v ${bosses.firstOrNull { it.id == k }?.displayName ?: enemies[k]?.displayName ?: k}"
                                     }
                                     + " $defeatedSoFar",
                                 style = MaterialTheme.typography.bodySmall,
@@ -1389,7 +1388,7 @@ private fun DungeonInfoSheet(
         "strength" -> "strength"
         else       -> "attack"
     }
-    val styleLabel = GameStrings.skillName(context, combatStyle)
+    val styleLabel = combatStyle.replaceFirstChar { it.titlecase() }
     val canStart   = canEnter && !isStarting &&
         (combatStyle != "magic" || selectedSpell != null)
 
@@ -1535,7 +1534,7 @@ private fun DungeonInfoSheet(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             } else {
-                var onlyCastable by remember { mutableStateOf(true) }
+                var onlyCastable by remember { mutableStateOf(false) }
                 val displaySpells = if (onlyCastable)
                     availableSpells.filter { spell ->
                         equippedWeapon?.infiniteRunes == spell.runeType ||
@@ -1562,7 +1561,7 @@ private fun DungeonInfoSheet(
                     ) {
                         Column(Modifier.weight(1f)) {
                             Text(
-                                text       = GameStrings.spellName(context, spell.name),
+                                text       = spell.displayName,
                                 style      = MaterialTheme.typography.bodyMedium,
                                 fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
                                 color      = if (isSelected) GoldPrimary else MaterialTheme.colorScheme.onSurface,
@@ -1716,7 +1715,7 @@ private fun BossInfoSheet(
         "strength" -> "strength"
         else       -> "attack"
     }
-    val styleLabel = GameStrings.skillName(context, combatStyle)
+    val styleLabel = combatStyle.replaceFirstChar { it.titlecase() }
     val canStart = canFight && !isStarting &&
         (combatStyle != "magic" || selectedSpell != null)
 
@@ -1730,12 +1729,12 @@ private fun BossInfoSheet(
             .weight(1f, fill = false)
             .verticalScroll(rememberScrollState())) {
         Text(
-            text       = "${boss.emoji} ${GameStrings.bossName(context, boss.id)}",
+            text       = "${boss.emoji} ${boss.displayName}",
             style      = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
         )
         Text(
-            text  = GameStrings.bossDesc(context, boss.id).takeIf { it.isNotBlank() } ?: boss.description,
+            text  = boss.description,
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -1871,7 +1870,7 @@ private fun BossInfoSheet(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             } else {
-                var onlyCastable by remember { mutableStateOf(true) }
+                var onlyCastable by remember { mutableStateOf(false) }
                 val displaySpells = if (onlyCastable)
                     availableSpells.filter { spell ->
                         equippedWeapon?.infiniteRunes == spell.runeType ||
@@ -1897,7 +1896,7 @@ private fun BossInfoSheet(
                     ) {
                         Column(Modifier.weight(1f)) {
                             Text(
-                                text       = GameStrings.spellName(context, spell.name),
+                                text       = spell.displayName,
                                 style      = MaterialTheme.typography.bodyMedium,
                                 fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
                                 color      = if (isSelected) GoldPrimary else MaterialTheme.colorScheme.onSurface,
