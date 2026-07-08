@@ -319,13 +319,6 @@ private fun CraftSheet(
             style      = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
         )
-        if (recipe.outputQty > 1) {
-            Text(
-                text  = stringResource(R.string.crafting_produces, recipe.outputQty * qty),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
         val inInventory = state.inventory[recipe.outputKey] ?: 0
         if (inInventory > 0) {
             Text(
@@ -433,6 +426,14 @@ private fun CraftSheet(
             color    = GoldPrimary,
             modifier = Modifier.align(Alignment.CenterHorizontally),
         )
+        if (recipe.outputQty > 1) {
+            Text(
+                text     = stringResource(R.string.crafting_produces, recipe.outputQty * qty, recipe.displayName),
+                style    = MaterialTheme.typography.bodySmall,
+                color    = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+            )
+        }
 
         Spacer(Modifier.height(20.dp))
 

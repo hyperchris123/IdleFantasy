@@ -45,6 +45,7 @@ import com.fantasyidler.ui.screen.QuestsScreen
 import com.fantasyidler.ui.screen.SettingsScreen
 import com.fantasyidler.ui.screen.ShopScreen
 import com.fantasyidler.ui.screen.SkillsScreen
+import com.fantasyidler.ui.screen.SlayerScreen
 import com.fantasyidler.ui.screen.WorkerSkillsScreen
 import com.fantasyidler.ui.viewmodel.OnboardingViewModel
 
@@ -81,7 +82,7 @@ fun AppNavigation(
     val currentDestination = backStackEntry?.destination
 
     val tabSubScreens: Map<String, Set<String>> = mapOf(
-        "home"   to setOf("shop", "settings", "inn", "worker_skills", "guild_hall", "guild_detail/{guild}", "church"),
+        "home"   to setOf("shop", "settings", "inn", "worker_skills", "guild_hall", "guild_detail/{guild}", "church", "slayer"),
         "skills" to setOf("farming", "mercantile"),
     )
 
@@ -153,6 +154,7 @@ fun AppNavigation(
                 SkillsScreen(
                     onNavigateToFarming    = { navController.navigate(Screen.Farming.route) },
                     onNavigateToMercantile = { navController.navigate(Screen.Mercantile.route) },
+                    onNavigateToSlayer     = { navController.navigate(Screen.Slayer.route) },
                 )
             }
             composable(Screen.Farming.route) { entry ->
@@ -170,6 +172,7 @@ fun AppNavigation(
                     onNavigateToWorkerSkills = { navController.navigate(Screen.WorkerSkills.route) },
                     onNavigateToGuildHall    = { navController.navigate(Screen.GuildHall.route) },
                     onNavigateToChurch       = { navController.navigate(Screen.Church.route) },
+                    onNavigateToSlayer       = { navController.navigate(Screen.Slayer.route) },
                 )
             }
             composable(Screen.Quests.route)   { QuestsScreen() }
@@ -208,6 +211,11 @@ fun AppNavigation(
             }
             composable(Screen.Church.route) { entry ->
                 ChurchScreen(
+                    onBack = { if (navController.currentBackStackEntry == entry) navController.popBackStack() },
+                )
+            }
+            composable(Screen.Slayer.route) { entry ->
+                SlayerScreen(
                     onBack = { if (navController.currentBackStackEntry == entry) navController.popBackStack() },
                 )
             }

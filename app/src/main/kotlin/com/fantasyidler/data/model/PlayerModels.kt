@@ -68,7 +68,24 @@ data class PlayerFlags(
     @SerialName("backup_folder_uri") val backupFolderUri: String = "",
     /** Automatic backup frequency: ""|"hourly"|"daily"|"weekly". */
     @SerialName("backup_frequency") val backupFrequency: String = "",
+    /** Currently assigned Slayer task, or null if none. */
+    @SerialName("active_slayer_task") val activeSlayerTask: SlayerTask? = null,
+    /** Accumulated Slayer points, spent in the Slayer Master shop. */
+    @SerialName("slayer_points") val slayerPoints: Int = 0,
 )
+
+/** An active Slayer task assigned by the Slayer Master. */
+@Serializable
+data class SlayerTask(
+    @SerialName("enemy_key")       val enemyKey: String,
+    @SerialName("display_name")    val displayName: String,
+    @SerialName("target_kills")    val targetKills: Int,
+    @SerialName("kills_completed") val killsCompleted: Int = 0,
+    @SerialName("xp_per_kill")     val xpPerKill: Int,
+    @SerialName("task_points")     val taskPoints: Int,
+) {
+    val isComplete get() = killsCompleted >= targetKills
+}
 
 /** A session to be started when the current one completes. */
 @Serializable
@@ -239,12 +256,13 @@ object Skills {
     const val HITPOINTS = "hitpoints"
     const val PRAYER      = "prayer"
     const val MERCANTILE  = "mercantile"
+    const val SLAYER      = "slayer"
 
     val GATHERING = listOf(MINING, FISHING, WOODCUTTING, FARMING, FIREMAKING, AGILITY)
     val CRAFTING_SKILLS = listOf(SMITHING, COOKING, FLETCHING, CRAFTING, RUNECRAFTING, HERBLORE)
     val COMBAT = listOf(ATTACK, STRENGTH, DEFENSE, RANGED, MAGIC, HITPOINTS, PRAYER)
     val SUPPORT = listOf(PRAYER, MERCANTILE)
-    val ALL = GATHERING + CRAFTING_SKILLS + COMBAT + listOf(MERCANTILE)
+    val ALL = GATHERING + CRAFTING_SKILLS + COMBAT + listOf(MERCANTILE, SLAYER)
 
     val DEFAULT_LEVELS: Map<String, Int> = ALL.associateWith { 1 }
     val DEFAULT_XP: Map<String, Long> = ALL.associateWith { 0L }

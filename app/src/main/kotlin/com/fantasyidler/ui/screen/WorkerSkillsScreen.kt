@@ -63,6 +63,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.fantasyidler.R
 import com.fantasyidler.data.model.Skills
+import com.fantasyidler.simulator.XpTable
 import com.fantasyidler.data.model.WorkerTier
 import com.fantasyidler.ui.theme.GoldPrimary
 import com.fantasyidler.ui.viewmodel.CraftableRecipe
@@ -519,6 +520,15 @@ private fun WorkerCraftSkillSheet(
     }
 }
 
+private fun projectedXpLabel(currentXp: Long, xpGain: Long): String {
+    val currentLevel   = XpTable.levelForXp(currentXp)
+    val projectedLevel = XpTable.levelForXp(currentXp + xpGain)
+    return if (projectedLevel > currentLevel)
+        "+${xpGain.formatXp()} XP → Level $projectedLevel"
+    else
+        "+${xpGain.formatXp()} XP"
+}
+
 private fun workerMeetsLevel(state: WorkerSkillsUiState, recipe: CraftableRecipe): Boolean =
     (state.skillLevels[recipe.skillName] ?: 1) >= recipe.levelRequired
 
@@ -735,7 +745,7 @@ private fun WorkerCraftQuantityContent(
         QtyQuickButtons(qty, max) { onSetQuantity(it) }
         Spacer(Modifier.height(8.dp))
         Text(
-            text     = stringResource(R.string.skills_xp_total, totalXp.toInt()),
+            text     = projectedXpLabel(state.skillXp[recipe.skillName] ?: 0L, totalXp.toLong()),
             style    = MaterialTheme.typography.bodySmall,
             color    = GoldPrimary,
             modifier = Modifier.align(Alignment.CenterHorizontally),

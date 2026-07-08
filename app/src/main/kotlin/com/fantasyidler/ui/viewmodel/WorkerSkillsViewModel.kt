@@ -108,9 +108,28 @@ class WorkerSkillsViewModel @Inject constructor(
     // Recipe lists (mirrors CraftingViewModel, lazy)
     // ------------------------------------------------------------------
 
+    private fun tierFromKey(key: String) =
+        key.substringBefore('_').replaceFirstChar { it.uppercase() }
+
+    private val ARMOUR_SLOTS = setOf(
+        EquipSlot.HEAD, EquipSlot.BODY, EquipSlot.LEGS,
+        EquipSlot.BOOTS, EquipSlot.CAPE, EquipSlot.SHIELD,
+    )
+
     val smithingRecipes: List<CraftableRecipe> by lazy {
         gameData.smithingRecipes.map { (key, r) ->
             val equip = gameData.equipment[key]
+            val category = when (r.type) {
+                "bar"       -> "Bar"
+                "component" -> "Component"
+                "tool"      -> "Tool"
+                "equipment" -> when (equip?.slot) {
+                    EquipSlot.WEAPON -> "Weapon"
+                    in ARMOUR_SLOTS  -> "Armour"
+                    else             -> "Equipment"
+                }
+                else -> ""
+            }
             CraftableRecipe(
                 key                 = key,
                 displayName         = r.displayName,
@@ -125,6 +144,8 @@ class WorkerSkillsViewModel @Inject constructor(
                 outputDefenseBonus  = equip?.defenseBonus  ?: 0,
                 outputRequirements  = equip?.requirements  ?: emptyMap(),
                 outputCombatStyle   = equip?.combatStyle,
+                category            = category,
+                tier                = tierFromKey(key),
             )
         }.sortedBy { it.levelRequired }
     }
@@ -148,6 +169,12 @@ class WorkerSkillsViewModel @Inject constructor(
 
     val fletchingRecipes: List<CraftableRecipe> by lazy {
         gameData.fletchingRecipes.map { (_, r) ->
+            val category = when (r.type) {
+                "component"  -> "Component"
+                "ammunition" -> "Ammunition"
+                "weapon"     -> "Weapon"
+                else         -> ""
+            }
             CraftableRecipe(
                 key                 = r.itemName,
                 displayName         = r.displayName,
@@ -161,6 +188,8 @@ class WorkerSkillsViewModel @Inject constructor(
                 outputAttackBonus   = r.attackBonus   ?: 0,
                 outputStrengthBonus = r.strengthBonus ?: 0,
                 outputCombatStyle   = gameData.equipment[r.itemName]?.combatStyle,
+                category            = category,
+                tier                = tierFromKey(r.itemName),
             )
         }.sortedBy { it.levelRequired }
     }
@@ -182,6 +211,8 @@ class WorkerSkillsViewModel @Inject constructor(
                 outputDefenseBonus  = equip?.defenseBonus  ?: 0,
                 outputRequirements  = equip?.requirements  ?: emptyMap(),
                 outputCombatStyle   = equip?.combatStyle,
+                category            = "Jewellery",
+                tier                = tierFromKey(key),
             )
         }.sortedBy { it.levelRequired }
     }

@@ -77,6 +77,7 @@ class InnViewModel @Inject constructor(
     fun hire(tier: WorkerTier) {
         viewModelScope.launch {
             val flags = playerRepo.getFlags()
+
             if (flags.hiredWorker != null) {
                 _extra.update { it.copy(snackbarMessage = context.getString(R.string.inn_worker_already_hired)) }
                 return@launch

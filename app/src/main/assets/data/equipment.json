@@ -2943,5 +2943,57 @@
     "cape_skill": "mercantile",
     "cape_bonus": 0.05,
     "requirements": {}
+  },
+  "slayer_helm": {
+    "name": "slayer_helm",
+    "display_name": "Slayer Helm",
+    "slot": "head",
+    "combat_style": null,
+    "description": "A sturdy helm worn by veteran slayers.",
+    "attack_bonus": 0,
+    "strength_bonus": 0,
+    "defense_bonus": 40,
+    "requirements": {
+      "defense": 45
+    }
+  },
+  "abyssal_whip": {
+    "name": "abyssal_whip",
+    "display_name": "Abyssal Whip",
+    "slot": "weapon",
+    "combat_style": "strength",
+    "description": "A whip forged from abyssal energy.",
+    "attack_bonus": 60,
+    "strength_bonus": 80,
+    "defense_bonus": 0,
+    "requirements": {
+      "strength": 50
+    }
+  },
+  "slayer_platebody": {
+    "name": "slayer_platebody",
+    "display_name": "Slayer Platebody",
+    "slot": "body",
+    "combat_style": null,
+    "description": "Heavy armour etched with slayer runes.",
+    "attack_bonus": 0,
+    "strength_bonus": 0,
+    "defense_bonus": 80,
+    "requirements": {
+      "defense": 45
+    }
+  },
+  "slayer_platelegs": {
+    "name": "slayer_platelegs",
+    "display_name": "Slayer Platelegs",
+    "slot": "legs",
+    "combat_style": null,
+    "description": "Protective legs crafted for extended dungeon runs.",
+    "attack_bonus": 0,
+    "strength_bonus": 0,
+    "defense_bonus": 65,
+    "requirements": {
+      "defense": 45
+    }
   }
 }

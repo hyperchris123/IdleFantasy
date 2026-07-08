@@ -108,6 +108,7 @@ import java.util.Locale
 fun SkillsScreen(
     onNavigateToFarming: () -> Unit = {},
     onNavigateToMercantile: () -> Unit = {},
+    onNavigateToSlayer: () -> Unit = {},
     viewModel: SkillsViewModel       = hiltViewModel(),
     craftingViewModel: CraftingViewModel = hiltViewModel(),
     expeditionsViewModel: ExpeditionsViewModel = hiltViewModel(),
@@ -169,6 +170,7 @@ fun SkillsScreen(
                         context                = context,
                         onNavigateToFarming    = onNavigateToFarming,
                         onNavigateToMercantile = onNavigateToMercantile,
+                        onNavigateToSlayer     = onNavigateToSlayer,
                     )
                 }
             }
@@ -308,6 +310,7 @@ private fun SkillsTabContent(
     context: android.content.Context,
     onNavigateToFarming: () -> Unit,
     onNavigateToMercantile: () -> Unit = {},
+    onNavigateToSlayer: () -> Unit = {},
 ) {
     LazyColumn(modifier = Modifier.fillMaxSize()) {
         state.activeSession?.let { session ->
@@ -368,6 +371,17 @@ private fun SkillsTabContent(
                     if (key == Skills.MERCANTILE) onNavigateToMercantile()
                     else viewModel.onSkillTapped(key)
                 },
+            )
+        }
+
+        item { SectionHeader(stringResource(R.string.label_combat)) }
+        item {
+            SkillRow(
+                skillKey = Skills.SLAYER,
+                level    = state.skillLevels[Skills.SLAYER] ?: 1,
+                xp       = state.skillXp[Skills.SLAYER] ?: 0L,
+                isActive = false,
+                onClick  = onNavigateToSlayer,
             )
         }
     }
