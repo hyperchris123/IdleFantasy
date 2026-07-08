@@ -942,4 +942,7 @@
     <string name="bone_altar_buried_count">%d begraven</string>
     <string name="bone_altar_no_bones">Geen botten in inventaris</string>
     <string name="bone_altar_cape_awarded">Gebedscape verdiend!</string>
+    <string name="slayer_add_dungeon_to_queue">Kerker aan wachtrij toevoegen</string>
+    <string name="slayer_queue_added">Toegevoegd aan wachtrij: %1$s.</string>
+    <string name="slayer_queue_full">Wachtrij is vol (3/3).</string>
 </resources>
