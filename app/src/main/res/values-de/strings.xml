@@ -654,5 +654,12 @@
     <string name="expedition_dungeon_unlocked">Combat dungeon unlocked!</string>
     <string name="expedition_discover_hint">Discover via Expeditions</string>
     <string name="label_notes">Notes</string>
+    <string name="label_hide_completed">Hide completed</string>
+    <string name="settings_lang_español_españa">Español (España)</string>
+    <string name="farming_harvest_and_plant">Harvest and Plant All</string>
+    <string name="farming_no_crops_ready">No crops ready to harvest</string>
+    <string name="farming_no_empty_patches">No empty patches available</string>
+    <string name="farming_no_seeds_inventory">Not enough %1$s in inventory</string>
+    <string name="farming_planted">Planted %1$d %2$s</string>
 
 </resources>
