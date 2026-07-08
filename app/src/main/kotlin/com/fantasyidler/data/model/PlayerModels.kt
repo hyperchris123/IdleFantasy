@@ -40,6 +40,18 @@ data class PlayerFlags(
     @SerialName("daily_quest_claimed") val dailyQuestClaimed: List<String> = emptyList(),
     /** Epoch ms when today's daily quests were generated (used to detect 6am rollover). */
     @SerialName("daily_quest_generated_at") val dailyQuestGeneratedAt: Long = 0L,
+
+    /** IDs of the 5 active weekly challenge template IDs. */
+    @SerialName("weekly_quest_ids") val weeklyQuestIds: List<String> = emptyList(),
+    /** Progress map: templateId → count accumulated this week. */
+    @SerialName("weekly_quest_progress") val weeklyQuestProgress: Map<String, Int> = emptyMap(),
+    /** Template IDs whose individual reward has been claimed. */
+    @SerialName("weekly_quest_claimed") val weeklyQuestClaimed: List<String> = emptyList(),
+    /** Epoch ms when the current weekly set was generated (used to detect Monday 6am rollover). */
+    @SerialName("weekly_quest_generated_at") val weeklyQuestGeneratedAt: Long = 0L,
+    /** True if the full weekly bonus chest has been claimed this week. */
+    @SerialName("weekly_bonus_claimed") val weeklyBonusClaimed: Boolean = false,
+
     /** Currently hired worker, or null if none. */
     @SerialName("hired_worker") val hiredWorker: HiredWorker? = null,
     /** Second worker slot (Apprentice / Journeyman / Master), or null if none. */
@@ -80,6 +92,8 @@ data class PlayerFlags(
     @SerialName("recent_sessions") val recentSessions: List<RecentSession> = emptyList(),
     /** Whether to show the recent activity log FAB on the home screen. */
     @SerialName("show_recent_activity_log") val showRecentActivityLog: Boolean = true,
+    /** Profile screen layout: "rail" (sidebar) or "tabs" (horizontal tab bar). */
+    @SerialName("profile_layout") val profileLayout: String = "rail",
     /** Prestige level per skill: skill key → 0–3. */
     @SerialName("skill_prestige") val skillPrestige: Map<String, Int> = emptyMap(),
     /** Ash fertilizer per farming patch: patchNumber.toString() → ash item key. */
@@ -90,6 +104,8 @@ data class PlayerFlags(
     @SerialName("town_building_tiers") val townBuildingTiers: Map<String, Int> = emptyMap(),
     /** Ash item key last used as fertilizer when planting crops; pre-selected in the plant sheet. */
     @SerialName("last_fertilizer_key") val lastFertilizerKey: String? = null,
+    /** Lifetime kill count per enemy/boss key; absent = never encountered. */
+    @SerialName("enemy_kills") val enemyKills: Map<String, Int> = emptyMap(),
 )
 
 /** A single entry in the recent sessions log. */
