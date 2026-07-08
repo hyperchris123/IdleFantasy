@@ -1237,9 +1237,14 @@
     <string name="farming_bean_climb">Salire</string>
     <string name="farming_bean_climbed">Hai scalato il fagiolo magico. Qualcosa ti aspetta...</string>
     <string name="farming_bean_picker_stats">\?\?\?  •  \?\?\?  •  \?\?\?</string>
+    <string name="farming_magic_bean_one_plot">I fagioli magici possono essere piantati solo in un appezzamento</string>
 
     <!-- ===== Armory Tab ===== -->
     <string name="armory_tab">Armeria</string>
+    <string name="tab_bonuses">Bonus</string>
+    <string name="bonus_none">Nessun bonus XP attivo</string>
+    <string name="bonus_all_skills">Tutte le abilità</string>
+    <string name="bonus_section_boosts">Bonus attivi</string>
     <string name="armory_not_owned">Non possiedi questo oggetto.</string>
     <string name="armory_how_to_obtain">Come ottenere</string>
     <string name="armory_no_stats">Nessun bonus alle statistiche.</string>
@@ -1248,4 +1253,11 @@
     <string name="armory_filter_armor">Armatura</string>
     <string name="armory_filter_accessories">Accessori</string>
     <string name="armory_filter_tools">Strumenti</string>
+
+    <!-- Boss Descriptions -->
+    <string name="boss_king_black_dragon_desc">Il leggendario drago a tre teste, temuto in tutto il regno.</string>
+    <string name="boss_demon_lord_desc">Un antico demone dell\'abisso, maestro della magia oscura.</string>
+    <string name="boss_kraken_desc">Il terrore dei mari profondi, un colossale mostro marino.</string>
+    <string name="boss_balrog_desc">Un antico demone di fiamme e ombre, risvegliato dal suo sonno profondo sotto la terra.</string>
+    <string name="boss_void_sovereign_desc">L\'entità primordiale dietro gli squarci del vuoto. Antica oltre ogni misura, guarda agli sfidanti mortali con disprezzo.</string>
 </resources>

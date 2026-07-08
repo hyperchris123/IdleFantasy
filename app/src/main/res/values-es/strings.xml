@@ -1208,9 +1208,14 @@
     <string name="farming_bean_climb">Trepar</string>
     <string name="farming_bean_climbed">Has trepado la planta de frijol. Algo te aguarda...</string>
     <string name="farming_bean_picker_stats">\?\?\?  •  \?\?\?  •  \?\?\?</string>
+    <string name="farming_magic_bean_one_plot">Los frijoles mágicos solo pueden plantarse en un único campo</string>
 
     <!-- ===== Armory Tab ===== -->
     <string name="armory_tab">Armería</string>
+    <string name="tab_bonuses">Bonificaciones</string>
+    <string name="bonus_none">Sin bonificaciones de XP activas</string>
+    <string name="bonus_all_skills">Todas las habilidades</string>
+    <string name="bonus_section_boosts">Bonificaciones activas</string>
     <string name="armory_not_owned">No posees este objeto.</string>
     <string name="armory_how_to_obtain">Cómo obtener</string>
     <string name="armory_no_stats">Sin bonificaciones de estadísticas.</string>
@@ -1219,4 +1224,11 @@
     <string name="armory_filter_armor">Armadura</string>
     <string name="armory_filter_accessories">Accesorios</string>
     <string name="armory_filter_tools">Herramientas</string>
+
+    <!-- Boss Descriptions -->
+    <string name="boss_king_black_dragon_desc">El legendario dragón de tres cabezas, temido en todo el reino.</string>
+    <string name="boss_demon_lord_desc">Un antiguo demonio del abismo, maestro de la magia oscura.</string>
+    <string name="boss_kraken_desc">El terror de las profundidades marinas, un colosal monstruo marino.</string>
+    <string name="boss_balrog_desc">Un antiguo demonio de llamas y sombras, despertado de su letargo en las profundidades de la tierra.</string>
+    <string name="boss_void_sovereign_desc">La entidad primordial detrás de las grietas del vacío. Antigua más allá de todo cálculo, mira a los retadores mortales con desprecio.</string>
 </resources>
