@@ -17,10 +17,10 @@ Pick a skill or dungeon, start a session, then put your phone down. Your hero ke
 
 ## Skills
 
-Train **21 skills** at your own pace:
+Train **23 skills** at your own pace:
 
-- **Gathering** (6): Mining, Fishing, Woodcutting, Farming, Firemaking, Agility
-- **Crafting** (6): Smithing, Cooking, Fletching, Crafting, Runecrafting, Herblore
+- **Gathering** (7): Mining, Fishing, Woodcutting, Farming, Firemaking, Agility, Thieving
+- **Crafting** (7): Smithing, Cooking, Fletching, Crafting, Runecrafting, Herblore, Construction
 - **Combat** (7): Attack, Strength, Defense, Ranged, Magic, Hitpoints, Prayer
 - **Support** (2): Mercantile, Slayer
 

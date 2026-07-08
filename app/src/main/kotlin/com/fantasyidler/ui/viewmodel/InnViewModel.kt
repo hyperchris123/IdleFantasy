@@ -86,7 +86,8 @@ class InnViewModel @Inject constructor(
                 _extra.update { it.copy(snackbarMessage = context.getString(R.string.inn_worker_already_hired)) }
                 return@launch
             }
-            val name = workerName(tier)
+            val otherName = if (slot == 1) flags.hiredWorker2?.dailyName else flags.hiredWorker?.dailyName
+            val name = uniqueWorkerName(tier, otherName)
             if (!playerRepo.spendCoins(tier.hireCost)) {
                 _extra.update { it.copy(snackbarMessage = context.getString(R.string.inn_not_enough_coins)) }
                 return@launch
@@ -122,6 +123,21 @@ class InnViewModel @Inject constructor(
         val daySeed = cal.get(Calendar.YEAR) * 10000L + cal.get(Calendar.MONTH) * 100 + cal.get(Calendar.DAY_OF_MONTH)
         val rng = Random(daySeed + tier.ordinal * 7919L)
         return names[rng.nextInt(names.size)]
+    }
+
+    private fun uniqueWorkerName(tier: WorkerTier, exclude: String?): String {
+        val base = workerName(tier)
+        if (exclude == null || base != exclude) return base
+        val names = context.resources.getStringArray(R.array.worker_names)
+        if (names.isEmpty()) return "Worker"
+        val cal = Calendar.getInstance()
+        if (cal.get(Calendar.HOUR_OF_DAY) < 6) cal.add(Calendar.DAY_OF_YEAR, -1)
+        val daySeed = cal.get(Calendar.YEAR) * 10000L + cal.get(Calendar.MONTH) * 100 + cal.get(Calendar.DAY_OF_MONTH)
+        for (offset in 1..names.size) {
+            val candidate = names[Random(daySeed + tier.ordinal * 7919L + offset).nextInt(names.size)]
+            if (candidate != exclude) return candidate
+        }
+        return base
     }
 
     private fun computeDailyFoods(): List<DailyFoodItem> {

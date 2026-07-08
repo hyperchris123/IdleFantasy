@@ -646,7 +646,7 @@
     <string name="inn_laborers_header">Werknemers</string>
 
     <!-- ===== Combat difficulty ratings ===== -->
-    <string name="combat_difficulty_likely">Ziet er goed uit</string>
+    <string name="combat_difficulty_likely">You\'ve got this</string>
     <string name="combat_difficulty_risky">Riskant met de huidige uitrusting</string>
     <string name="combat_difficulty_unlikely">Waarschijnlijk dat je dood gaat</string>
 
@@ -995,6 +995,9 @@
     <string name="item_yew_wardrobe_name">Taxushouten Kledingkast</string>
     <string name="item_magic_throne_name">Magische Troon</string>
     <string name="town_upgrade_section_title">Stadsgebouw</string>
+    <string name="town_building_inn_name">Inn</string>
+    <string name="town_building_guild_hall_name">Guild Hall</string>
+    <string name="town_building_church_name">Church</string>
     <string name="town_building_current_tier">Rang %1$d / 3</string>
     <string name="town_building_maxed_label">Volledig Verbeterd</string>
     <string name="town_upgrade_next_label">Volgende Upgrade</string>

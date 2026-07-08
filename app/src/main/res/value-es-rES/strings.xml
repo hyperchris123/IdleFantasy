@@ -1046,4 +1046,7 @@
     <string name="achievement_town_one_maxed_desc">Mejora cualquier edificio al nivel máximo</string>
     <string name="achievement_town_all_maxed_name">Pueblo Legendario</string>
     <string name="achievement_town_all_maxed_desc">Mejora los tres edificios del pueblo al nivel máximo</string>
+    <string name="town_building_inn_name">Inn</string>
+    <string name="town_building_guild_hall_name">Guild Hall</string>
+    <string name="town_building_church_name">Church</string>
 </resources>

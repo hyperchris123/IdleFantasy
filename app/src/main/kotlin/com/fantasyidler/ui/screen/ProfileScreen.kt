@@ -74,6 +74,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.fantasyidler.R
 import com.fantasyidler.data.json.SkillingDungeonData
+import com.fantasyidler.data.json.ConstructionRecipe
+import com.fantasyidler.data.json.ThievingNpcData
 import com.fantasyidler.data.model.EquipSlot
 import com.fantasyidler.ui.theme.GoldPrimary
 import com.fantasyidler.ui.viewmodel.Achievement
@@ -88,8 +90,8 @@ import com.fantasyidler.util.stringByName
 import com.fantasyidler.util.toTitleCase
 
 private val SKILL_CATEGORY_GROUPS: List<Pair<Int, List<String>>> = listOf(
-    R.string.label_gathering      to listOf("mining", "fishing", "woodcutting", "farming", "agility"),
-    R.string.label_crafting       to listOf("smithing", "cooking", "fletching", "crafting", "runecrafting", "herblore", "firemaking"),
+    R.string.label_gathering      to listOf("mining", "fishing", "woodcutting", "farming", "agility", "thieving"),
+    R.string.label_crafting       to listOf("smithing", "cooking", "fletching", "crafting", "runecrafting", "herblore", "firemaking", "construction"),
     R.string.label_support_skills to listOf("prayer", "mercantile", "slayer"),
     R.string.label_combat         to listOf("attack", "strength", "defense", "ranged", "magic", "hitpoints"),
 )
@@ -620,6 +622,18 @@ private fun buildUnlockMilestones(skillKey: String, vm: InventoryViewModel, cont
                     )
                 }
 
+        "thieving" ->
+            vm.thievingNpcs.entries
+                .sortedBy { it.value.levelRequired }
+                .distinctBy { it.value.levelRequired }
+                .map { (key, npc) -> UnlockMilestone(npc.levelRequired, GameStrings.thievingNpcName(context, key)) }
+
+        "construction" ->
+            vm.constructionRecipes.entries
+                .sortedBy { it.value.levelRequired }
+                .distinctBy { it.value.levelRequired }
+                .map { (key, recipe) -> UnlockMilestone(recipe.levelRequired, GameStrings.itemName(context, key)) }
+
         "mercantile" ->
             vm.tradeRoutes
                 .sortedBy { it.levelRequired }
@@ -806,12 +820,16 @@ private fun AchievementRow(ach: Achievement) {
             .padding(horizontal = 16.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(
-            text     = ach.emoji,
-            style    = MaterialTheme.typography.titleLarge,
-            modifier = Modifier.size(36.dp),
-            color    = MaterialTheme.colorScheme.onSurface.copy(alpha = alpha),
-        )
+        Box(
+            modifier         = Modifier.size(36.dp),
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(
+                text  = ach.emoji,
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = alpha),
+            )
+        }
         Spacer(Modifier.width(12.dp))
         Column(Modifier.weight(1f)) {
             Text(
@@ -894,14 +912,16 @@ private fun PetRow(pet: com.fantasyidler.data.json.PetData, owned: Boolean) {
             .padding(horizontal = 16.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(
-            text     = pet.emoji,
-            style    = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier
-                .width(48.dp)
-                .then(if (owned) Modifier else Modifier),
-            color    = MaterialTheme.colorScheme.onSurface.copy(alpha = alpha),
-        )
+        Box(
+            modifier         = Modifier.size(48.dp),
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(
+                text  = pet.emoji,
+                style = MaterialTheme.typography.headlineMedium,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = alpha),
+            )
+        }
         Column(
             modifier = Modifier.weight(1f),
         ) {

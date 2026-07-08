@@ -85,7 +85,7 @@ def run_write(out: Path, page_list: str | list[str]):
     if page_list == "all":
         write_pages(out, pages)
     else:
-        write_pages(out, {k: v for k, v in pages if k in page_list})
+        write_pages(out, {k: v for k, v in pages.items() if k in page_list})
 
 
 def parse_args():

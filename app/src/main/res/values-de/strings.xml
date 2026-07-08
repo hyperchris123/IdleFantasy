@@ -622,7 +622,7 @@
     <string name="worker_skills_title_nav">Arbeiterfähigkeiten</string>
 
     <!-- ===== Combat difficulty ratings ===== -->
-    <string name="combat_difficulty_likely">Sieht schaffbar aus</string>
+    <string name="combat_difficulty_likely">You\'ve got this</string>
     <string name="combat_difficulty_risky">Mit dieser Ausrüstung könnte es knapp werden</string>
     <string name="combat_difficulty_unlikely">Ihr werdet vermutlich den Löffel abgeben</string>
 
@@ -1005,6 +1005,9 @@
     <string name="item_yew_wardrobe_name">Eibenholzschrank</string>
     <string name="item_magic_throne_name">Magischer Thron</string>
     <string name="town_upgrade_section_title">Stadtgebäude</string>
+    <string name="town_building_inn_name">Inn</string>
+    <string name="town_building_guild_hall_name">Guild Hall</string>
+    <string name="town_building_church_name">Church</string>
     <string name="town_building_current_tier">Stufe %1$d / 3</string>
     <string name="town_building_maxed_label">Vollständig ausgebaut</string>
     <string name="town_upgrade_next_label">Nächstes Upgrade</string>

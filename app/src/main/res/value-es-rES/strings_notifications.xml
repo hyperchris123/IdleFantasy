@@ -18,4 +18,10 @@
     <!-- Plural variant used when multiple patches are ready -->
     <!-- Translator note: %1$d = number of patches ready -->
     <string name="notif_farming_ready_body_multi">%1$d parcelas están listas para cosechar.</string>
+    <string name="notif_channel_buffs_name">Buff Alerts</string>
+    <string name="notif_channel_buffs_desc">Notifications when your active buffs expire</string>
+    <string name="notif_xp_boost_expired_title">XP Boost Expired</string>
+    <string name="notif_xp_boost_expired_body">Your 2x XP boost has run out. Visit the marketplace to reactivate.</string>
+    <string name="notif_blessing_expired_title">Blessing Expired</string>
+    <string name="notif_blessing_expired_body">Your church blessing has faded. Visit the Church to renew it.</string>
 </resources>

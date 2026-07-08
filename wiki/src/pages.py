@@ -56,6 +56,7 @@ PAGE_DIRECTORY: dict[str, PageInfo] = {
     "spells": PageInfo("Spells", "Spells.md"),
     # Town
     "shop": PageInfo("Shop", "Shop.md"),
+    "workers": PageInfo("Workers", "Workers.md"),
     # Miscellaneous
     "pets": PageInfo("Pets", "Pets.md"),
     "quests": PageInfo("Quests", "Quests.md")
@@ -100,7 +101,8 @@ PAGE_HIERARCHY = (
         "spells"
     )),
     ("Town", (
-        "shop"
+        "shop",
+        "workers",
     )),
     ("Miscellaneous", (
         "pets",
@@ -140,6 +142,7 @@ def _get_page_to_content() -> dict[str, str]:
         "spells": gen_spells(),
         # Town
         "shop": gen_shop(),
+        "workers": gen_workers(),
         # Miscellaneous
         "pets": gen_pets(),
         "quests": gen_quests(),
@@ -780,6 +783,44 @@ def gen_pets() -> str:
     ]
     return get_template("miscellaneous/pets").format(
         pet_table=table(["Pet", "Source", "Bonus", "Description"], rows),
+    )
+
+
+def gen_workers() -> str:
+    # Worker tier stats (mirrored from WorkerTier enum)
+    tiers = [
+        ("Long Laborer", 8,  0.5,  5_000,  4.0,  "Uncapped (2 min/item)"),
+        ("Apprentice",   8,  1.0,  10_000, 8.0,  "480 items"),
+        ("Journeyman",   6,  1.25, 20_000, 7.5,  "360 items"),
+        ("Master",       4,  2.0,  50_000, 8.0,  "240 items"),
+    ]
+    tier_rows = [
+        [name, f"{dur}h", f"{eff:.2f}×", f"{cost:,}", f"{gather:.1f}×", craft]
+        for name, dur, eff, cost, gather, craft in tiers
+    ]
+    tier_table = table(
+        ["Tier", "Session Duration", "Efficiency", "Hire Cost", "Gathering Output", "Crafting Output"],
+        tier_rows,
+    )
+
+    # Allowed skills (mirrors WorkerSkillsScreen: GATHERING minus FARMING, all CRAFTING_SKILLS, Prayer)
+    gathering_skills = ["Mining", "Fishing", "Woodcutting", "Agility", "Thieving"]
+    crafting_skills  = ["Smithing", "Cooking", "Fletching", "Crafting", "Firemaking", "Runecrafting", "Herblore", "Construction"]
+    skill_rows = (
+        [["Gathering", s] for s in gathering_skills] +
+        [["Crafting",  s] for s in crafting_skills] +
+        [["Support",   "Prayer"]]
+    )
+    skill_table = table(["Category", "Skill"], skill_rows)
+
+    # Inn upgrade XP bonuses (tier 0–3: +0%, +10%, +20%, +30%)
+    inn_rows = [[tier, f"×{1.0 + tier * 0.10:.2f}"] for tier in range(4)]
+    inn_bonus_table = table(["Inn Tier", "Worker XP Multiplier"], inn_rows)
+
+    return get_template("town/workers").format(
+        tier_table=tier_table,
+        skill_table=skill_table,
+        inn_bonus_table=inn_bonus_table,
     )
 
 

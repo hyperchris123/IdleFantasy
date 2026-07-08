@@ -1,3 +1,16 @@
+v1.8.2
+• Fixed Firemaking appearing under Gathering instead of Crafting in the Guild Hall
+• Fixed guild daily quest progress being silently dropped when a daily refresh triggered during session collection
+• Fixed skill names in the Slayer lamp skill picker showing raw keys instead of translated names
+• Fixed all three town buildings showing "Town Building" as their title instead of their actual names
+• Fixed workers occasionally being assigned the same name
+• Added English names for equipment, food, and bosses for translators
+• Fixed Thieving and Construction missing from the skills tab on the profile screen
+• Dungeon difficulty label "Looks manageable" renamed to "You\'ve got this" and changed from gold to green
+• Fixed pet, boss, and achievement icons not being centered in their rows
+• Added notifications for when the XP boost and Church blessing expire
+• Fixed Thieving sessions queued after another skill disappearing instead of starting
+• Fixed missing Russian translations for town building names and buff notifications
 v1.8.1
 • Fixed prayer "Start Burying" button being hidden behind the keyboard
 • Fixed construction sessions disappearing from the queue without starting
