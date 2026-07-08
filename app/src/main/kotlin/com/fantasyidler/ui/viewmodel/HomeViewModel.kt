@@ -730,6 +730,7 @@ class HomeViewModel @Inject constructor(
                 equippedSnapshot    = player?.equipped,
                 spellName           = flags.activeSpell,
                 arrowsKey           = flags.equippedArrows,
+                coinRefund          = coinCostForRepeat,
             ))
             if (!enqueued) {
                 if (coinCostForRepeat > 0) playerRepo.addCoins(coinCostForRepeat)

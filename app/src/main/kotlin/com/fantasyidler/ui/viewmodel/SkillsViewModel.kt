@@ -647,11 +647,24 @@ class SkillsViewModel @Inject constructor(
                 val agility      = (json.decodeFromString<Map<String, Int>>(player.skillLevels))[Skills.AGILITY] ?: 1
                 val gatherFlags = try { json.decodeFromString<PlayerFlags>(player.flags) } catch (_: Exception) { PlayerFlags() }
                 val xpQueueMult = (if (gatherFlags.xpBoostExpiresAt > System.currentTimeMillis()) 2.0 else 1.0) * ChurchRepository.xpMultiplier(gatherFlags)
+                val equipped: Map<String, String?> = json.decodeFromString(player.equipped)
                 val estimatedXpGain = (when (skillName) {
-                    Skills.MINING      -> (gameData.ores[activityKey]?.xpPerOre?.toLong()            ?: 0L) * 60L
-                    Skills.WOODCUTTING -> (gameData.trees[activityKey]?.xpPerLog?.toLong()           ?: 0L) * 60L
-                    Skills.FISHING     -> (gameData.fish[activityKey]?.xpPerCatch?.toLong()          ?: 0L) * 60L
-                    Skills.AGILITY     -> (gameData.agilityCourses[activityKey]?.xpPerSuccess?.toLong() ?: 0L) * 60L
+                    Skills.MINING      -> SkillSimulator.estimateGatheringXp(
+                        gameData.ores[activityKey]?.xpPerOre ?: 0,
+                        toolEfficiency(equipped[EquipSlot.PICKAXE], EquipSlot.PICKAXE),
+                    )
+                    Skills.WOODCUTTING -> SkillSimulator.estimateGatheringXp(
+                        gameData.trees[activityKey]?.xpPerLog ?: 0,
+                        toolEfficiency(equipped[EquipSlot.AXE], EquipSlot.AXE),
+                    )
+                    Skills.FISHING     -> SkillSimulator.estimateGatheringXp(
+                        gameData.fish[activityKey]?.xpPerCatch ?: 0,
+                        toolEfficiency(equipped[EquipSlot.FISHING_ROD], EquipSlot.FISHING_ROD),
+                    )
+                    Skills.AGILITY     -> {
+                        val course = gameData.agilityCourses[activityKey]
+                        SkillSimulator.estimateAgilityXp(course?.xpPerSuccess ?: 0, course?.levelRequired ?: 1, agility)
+                    }
                     else               -> 0L
                 } * xpQueueMult).toLong()
                 val enqueued = playerRepo.enqueueAction(

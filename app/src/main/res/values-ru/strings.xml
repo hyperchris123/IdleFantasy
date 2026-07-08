@@ -584,6 +584,7 @@
     <string name="character_gender_male">Мужской</string>
     <string name="character_gender_female">Женский</string>
     <string name="character_gender_other">Другой</string>
+    <string name="character_gender_custom_hint">Опишите свой гендер</string>
     <string name="character_race">Раса</string>
     <string name="character_race_human">Человек</string>
     <string name="character_race_elf">Эльф</string>
