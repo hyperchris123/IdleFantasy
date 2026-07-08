@@ -1016,7 +1016,7 @@
     <string name="bone_altar_tap">Нажмите, чтобы захоронить</string>
     <string name="bone_altar_change_bone">Изменить</string>
     <string name="bone_altar_combo_count">Комбо ×%d</string>
-    <string name="bone_altar_bonus_active">+50%% к XP!</string>
+    <string name="bone_altar_bonus_active">+50% к XP!</string>
     <string name="bone_altar_session_xp">+%s XP за сессию</string>
     <string name="bone_altar_buried_count">%d захоронено</string>
     <string name="bone_altar_no_bones">Нет костей в инвентаре</string>

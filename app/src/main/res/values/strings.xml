@@ -990,7 +990,7 @@
     <string name="bone_altar_tap">Tap to Bury</string>
     <string name="bone_altar_change_bone">Change</string>
     <string name="bone_altar_combo_count">Combo ×%d</string>
-    <string name="bone_altar_bonus_active">+50%% XP bonus!</string>
+    <string name="bone_altar_bonus_active">+50% XP bonus!</string>
     <string name="bone_altar_session_xp">+%s XP this session</string>
     <string name="bone_altar_buried_count">%d buried</string>
     <string name="bone_altar_no_bones">No bones in inventory</string>
