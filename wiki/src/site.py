@@ -34,9 +34,9 @@ def _slugify(text: str) -> str:
 def _fix_page_links(html: str) -> str:
     """Add .html extension (and item row fragment) to relative wiki page hrefs.
 
-    pages.py emits [text](PageStem) Markdown links.  After the markdown library
-    converts them to <a href="PageStem">text</a> we need to turn PageStem into
-    PageStem.html (or PageStem.html#slug for item cross-links).
+    pages.py emits [text](PageStem) Markdown links and html_link() anchors.
+    After the markdown library converts links to <a href="PageStem">text</a> we
+    need to turn PageStem into PageStem.html (or PageStem.html#slug for item cross-links).
     """
     def fix(m: re.Match) -> str:
         href, text = m.group(1), m.group(2)
@@ -78,8 +78,8 @@ def _md_to_html(text: str) -> str:
 # ---------------------------------------------------------------------------
 
 def _build_nav(active_page_id: str | None, items: PageHierarchy | None = None) -> str:
-    # Todo: Allow page hierarchies to be collapsible - this allows for dynamically generated pages like bosses/etc to avoid bloating the navigation
-    # Todo: Cont. Could be worthwhile considering how this should be done for things like the home page, GitHub sidebar, perhaps leave out?
+    # Todo: Allow page hierarchies to be collapsible
+    # Todo: Also make any existing HTML links active - eg. For the combat footer
     if items is None:
         items = PAGE_HIERARCHY
     lines = ["<ul>"]

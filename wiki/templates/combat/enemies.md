@@ -9,3 +9,5 @@ For bosses, see {boss_link}
 All enemies found in dungeons, ordered by HP. More information about specific enemies can be found on their particular pages.
 
 {enemy_table}
+
+{combat_footer}

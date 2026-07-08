@@ -11,3 +11,5 @@
 ## Possible loot
 
 {loot_table}
+
+{combat_footer}

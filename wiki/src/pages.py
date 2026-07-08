@@ -271,6 +271,13 @@ def link(page_id: str, display_name: str | None = None):
     return f"[{page.title if display_name is None else display_name}]({page.url.removesuffix('.md')})"
 
 
+def html_link(page_id: str, display_name: str | None = None) -> str:
+    """HTML anchor for use inside raw HTML blocks where Markdown links are not parsed."""
+    page = PAGE_DIRECTORY[page_id]
+    name = page.title if display_name is None else display_name
+    return f'<a href="{page.url.removesuffix(".md")}">{name}</a>'
+
+
 def _tool_table(slot: str, efficiency_key: str) -> str:
     equipment = load("equipment.json")
     assert isinstance(equipment, dict)
@@ -774,6 +781,32 @@ def gen_equipment() -> str:
     return get_template("inventory/equipment").format(equipment="\n\n".join(sections))
 
 
+def gen_combat_footer() -> str:
+    dungeons = sorted(
+        (load(f, False) for f in (ASSETS / "dungeons").glob("*.json")),
+        key=lambda d: d.get("recommended_level", 0),
+    )
+    bosses = load("raid_bosses.json")
+    enemies = load("enemies.json")
+    assert isinstance(bosses, dict)
+    assert isinstance(enemies, dict)
+    return get_template("combat/combat_footer").format(
+        dungeon_heading=html_link("dungeons"),
+        boss_heading=html_link("bosses"),
+        enemy_heading=html_link("enemies"),
+        dungeon_links=", ".join(html_link(dungeon["name"]) for dungeon in dungeons),
+        boss_links=", ".join(
+            html_link(boss_id)
+            for boss_id in sorted(bosses.keys(), key=lambda x: bosses[x].get("combat_level_required", 0))
+        ),
+        enemy_links=", ".join(
+            html_link(enemy_id)
+            for enemy_id, _ in sorted(enemies.items(), key=lambda x: x[1]["hp"])
+        ),
+        miscellaneous_links=", ".join([html_link("spells"), html_link("slayer")]),
+    )
+
+
 def gen_bosses() -> str:
     bosses = load("raid_bosses.json")
     assert isinstance(bosses, dict)
@@ -785,7 +818,10 @@ def gen_bosses() -> str:
         ]
         for boss_id, boss in sorted(bosses.items(), key=lambda x: x[1].get("combat_level_required", 0))
     ]
-    return get_template("combat/bosses").format(boss_table=table(["Boss", "Combat Level", "Description"], rows))
+    return get_template("combat/bosses").format(
+        boss_table=table(["Boss", "Combat Level", "Description"], rows),
+        combat_footer=gen_combat_footer(),
+    )
 
 
 def _dungeon_loot_rows(dungeon: dict, enemies: dict) -> list[list]:
@@ -825,6 +861,7 @@ def gen_dungeon(dungeon: dict) -> str:
         description=dungeon.get("description", ""),
         spawn_table=table(["Enemy", "Weight", "Spawn Chance"], spawn_rows) if spawn_rows else "",
         loot_table=table(["Loot", "Dropped By"], loot_rows) if loot_rows else "_No loot._",
+        combat_footer=gen_combat_footer(),
     )
 
 
@@ -843,6 +880,7 @@ def gen_dungeons() -> str:
     ]
     return get_template("combat/dungeons").format(
         dungeon_table=table(["Dungeon", "Recommended Level", "Description"], rows),
+        combat_footer=gen_combat_footer(),
     )
 
 
@@ -875,6 +913,7 @@ def gen_enemies() -> str:
     return get_template("combat/enemies").format(
         boss_link=link("bosses"),
         enemy_table=table(["Enemy", "HP", "XP on kill", "Found in"], rows),
+        combat_footer=gen_combat_footer(),
     )
 
 
@@ -922,6 +961,7 @@ def gen_enemy(enemy: dict) -> str:
         magic_defence=defensive_stats.get("magic_defense", "—"),
         loot_table=table(["Item", "Chance", "Qty"], drop_rows) if drop_rows else "_No drops._",
         dungeon_table=table(["Dungeon", "Combat Level", "Spawn Chance"], dungeon_rows) if dungeon_rows else "_Not found in any dungeon._",
+        combat_footer=gen_combat_footer(),
     )
 
 
@@ -934,6 +974,7 @@ def gen_spells() -> str:
     ], key=lambda r: r[1])
     return get_template("combat/spells").format(
         spell_table=table(["Spell", "Magic Level", "Rune", "Runes / Cast", "Max Hit"], rows),
+        combat_footer=gen_combat_footer(),
     )
 
 
@@ -1210,7 +1251,7 @@ def gen_boss(boss: dict) -> str:
         xp_rewards=", ".join(f"{title(sk)} {v:,}" for sk, v in xp.items()) if xp else "—",
         loot_table=table(["Item", "Min", "Max"], common_loot_rows) if common_loot_rows else "_No loot defined._",
         rare_drops_table=table(["Item", "Chance"], rare_loot_rows) if rare_loot_rows else "_No rare drops._",
-        combat_footer="",
+        combat_footer=gen_combat_footer(),
     )
 
 # ---------------------------------------------------------------------------

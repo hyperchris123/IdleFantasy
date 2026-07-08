@@ -47,3 +47,5 @@ When you defeat a {name}, the simulator first rolls to check if you meet the cha
 The {name} can be found in the following dungeons:
 
 {dungeon_table}
+
+{combat_footer}
