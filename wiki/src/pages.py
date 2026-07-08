@@ -1,22 +1,20 @@
 """
 pages.py - Defines methods for generating IdleFantasy GitHub wiki pages from game data assets
 
-Reads JSON assets from app/src/main/assets/data/ and generates appropriate Markdown content
+Reads JSON assets from app/src/main/assets/data/ and generates appropriate markdown content
 """
 
 from __future__ import annotations
 
 import json
 import logging
+import os
 import traceback
 from dataclasses import dataclass
 from logging import log
 from pathlib import Path
-from typing import Callable
 
 from wiki.src import ASSETS, TEMPLATES
-from wiki.src.page_hierarchy import PageHierarchy
-
 
 # ---------------------------------------------------------------------------
 # Page Listings
@@ -26,160 +24,146 @@ from wiki.src.page_hierarchy import PageHierarchy
 class PageInfo:
     title: str
     url: str
-    generate: Callable[[], str] | NotImplemented
 
 
-PAGE_DIRECTORY: dict[str, PageInfo] = {}
-PAGE_HIERARCHY: PageHierarchy = PageHierarchy()
+PAGE_DIRECTORY: dict[str, PageInfo] = {
+    # Home
+    "sidebar": PageInfo("Sidebar", "_Sidebar.md"),
+    "home": PageInfo("Home", "Home.md"),
+    # Skills
+    "skills": PageInfo("Skills", "Skills.md"),
+    "mining": PageInfo("Mining", "Mining.md"),
+    "fishing": PageInfo("Fishing", "Fishing.md"),
+    "woodcutting": PageInfo("Woodcutting", "Woodcutting.md"),
+    "farming": PageInfo("Farming", "Farming.md"),
+    "agility": PageInfo("Agility", "Agility.md"),
+    "smithing": PageInfo("Smithing", "Smithing.md"),
+    "cooking": PageInfo("Cooking", "Cooking.md"),
+    "fletching": PageInfo("Fletching", "Fletching.md"),
+    "crafting": PageInfo("Crafting", "Crafting.md"),
+    "firemaking": PageInfo("Firemaking", "Firemaking.md"),
+    "runecrafting": PageInfo("Runecrafting", "Runecrafting.md"),
+    "herblore": PageInfo("Herblore", "Herblore.md"),
+    "construction": PageInfo("Construction", "Construction.md"),
+    "thieving": PageInfo("Thieving", "Thieving.md"),
+    "prayer": PageInfo("Prayer", "Prayer.md"),
+    "mercantile": PageInfo("Mercantile", "Mercantile.md"),
+    "slayer": PageInfo("Slayer", "Slayer.md"),
+    # Inventory
+    "equipment": PageInfo("Equipment", "Equipment.md"),
+    # Combat
+    "bosses": PageInfo("Bosses", "Bosses.md"),
+    "dungeons": PageInfo("Dungeons", "Dungeons.md"),
+    "enemies": PageInfo("Enemies", "Enemies.md"),
+    "spells": PageInfo("Spells", "Spells.md"),
+    # Town
+    "shop": PageInfo("Shop", "Shop.md"),
+    "workers": PageInfo("Workers", "Workers.md"),
+    "guilds": PageInfo("Guilds", "Guilds.md"),
+    "buildings": PageInfo("Buildings", "Buildings.md"),
+    # Miscellaneous
+    "pets": PageInfo("Pets", "Pets.md"),
+    "quests": PageInfo("Quests", "Quests.md")
+
+}
+
+PAGE_HIERARCHY = (
+    "home",
+    ("Skills", (
+        "skills",
+        ("Gathering", (
+            "mining",
+            "fishing",
+            "woodcutting",
+            "farming",
+            "agility",
+            "thieving",
+        )),
+        ("Crafting", (
+            "smithing",
+            "cooking",
+            "fletching",
+            "crafting",
+            "firemaking",
+            "runecrafting",
+            "herblore",
+            "construction",
+        )),
+        ("Support", (
+            "prayer",
+            "mercantile",
+        )),
+        ("Combat", (
+            "slayer",
+        ))
+    )),
+    ("Inventory", (
+        "equipment",
+    )),
+    ("Combat", (
+        "bosses",
+        "dungeons",
+        "enemies",
+        "spells"
+    )),
+    ("Town", (
+        "shop",
+        "workers",
+        "guilds",
+        "buildings",
+    )),
+    ("Miscellaneous", (
+        "pets",
+        "quests"
+    ))
+)
 
 
-def add_static_pages():
-    """Registers all static wiki pages."""
-    # Todo: Add combat page with strategy information explaining what attack, etc, does - link in boss and enemy pages
-
-    # Add pages not in the hierarchy
-    PAGE_DIRECTORY.update({
-        "sidebar": PageInfo("Sidebar", "_Sidebar.md", gen_sidebar)
-    })
-
-    # Add pages in both the directory and hierarchy
-    pages = [
-        ("home", PageInfo("Home", "Home.md", gen_home)),
-        ["Skills", False, [
-            ("skills", PageInfo("Skills", "Skills.md", gen_skills)),
-            ["Gathering", False, [
-                ("mining", PageInfo("Mining", "Mining.md", gen_mining)),
-                ("fishing", PageInfo("Fishing", "Fishing.md", gen_fishing)),
-                ("woodcutting", PageInfo("Woodcutting", "Woodcutting.md", gen_woodcutting)),
-                ("farming", PageInfo("Farming", "Farming.md", gen_farming)),
-                ("agility", PageInfo("Agility", "Agility.md", gen_agility)),
-                ("thieving", PageInfo("Thieving", "Thieving.md", gen_thieving))
-            ]],
-            ["Crafting", False, [
-                ("smithing", PageInfo("Smithing", "Smithing.md", gen_smithing)),
-                ("cooking", PageInfo("Cooking", "Cooking.md", gen_cooking)),
-                ("fletching", PageInfo("Fletching", "Fletching.md", gen_fletching)),
-                ("crafting", PageInfo("Crafting", "Crafting.md", gen_crafting)),
-                ("firemaking", PageInfo("Firemaking", "Firemaking.md", gen_firemaking)),
-                ("runecrafting", PageInfo("Runecrafting", "Runecrafting.md", gen_runecrafting)),
-                ("herblore", PageInfo("Herblore", "Herblore.md", gen_herblore)),
-                ("construction", PageInfo("Construction", "Construction.md", gen_construction))
-            ]],
-            ["Support", False, [
-                ("prayer", PageInfo("Prayer", "Prayer.md", gen_prayer)),
-                ("mercantile", PageInfo("Mercantile", "Mercantile.md", gen_mercantile)),
-            ]],
-            ["Combat", False, [
-                ("slayer", PageInfo("Slayer", "Slayer.md", gen_slayer)),
-            ]],
-        ]],
-        ["Inventory", False, [
-            ("equipment", PageInfo("Equipment", "Equipment.md", gen_equipment)),
-        ]],
-        ["Combat", False, [
-            ("bosses", PageInfo("Bosses", "Bosses.md", gen_bosses)),
-            ("dungeons", PageInfo("Dungeons", "Dungeons.md", gen_dungeons)),
-            ("enemies", PageInfo("Enemies", "Enemies.md", gen_enemies)),
-            ("spells", PageInfo("Spells", "Spells.md", gen_spells)),
-        ]],
-        ["Town", False, [
-            ("shop", PageInfo("Shop", "Shop.md", gen_shop)),
-            ("workers", PageInfo("Workers", "Workers.md", gen_workers)),
-            ("guilds", PageInfo("Guilds", "Guilds.md", gen_guilds)),
-            ("buildings", PageInfo("Buildings", "Buildings.md", gen_guilds)),
-        ]],
-        ["Miscellaneous", False, [
-            ("pets", PageInfo("Pets", "Pets.md", gen_pets)),
-            ("quests", PageInfo("Quests", "Quests.md", gen_quests)),
-        ]],
-    ]
-
-    # Convert into form suitable for hierarchy merge function
-    def _make_hierarchical(page_list: list[tuple[str, PageInfo] | list]):
-        items = []
-        for x in page_list:
-            if isinstance(x, list): # pagify the contents
-                items.append([x[0], x[1], _make_hierarchical(x[2])])
-            else: # Append only the name
-                items.append(x[0])
-        return items
-
-    # Add pages to hierarchy
-    PAGE_HIERARCHY.merge(_make_hierarchical(pages))
-
-    # Add pages to directory, ignoring the hierarchical structure
-    # Note: The `pages` variable is no longer in a usable state after running this so it should be done last
-    while len(pages) > 0:
-        item = pages.pop(0)
-        if isinstance(item, list): # Add all subpages
-            pages += item[2]
-        else: # Add page
-            PAGE_DIRECTORY.update({item[0]: item[1]})
-
-
-def add_boss_pages():
-    bosses = load("raid_bosses.json")
-    assert isinstance(bosses, dict)
-    boss_pages = {
-        boss_id: PageInfo(bosses[boss_id]["display_name"], f"{boss_id}.md", lambda x=bosses[boss_id]: gen_boss(x))
-        for boss_id in bosses.keys()
+def _get_page_to_content() -> dict[str, str]:
+    return {
+        # Main pages
+        "home": gen_home(),
+        "sidebar": gen_sidebar(),
+        # Skills
+        "skills": gen_skills(),
+        "mining": gen_mining(),
+        "fishing": gen_fishing(),
+        "woodcutting": gen_woodcutting(),
+        "farming": gen_farming(),
+        "agility": gen_agility(),
+        "smithing": gen_smithing(),
+        "cooking": gen_cooking(),
+        "fletching": gen_fletching(),
+        "crafting": gen_crafting(),
+        "firemaking": gen_firemaking(),
+        "runecrafting": gen_runecrafting(),
+        "herblore": gen_herblore(),
+        "construction": gen_construction(),
+        "thieving": gen_thieving(),
+        "prayer": gen_prayer(),
+        "mercantile": gen_mercantile(),
+        "slayer": gen_slayer(),
+        # Inventory
+        "equipment": gen_equipment(),
+        # Combat
+        "bosses": gen_bosses(),
+        "dungeons": gen_dungeons(),
+        "enemies": gen_enemies(),
+        "spells": gen_spells(),
+        # Town
+        "shop": gen_shop(),
+        "workers": gen_workers(),
+        "guilds": gen_guilds(),
+        "buildings": gen_buildings(),
+        # Miscellaneous
+        "pets": gen_pets(),
+        "quests": gen_quests(),
     }
-    PAGE_DIRECTORY.update(boss_pages)
-    # Todo: Remove once Page Hierarchies are collapsible
-    # PAGE_HIERARCHY.merge([
-    #     ["Combat", True, [
-    #         ["Bosses", [boss_id for boss_id in boss_pages.keys()]],
-    #     ]]
-    # ])
 
-
-def add_enemy_pages():
-    enemies = load("enemies.json")
-    assert isinstance(enemies, dict)
-    enemy_pages = {
-        enemy_id: PageInfo(
-            enemies[enemy_id]["display_name"],
-            f"{enemy_id}.md",
-            lambda entry=enemies[enemy_id]: gen_enemy(entry),
-        )
-        for enemy_id in enemies.keys()
-    }
-    PAGE_DIRECTORY.update(enemy_pages)
-    # Todo: Remove once Page Hierarchies are collapsible
-    # PAGE_HIERARCHY.merge([
-    #     ["Combat", True, [
-    #         ["Enemies", [enemy_id for enemy_id in enemy_pages.keys()]],
-    #     ]]
-    # ])
-
-
-def add_dungeon_pages():
-    dungeons = sorted(
-        (load(f, False) for f in (ASSETS / "dungeons").glob("*.json")),
-        key=lambda d: d.get("recommended_level", 0),
-    )
-    dungeon_pages = {
-        dungeon["name"]: PageInfo(
-            dungeon["display_name"],
-            f"{dungeon['name']}.md",
-            lambda entry=dungeon: gen_dungeon(entry),
-        )
-        for dungeon in dungeons
-    }
-    PAGE_DIRECTORY.update(dungeon_pages)
-    # Todo: Remove once Page Hierarchies are collapsible
-    # PAGE_HIERARCHY.merge([
-    #     ["Combat", True, [
-    #         ["Dungeons", [dungeon["name"] for dungeon in dungeons]],
-    #     ]]
-    # ])
-
-# ---------------------------------------------------------------------------
-# Main functions
-# ---------------------------------------------------------------------------
 
 def get_pages() -> dict[str, str]:
-    return {info.url: info.generate() for info in PAGE_DIRECTORY.values()}
+    page_to_content = _get_page_to_content()
+    return {PAGE_DIRECTORY[page].url: content for page, content in page_to_content.items()}
 
 
 def check_wiki_validity():
@@ -187,36 +171,39 @@ def check_wiki_validity():
 
     # Check hierarchy and directory links
     # Get all pages in the hierarchy
-    pages_in_hierarchy = set()
-    listing_items = [PAGE_HIERARCHY]
+    pages_in_hierarchy = []
+    listing_items = list(PAGE_HIERARCHY)
     while len(listing_items) > 0:
         item = listing_items.pop(0)
         if isinstance(item, str):
-            pages_in_hierarchy.add(item)
+            pages_in_hierarchy.append(item)
+        elif isinstance(item[1], str):
+            pages_in_hierarchy.append(item[1])
         else:
-            listing_items += [x for x in item]
+            listing_items += item[1]
     # Confirm page listing has all pages
-    print("Checking page directory...")
+    all_pages_in_directory = True
     for page in pages_in_hierarchy:
         if page not in PAGE_DIRECTORY:
             print(f"Critical: Page '{page}' is listed in the hierarchy but not in the directory")
-    # Confirm all directory items are in the hierarchy excluding special pages (e.g. Sidebar/Footer)
-    print("Checking hierarchy...")
+            all_pages_in_directory = False
+    # Confirm all directory items are in the hierarchy excluding special pages (eg. Sidebar/Footer)
     for page_id, page_info in PAGE_DIRECTORY.items():
         if page_id not in pages_in_hierarchy and not page_info.url.startswith("_"):
             print(f"Warning: Page '{page_id}' is listed in the directory but not present in the hierarchy")
 
-    # Ensure all pages can generate content
-    print("Checking page content...")
-    for page_id, page_info in PAGE_DIRECTORY.items():
-        if page_info.generate is NotImplemented:
-            print(f"Critical: Page '{page_id}' does not contain a method to create content")
-        else:
-            try:
-                page_info.generate()
-            except:
-                print(f"Critical: Creating content for page '{page_id}' failed due to the below error")
-                print(f"\033[91m{traceback.format_exc()}\033[00m")
+    # Ensure all pages have associated content
+    if all_pages_in_directory:
+        try:
+            page_to_content = _get_page_to_content()
+            for page in PAGE_DIRECTORY.keys():
+                if page not in page_to_content:
+                    print(f"Critical: Page '{page}' does not have any content")
+        except KeyError:
+            print(f"Error: Content test failed due to below issue")
+            print(f"\033[91m{traceback.format_exc()}\033[00m")
+    else:
+        print("Critical: Could not run content tests - all pages in the hierarchy must be in the directory")
 
     print("Validation complete")
 
@@ -256,8 +243,8 @@ def table(headers: list[str], rows: list[list]) -> str:
     sep = " | "
     header_row  = sep.join(headers)
     divider_row = sep.join("---" for _ in headers)
-    data_rows   = "\n".join(f"| {sep.join(str(c) for c in row)} |" for row in rows)
-    return f"| {header_row} |\n| {divider_row} |\n{data_rows}"
+    data_rows   = "\n".join(sep.join(str(c) for c in row) for row in rows)
+    return f"| {header_row} |\n| {divider_row} |\n" + "\n".join(f"| {sep.join(str(c) for c in row)} |" for row in rows)
 
 
 def session_minutes(level: int) -> int:
@@ -266,21 +253,13 @@ def session_minutes(level: int) -> int:
     return round(60 - 20 * fraction)
 
 
-def link(page_id: str, display_name: str | None = None):
+def link(page_id: str):
     page = PAGE_DIRECTORY[page_id]
-    return f"[{page.title if display_name is None else display_name}]({page.url.removesuffix('.md')})"
-
-
-def html_link(page_id: str, display_name: str | None = None) -> str:
-    """HTML anchor for use inside raw HTML blocks where Markdown links are not parsed."""
-    page = PAGE_DIRECTORY[page_id]
-    name = page.title if display_name is None else display_name
-    return f'<a href="{page.url.removesuffix(".md")}">{name}</a>'
+    return f"[{page.title}]({page.url.removesuffix('.md')})"
 
 
 def _tool_table(slot: str, efficiency_key: str) -> str:
     equipment = load("equipment.json")
-    assert isinstance(equipment, dict)
     tools = sorted(
         [v for v in equipment.values() if v.get("slot") == slot and efficiency_key in v],
         key=lambda v: (list(v.get("requirements", {}).values() or [0])[0], v[efficiency_key])
@@ -355,14 +334,14 @@ def item_link(key: str) -> str:
 # Page Creation
 # ---------------------------------------------------------------------------
 
-def _gen_page_listing(pages: PageHierarchy, level: int = 2) -> str:
+def _gen_page_listing(pages, level: int = 2) -> str:
     content = ""
     for value in pages:
         if isinstance(value, str): # Add link
             content += f"- {link(value)}\n"
         else: # Add subsection
-            content += f"\n{"#" * level} {value.name}\n"
-            content += f"{_gen_page_listing(value, level + 1)}\n"
+            content += f"\n{"#" * level} {value[0]}\n"
+            content += f"{_gen_page_listing([value[1]] if isinstance(value[1], str) else value[1], level + 1)}\n"
     # Return content without trailing newline/etc
     return content.strip()
 
@@ -424,7 +403,6 @@ def gen_skills() -> str:
 
 def gen_mining() -> str:
     ores = load("ores.json")
-    assert isinstance(ores, dict)
     # Todo: Add information about how ore amounts change depending on pickaxe, etc
     rows = sorted(
         [[o["display_name"], o["level_required"], o["xp_per_ore"]]
@@ -440,7 +418,6 @@ def gen_mining() -> str:
 
 def gen_fishing() -> str:
     fish_data = load("skills/fishing.json")
-    assert isinstance(fish_data, dict)
     # Todo: Adjust based upon new fishing mechanics
     xp_ranges = fish_data.get("xp_ranges", {})
     rows = sorted(
@@ -457,7 +434,6 @@ def gen_fishing() -> str:
 
 def gen_woodcutting() -> str:
     trees = load("trees.json")
-    assert isinstance(trees, dict)
     rows = sorted(
         [[t["display_name"], t["level_required"], t["xp_per_log"], t["log_display_name"]]
          for t in trees.values()],
@@ -471,9 +447,9 @@ def gen_woodcutting() -> str:
 
 
 def gen_farming() -> str:
+    # Todo: Fix loading error
     # Todo: Add detail about using ashes to improve yield
     crops = load("crops.json")
-    assert isinstance(crops, dict)
     rows = sorted(
         [[
             f"{c.get('emoji','')} {c['display_name']}",
@@ -488,7 +464,6 @@ def gen_farming() -> str:
         key=lambda r: r[1]
     )
     equipment = load("equipment.json")
-    assert isinstance(equipment, dict)
     hoes = sorted(
         [v for v in equipment.values() if v.get("slot") == "hoe" and "farming_efficiency" in v],
         key=lambda v: list(v.get("requirements", {}).values() or [0])[0]
@@ -502,8 +477,7 @@ def gen_farming() -> str:
 
 def gen_agility() -> str:
     courses = load("agility_courses.json")
-    assert isinstance(courses, dict)
-    sorted_courses = sorted(courses.values(), key=lambda x: x["level_required"])
+    sorted_courses = sorted(courses.values(), key=lambda c: c["level_required"])
 
     course_rows = []
     for c in sorted_courses:
@@ -533,7 +507,6 @@ def gen_agility() -> str:
 
 def gen_smithing() -> str:
     recipes = load("recipes/smithing.json")
-    assert isinstance(recipes, dict)
     groups = {"bar": [], "weapon": [], "armour": [], "tool": [], "component": [], "other": []}
     for key, r in recipes.items():
         t = r.get("type", "other")
@@ -547,7 +520,7 @@ def gen_smithing() -> str:
     # Todo: Fix missing armour and weapons sections
     order = [("armour", "Armour"), ("bar", "Bars"), ("component", "Components"), ("tool", "Tools"), ("weapon", "Weapons")]
     for group_key, group_name in order:
-        rows = sorted(groups[group_key], key=lambda x: x[1])
+        rows = sorted(groups[group_key], key=lambda r: r[1])
         if rows:
             sections.append(f"## {group_name}\n\n{table(['Item','Level','Materials','XP / Item'], rows)}")
 
@@ -556,7 +529,6 @@ def gen_smithing() -> str:
 
 def gen_cooking() -> str:
     recipes = load("recipes/cooking.json")
-    assert isinstance(recipes, dict)
     rows = sorted(
         [[r["display_name"], r["level_required"], item_link(r["raw_item"]), r["xp_per_item"], r.get("healing_value", "—")]
          for r in recipes.values()],
@@ -569,7 +541,6 @@ def gen_cooking() -> str:
 
 def gen_fletching() -> str:
     recipes = load("recipes/fletching.json")
-    assert isinstance(recipes, dict)
     rows = sorted(
         [[r["display_name"], r["level_required"], fmt_materials(r["materials"]), r["xp_per_item"]]
          for r in recipes.values()],
@@ -580,7 +551,6 @@ def gen_fletching() -> str:
 
 def gen_crafting() -> str:
     recipes = load("recipes/crafting.json")
-    assert isinstance(recipes, dict)
     rows = sorted(
         [[r["display_name"], r["level_required"], fmt_materials(r["materials"]), r["xp_per_item"]]
          for r in recipes.values()],
@@ -592,7 +562,6 @@ def gen_crafting() -> str:
 def gen_firemaking() -> str:
     # Todo: Add details about using ashes for Rune Crafting, etc
     logs = load("logs.json")
-    assert isinstance(logs, dict)
     rows = sorted(
         [[l["display_name"], l["level_required"], l["xp_per_log"]]
          for l in logs.values()],
@@ -604,7 +573,6 @@ def gen_firemaking() -> str:
 def gen_runecrafting() -> str:
     # Todo: Add details for using ashes
     runes = load("runes.json")
-    assert isinstance(runes, dict)
     rows = sorted(
         [[
             r["display_name"],
@@ -622,7 +590,6 @@ def gen_runecrafting() -> str:
 
 def gen_herblore() -> str:
     recipes = load("recipes/herblore.json")
-    assert isinstance(recipes, dict)
     rows = sorted(
         [[
             r["display_name"],
@@ -638,7 +605,6 @@ def gen_herblore() -> str:
 
 def gen_construction() -> str:
     recipes = load("recipes/construction.json")
-    assert isinstance(recipes, dict)
     rows = sorted(
         [
             [r["display_name"], r["level_required"], fmt_materials(r["materials"]), int(r["xp_per_item"])]
@@ -677,7 +643,6 @@ def gen_thieving() -> str:
 def gen_prayer() -> str:
     # Todo: Add info about bone altar
     bones = load("bones.json")
-    assert isinstance(bones, dict)
     rows = sorted(
         [[b["display_name"], b["xp_per_bone"]]
          for b in bones.values()],
@@ -705,13 +670,12 @@ def gen_mercantile() -> str:
                 f"{low_xp['min']}–{high_xp['max']}",
                 f"{low_c['min']:,}–{high_c['max']:,}",
             ])
-    route_rows.sort(key=lambda x: x[1])
+    route_rows.sort(key=lambda r: r[1])
 
     # Skilling expeditions
     exp_rows = []
     for f in sorted((ASSETS / "skilling_dungeons").glob("*.json")):
         d = load(f, False)
-        assert isinstance(d, dict)
         xp_vals = list(d["xp_ranges"].values())
         xp_str  = f"{xp_vals[0]['min']}–{xp_vals[-1]['max']}"
         exp_rows.append([
@@ -721,7 +685,7 @@ def gen_mercantile() -> str:
             xp_str,
             title(d.get("unlock_dungeon", "—")),
         ])
-    exp_rows.sort(key=lambda x: (x[1], x[2]))
+    exp_rows.sort(key=lambda r: (r[1], r[2]))
 
     return get_template("skills/support/mercantile").format(
         route_table=table(['Route', 'Level', 'Cost', 'XP / Min (range)', 'Coin Return (range)'], route_rows),
@@ -731,7 +695,6 @@ def gen_mercantile() -> str:
 
 def gen_slayer() -> str:
     tasks = load("slayer_tasks.json")
-    assert isinstance(tasks, dict)
     rows = sorted(
         [
             [f"[{title(enemy)}](Enemies)", t["slayer_level"], f"{t['min_kills']}–{t['max_kills']}", t["xp_per_kill"]]
@@ -746,7 +709,6 @@ def gen_slayer() -> str:
 
 def gen_equipment() -> str:
     equip = load("equipment.json")
-    assert isinstance(equip, dict)
     slot_order = ["weapon", "head", "body", "legs", "boots", "cape", "ring", "necklace",
                   "shield", "pickaxe", "axe", "fishing_rod", "hoe"]
     slot_names = {
@@ -781,140 +743,84 @@ def gen_equipment() -> str:
     return get_template("inventory/equipment").format(equipment="\n\n".join(sections))
 
 
-def gen_combat_footer() -> str:
-    dungeons = sorted(
-        (load(f, False) for f in (ASSETS / "dungeons").glob("*.json")),
-        key=lambda d: d.get("recommended_level", 0),
-    )
-    bosses = load("raid_bosses.json")
-    enemies = load("enemies.json")
-    assert isinstance(bosses, dict)
-    assert isinstance(enemies, dict)
-    return get_template("combat/combat_footer").format(
-        dungeon_heading=html_link("dungeons"),
-        boss_heading=html_link("bosses"),
-        enemy_heading=html_link("enemies"),
-        dungeon_links=", ".join(html_link(dungeon["name"]) for dungeon in dungeons),
-        boss_links=", ".join(
-            html_link(boss_id)
-            for boss_id in sorted(bosses.keys(), key=lambda x: bosses[x].get("combat_level_required", 0))
-        ),
-        enemy_links=", ".join(
-            html_link(enemy_id)
-            for enemy_id, _ in sorted(enemies.items(), key=lambda x: x[1]["hp"])
-        ),
-        miscellaneous_links=", ".join([html_link("spells"), html_link("slayer")]),
-    )
+def _boss_loot_rows(boss) -> list[list]:
+    loot = boss.get("common_loot", {})
+    loot_rows = []
+    # Add coin information
+    coins_min = loot.get("coins_min")
+    coins_max = loot.get("coins_max")
+    if coins_min is not None and coins_max is not None:
+        loot_rows.append(["Coins", "100%", f"{coins_min:,}–{coins_max:,}"])
+    # Add loot
+    for item, info in loot.get("items", {}).items():
+        qty = f"{info.get('min',1)}–{info.get('max',1)}" if "min" in info else str(info.get("quantity", 1))
+        loot_rows.append([item_link(item), "100%", qty])
+    # Add rare drops
+    for drop in boss.get("rare_drops", []):
+        chance = fmt_pct(drop.get("chance", 0.005))
+        loot_rows.append([item_link(drop.get("item", "?")), chance, drop.get("quantity", 1)])
+    # Add pet chance — link to Pets page
+    pet = boss.get("pet")
+    if pet:
+        pet_name = f"{pet.get('emoji', '')} {pet.get('display_name', 'Pet')}".strip()
+        loot_rows.append([f"[{pet_name}](Pets)", fmt_pct(pet.get("chance", 0.005)), 1])
+    # Return rows
+    return loot_rows
 
 
 def gen_bosses() -> str:
     bosses = load("raid_bosses.json")
-    assert isinstance(bosses, dict)
-    rows = [
-        [
-            link(boss_id),
-            boss.get("combat_level_required", "—"),
-            boss.get("description", ""),
-        ]
-        for boss_id, boss in sorted(bosses.items(), key=lambda x: x[1].get("combat_level_required", 0))
-    ]
-    return get_template("combat/bosses").format(
-        boss_table=table(["Boss", "Combat Level", "Description"], rows),
-        combat_footer=gen_combat_footer(),
-    )
+    section_template = get_template("combat/boss_section")
+    sections = []
+    for boss in sorted(bosses.values(), key=lambda x: x.get("combat_level_required", 0)):
+        hp = boss.get("hp", "—")
+        xp = boss.get("xp_rewards", {})
+        cs = boss.get("combat_stats", {})
+        ds = boss.get("defensive_stats", {})
+        loot_rows = _boss_loot_rows(boss)
+        sections.append(section_template.format(
+            name=f"{boss.get('emoji', '')} {boss['display_name']}".strip(),
+            combat_level_required=boss.get("combat_level_required", "—"),
+            hp=f"{hp:,}" if isinstance(hp, int) else hp,
+            duration=boss.get("duration_minutes", "—"),
+            description=boss.get("description", ""),
+            attack_level=cs.get("attack_level", "—"),
+            strength_level=cs.get("strength_level", "—"),
+            defense_level=cs.get("defense_level", "—"),
+            attack_bonus=cs.get("attack_bonus", "—"),
+            strength_bonus=cs.get("strength_bonus", "—"),
+            atk_def=ds.get("attack_defense", "—"),
+            range_def=ds.get("ranged_defense", "—"),
+            magic_def=ds.get("magic_defense", "—"),
+            xp_rewards=", ".join(f"{title(sk)} {v:,}" for sk, v in xp.items()) if xp else "—",
+            loot_table=table(["Item", "Chance", "Qty"], loot_rows) if loot_rows else "_No loot defined._",
+        ))
 
-
-def _dungeon_loot_rows(dungeon: dict, enemies: dict) -> list[list]:
-    loot_enemies: dict[str, list[str]] = {}
-    for spawn in dungeon.get("enemy_spawns", []):
-        enemy_id = spawn.get("enemy")
-        if not enemy_id:
-            continue
-        enemy = enemies.get(enemy_id, {})
-        drops = enemy.get("always_drops", []) + enemy.get("drop_table", [])
-        for drop in drops:
-            item = drop["item"]
-            enemy_ids = loot_enemies.setdefault(item, [])
-            if enemy_id not in enemy_ids:
-                enemy_ids.append(enemy_id)
-    return [
-        [item_link(item), ", ".join(link(enemy_id) for enemy_id in enemy_ids)]
-        for item, enemy_ids in sorted(loot_enemies.items())
-    ]
-
-
-def gen_dungeon(dungeon: dict) -> str:
-    enemies = load("enemies.json")
-    assert isinstance(enemies, dict)
-    # Create spawn rows
-    spawns = dungeon.get("enemy_spawns", [])
-    total_w = sum(s.get("weight", 1) for s in spawns)
-    spawn_rows = [
-        [link(s["enemy"]), s.get("weight", 1), f"{s.get('weight', 1) / total_w * 100:.0f}%"]
-        for s in spawns
-    ]
-    # Create loot rows
-    loot_rows = _dungeon_loot_rows(dungeon, enemies)
-    return get_template("combat/dungeon").format(
-        name=dungeon["display_name"],
-        recommended_level=dungeon.get("recommended_level", "—"),
-        description=dungeon.get("description", ""),
-        spawn_table=table(["Enemy", "Weight", "Spawn Chance"], spawn_rows) if spawn_rows else "",
-        loot_table=table(["Loot", "Dropped By"], loot_rows) if loot_rows else "_No loot._",
-        combat_footer=gen_combat_footer(),
-    )
+    return get_template("combat/bosses").format(boss_sections="\n\n".join(sections))
 
 
 def gen_dungeons() -> str:
+    section_template = get_template("combat/dungeon_section")
     dungeons = sorted(
         (load(f, False) for f in (ASSETS / "dungeons").glob("*.json")),
         key=lambda d: d.get("recommended_level", 0),
     )
-    rows = [
-        [
-            link(dungeon["name"]),
-            dungeon.get("recommended_level", "—"),
-            dungeon.get("description", ""),
-        ]
-        for dungeon in dungeons
-    ]
-    return get_template("combat/dungeons").format(
-        dungeon_table=table(["Dungeon", "Recommended Level", "Description"], rows),
-        combat_footer=gen_combat_footer(),
-    )
-
-
-def _get_dungeons_by_enemy(enemy_id: str) -> list[tuple[dict, dict]]:
-    dungeons = sorted(
-        (load(f, False) for f in (ASSETS / "dungeons").glob("*.json")),
-        key=lambda d: d.get("recommended_level", 0),
-    )
-    results = []
+    sections = []
     for dungeon in dungeons:
-        for spawn in dungeon.get("enemy_spawns", []):
-            if spawn.get("enemy") == enemy_id:
-                results.append((dungeon, spawn))
-                break
-    return results
-
-
-def gen_enemies() -> str:
-    enemies = load("enemies.json")
-    assert isinstance(enemies, dict)
-    rows = [
-        [
-            link(enemy_id),
-            enemy["hp"],
-            enemy.get("xp_drops", {}).get("combat", "—"),
-            ", ".join(dungeon["display_name"] for dungeon, _ in _get_dungeons_by_enemy(enemy_id)) or "—",
+        assert isinstance(dungeon, dict)
+        spawns = dungeon.get("enemy_spawns", [])
+        total_w = sum(s.get("weight", 1) for s in spawns)
+        spawn_rows = [
+            [title(s["enemy"]), s.get("weight", 1), f"{s.get('weight', 1) / total_w * 100:.0f}%"] for s in spawns
         ]
-        for enemy_id, enemy in sorted(enemies.items(), key=lambda x: x[1]["hp"])
-    ]
-    return get_template("combat/enemies").format(
-        boss_link=link("bosses"),
-        enemy_table=table(["Enemy", "HP", "XP on kill", "Found in"], rows),
-        combat_footer=gen_combat_footer(),
-    )
+        sections.append(section_template.format(
+            name=dungeon["display_name"],
+            recommended_level=dungeon.get("recommended_level", "—"),
+            description=dungeon.get("description", ""),
+            spawn_table=table(["Enemy", "Weight", "Spawn Chance"], spawn_rows) if spawn_rows else "",
+        ))
+
+    return get_template("combat/dungeons").format(dungeon_sections="\n\n".join(sections))
 
 
 def _enemy_drop_rows(enemy: dict) -> list[list]:
@@ -930,39 +836,26 @@ def _enemy_drop_rows(enemy: dict) -> list[list]:
     return drop_rows
 
 
-def _enemy_dungeon_rows(enemy_id: str) -> list[list]:
-    rows = []
-    for dungeon, spawn in _get_dungeons_by_enemy(enemy_id):
-        spawns = dungeon.get("enemy_spawns", [])
-        total_w = sum(s.get("weight", 1) for s in spawns)
-        rows.append([
-            link(dungeon["name"]),
-            dungeon.get("recommended_level", "—"),
-            f"{spawn.get('weight', 1) / total_w * 100:.0f}%",
-        ])
-    return rows
+def gen_enemies() -> str:
+    enemies = load("enemies.json")
+    assert isinstance(enemies, dict)
+    section_template = get_template("combat/enemy_section")
+    sections = []
+    for enemy in sorted(enemies.values(), key=lambda x: x["hp"]):
+        combat_stats = enemy.get("combat_stats", {})
+        xp = enemy.get("xp_drops", {})
+        drop_rows = _enemy_drop_rows(enemy)
+        sections.append(section_template.format(
+            name=enemy["display_name"],
+            hp=enemy["hp"],
+            attack=combat_stats.get("attack_level", combat_stats.get("attack", "—")),
+            strength=combat_stats.get("strength_level", combat_stats.get("strength", "—")),
+            defense=combat_stats.get("defense_level", combat_stats.get("defense", "—")),
+            xp_drops=", ".join(f"{title(sk)} {v}" for sk, v in xp.items()) if xp else "—",
+            drop_table=table(["Item", "Chance", "Qty"], drop_rows) if drop_rows else "_No drops._",
+        ))
 
-
-def gen_enemy(enemy: dict) -> str:
-    combat_stats = enemy.get("combat_stats", {})
-    defensive_stats = enemy.get("defensive_stats", {})
-    hp = enemy.get("hp", "—")
-    xp = enemy.get("xp_drops", {}).get("combat", "—")
-    drop_rows = _enemy_drop_rows(enemy)
-    dungeon_rows = _enemy_dungeon_rows(enemy["name"])
-
-    return get_template("combat/enemy").format(
-        name=enemy["display_name"],
-        hp=f"{hp:,}" if isinstance(hp, int) else hp,
-        xp=f"{xp:,}" if isinstance(xp, int) else xp,
-        attack=combat_stats.get("attack_level", 0) + combat_stats.get("attack_bonus", 0),
-        melee_defence=defensive_stats.get("attack_defense", "—"),
-        ranged_defence=defensive_stats.get("ranged_defense", "—"),
-        magic_defence=defensive_stats.get("magic_defense", "—"),
-        loot_table=table(["Item", "Chance", "Qty"], drop_rows) if drop_rows else "_No drops._",
-        dungeon_table=table(["Dungeon", "Combat Level", "Spawn Chance"], dungeon_rows) if dungeon_rows else "_Not found in any dungeon._",
-        combat_footer=gen_combat_footer(),
-    )
+    return get_template("combat/enemies").format(enemy_sections="\n\n".join(sections))
 
 
 def gen_spells() -> str:
@@ -974,7 +867,6 @@ def gen_spells() -> str:
     ], key=lambda r: r[1])
     return get_template("combat/spells").format(
         spell_table=table(["Spell", "Magic Level", "Rune", "Runes / Cast", "Max Hit"], rows),
-        combat_footer=gen_combat_footer(),
     )
 
 
@@ -1195,71 +1087,3 @@ def gen_quests() -> str:
 
     return get_template("miscellaneous/quests").format(quest_sections="\n\n".join(sections))
 
-
-def gen_boss(boss: dict) -> str:
-    combat_stats = boss.get("combat_stats", {})
-    defensive_stats = boss.get("defensive_stats", {})
-    hp = boss.get("hp", "—")
-
-    # Add guaranteed loot
-    common_loot_rows = []
-    loot = boss.get("common_loot", {})
-    coins_min = loot.get("coins_min")
-    coins_max = loot.get("coins_max")
-    if coins_min is not None and coins_max is not None:
-        common_loot_rows.append(["Coins", coins_min, coins_max])
-    for item, info in loot.get("items", {}).items():
-        if isinstance(info, dict):
-            min_loot = info.get('min', 1)
-            max_loot = info.get('max', 1)
-        else:
-            min_loot = max_loot = str(info)
-        common_loot_rows.append([item_link(item), min_loot, max_loot])
-
-    # Add rare drops
-    rare_loot_rows = []
-    for drop in boss.get("rare_drops", []):
-        rare_loot_rows.append([
-            item_link(drop.get("item", "?")),
-            fmt_pct(drop.get("chance", 0.005)),
-        ])
-    # Add pet chance
-    pet = boss.get("pet")
-    assert isinstance(pet, dict)
-    if pet:
-        pet_name = f"{pet.get('emoji', '')} {pet.get('display_name', 'Pet')}".strip()
-        rare_loot_rows.append([f"[{pet_name}](Pets)", fmt_pct(pet.get("chance", 0.005))])
-
-    defensive_rows = [
-        ["Melee (Attack or Strength)", defensive_stats.get("attack_defense", "—")],
-        ["Ranged", defensive_stats.get("ranged_defense", "—")],
-        ["Magic", defensive_stats.get("magic_defense", "—")],
-    ]
-
-    xp = boss.get("xp_rewards", {})
-
-    return get_template("combat/boss").format(
-        icon=boss.get("emoji", ""),
-        name=boss["display_name"],
-        combat_level=boss.get("combat_level_required", "—"),
-        hp=f"{hp:,}" if isinstance(hp, int) else hp,
-        duration=boss.get("duration_minutes", "—"),
-        description=boss.get("description", ""),
-        boss_attack=combat_stats.get("attack_level", 0) + combat_stats.get("attack_bonus", 0),
-        defensive_table=table(["Style", "Defence"], defensive_rows),
-        boss_link=link("bosses"),
-        xp_rewards=", ".join(f"{title(sk)} {v:,}" for sk, v in xp.items()) if xp else "—",
-        loot_table=table(["Item", "Min", "Max"], common_loot_rows) if common_loot_rows else "_No loot defined._",
-        rare_drops_table=table(["Item", "Chance"], rare_loot_rows) if rare_loot_rows else "_No rare drops._",
-        combat_footer=gen_combat_footer(),
-    )
-
-# ---------------------------------------------------------------------------
-# Adding pages to the directory/hierarchy
-# ---------------------------------------------------------------------------
-
-# Add all relevant pages to the hierarchy and page directory
-add_static_pages()
-add_boss_pages()
-add_enemy_pages()
-add_dungeon_pages()

@@ -444,25 +444,50 @@ fun SettingsScreen(
                 }
             )
 
-            val freqTitle = stringResource(R.string.settings_backup_frequency) +
-                if (backupFrequency == "daily" || backupFrequency == "weekly")
-                    " (${stringResource(R.string.settings_backup_at_5am)})" else ""
+            val freqSubtitle = if (backupFrequency == "daily" || backupFrequency == "weekly")
+                "${stringResource(R.string.settings_backup_at_5am)}" else ""
             SettingsRow(
-                title    = freqTitle,
-                subtitle = null,
+                title    = stringResource(R.string.settings_backup_frequency),
+                subtitle = freqSubtitle,
                 trailing = {
-                    Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                        listOf(
-                            ""       to stringResource(R.string.settings_backup_off),
-                            "hourly" to stringResource(R.string.settings_backup_hourly),
-                            "daily"  to stringResource(R.string.settings_backup_daily),
-                            "weekly" to stringResource(R.string.settings_backup_weekly),
-                        ).forEach { (key, label) ->
-                            FilterChip(
-                                selected = backupFrequency == key,
-                                onClick  = { viewModel.setBackupFrequency(key) },
-                                label    = { Text(label, style = MaterialTheme.typography.labelSmall) },
-                            )
+                    val freqOptions = listOf(
+                        ""       to stringResource(R.string.settings_backup_off),
+                        "hourly" to stringResource(R.string.settings_backup_hourly),
+                        "daily"  to stringResource(R.string.settings_backup_daily),
+                        "weekly" to stringResource(R.string.settings_backup_weekly),
+                    )
+                    val freqLabel = freqOptions.firstOrNull { it.first == backupFrequency }?.second
+                        ?: stringResource(R.string.settings_backup_off)
+                    var freqExpanded by remember { mutableStateOf(false) }
+
+                    ExposedDropdownMenuBox(
+                        expanded = freqExpanded,
+                        onExpandedChange = { freqExpanded = it }
+                    ) {
+                        OutlinedTextField(
+                            value = freqLabel,
+                            onValueChange = {},
+                            readOnly = true,
+                            trailingIcon =  { ExposedDropdownMenuDefaults.TrailingIcon(expanded = freqExpanded) },
+                            modifier = Modifier
+                                .menuAnchor()
+                                .width(150.dp),
+                            textStyle = MaterialTheme.typography.bodySmall,
+                            singleLine = true,
+                        )
+                        ExposedDropdownMenu(
+                            expanded = freqExpanded,
+                            onDismissRequest = { freqExpanded = false },
+                        ) {
+                            freqOptions.forEach { (freq, label) ->
+                                DropdownMenuItem(
+                                    text = { Text(label) },
+                                    onClick = {
+                                        viewModel.setBackupFrequency(freq)
+                                        freqExpanded = false
+                                    }
+                                )
+                            }
                         }
                     }
                 }
