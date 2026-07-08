@@ -12,4 +12,5 @@ data class DailyQuestTemplate(
     val target: String,
     val amount: Int,
     val description: String,
+    @SerialName("level_required") val levelRequired: Int = 1,
 )
