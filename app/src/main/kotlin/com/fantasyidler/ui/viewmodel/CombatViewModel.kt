@@ -258,16 +258,16 @@ class CombatViewModel @Inject constructor(
                 val player      = playerRepo.getOrCreatePlayer()
                 val agility     = (json.decodeFromString<Map<String, Int>>(player.skillLevels))[Skills.AGILITY] ?: 1
                 val equipped: Map<String, String?> = json.decodeFromString(player.equipped)
+                val dungeonFlags: PlayerFlags = json.decodeFromString(player.flags)
                 val queuedWeaponSlot = _extra.value.selectedWeaponSlot
                     ?: EquipSlot.WEAPON_SLOTS.firstOrNull { equipped[it] != null }
                     ?: EquipSlot.WEAPON
                 val queuedWeapon = equipped[queuedWeaponSlot]?.let { gameData.equipment[it] }
                 val queuedSpell = _extra.value.selectedSpell
                 if (queuedWeapon != null || queuedSpell != null) {
-                    val flags: PlayerFlags = json.decodeFromString(player.flags)
-                    playerRepo.updateFlags(flags.copy(
+                    playerRepo.updateFlags(dungeonFlags.copy(
                         activeWeaponSlot = queuedWeaponSlot,
-                        activeSpell = if (queuedWeapon?.combatStyle == "magic" && queuedSpell != null) queuedSpell.name else flags.activeSpell,
+                        activeSpell = if (queuedWeapon?.combatStyle == "magic" && queuedSpell != null) queuedSpell.name else dungeonFlags.activeSpell,
                     ))
                 }
                 val enqueued = playerRepo.enqueueAction(
@@ -276,12 +276,20 @@ class CombatViewModel @Inject constructor(
                         activityKey         = dungeonKey,
                         skillDisplayName    = dungeonName,
                         estimatedDurationMs = SkillSimulator.sessionDurationMs(agility),
+                        equippedSnapshot    = player.equipped,
+                        arrowsKey           = _extra.value.selectedArrowKey ?: dungeonFlags.equippedArrows,
+                        spellName           = queuedSpell?.name ?: dungeonFlags.activeSpell,
+                        potionKey           = _extra.value.selectedPotionKey,
                     )
                 )
                 _extra.update {
                     it.copy(
-                        snackbarMessage = if (enqueued) "Added to queue: $dungeonName." else "Queue is full (3/3).",
-                        selectedDungeon = null,
+                        snackbarMessage    = if (enqueued) "Added to queue: $dungeonName." else "Queue is full (3/3).",
+                        selectedDungeon    = null,
+                        selectedWeaponSlot = null,
+                        selectedSpell      = null,
+                        selectedArrowKey   = null,
+                        selectedPotionKey  = null,
                     )
                 }
                 return@launch
@@ -452,20 +460,36 @@ class CombatViewModel @Inject constructor(
     fun startBossSession(bossKey: String) {
         viewModelScope.launch {
             if (sessionRepo.getActiveSession() != null) {
-                val bossName = gameData.bosses[bossKey]?.displayName ?: bossKey
-                val bossMs   = (gameData.bosses[bossKey]?.durationMinutes ?: 1) * 60_000L
+                val bossName     = gameData.bosses[bossKey]?.displayName ?: bossKey
+                val bossMs       = (gameData.bosses[bossKey]?.durationMinutes ?: 1) * 60_000L
+                val queuedPlayer = playerRepo.getOrCreatePlayer()
+                val queuedFlags: PlayerFlags          = json.decodeFromString(queuedPlayer.flags)
+                val queuedEquipped: Map<String, String?> = json.decodeFromString(queuedPlayer.equipped)
+                val bossWeaponSlot = _extra.value.selectedWeaponSlot
+                    ?: EquipSlot.WEAPON_SLOTS.firstOrNull { queuedEquipped[it] != null }
+                    ?: EquipSlot.WEAPON_ATK
+                val bossQueuedSpell = _extra.value.selectedSpell
+                val bossQueuedWeapon = queuedEquipped[bossWeaponSlot]?.let { gameData.equipment[it] }
                 val enqueued = playerRepo.enqueueAction(
                     QueuedAction(
                         skillName           = "boss",
                         activityKey         = bossKey,
                         skillDisplayName    = bossName,
                         estimatedDurationMs = bossMs,
+                        equippedSnapshot    = queuedPlayer.equipped,
+                        arrowsKey           = _extra.value.selectedArrowKey ?: queuedFlags.equippedArrows,
+                        spellName           = if (bossQueuedWeapon?.combatStyle == "magic" && bossQueuedSpell != null) bossQueuedSpell.name else queuedFlags.activeSpell,
+                        potionKey           = _extra.value.selectedPotionKey,
                     )
                 )
                 _extra.update {
                     it.copy(
-                        snackbarMessage = if (enqueued) "Added to queue: $bossName." else "Queue is full (3/3).",
-                        selectedBoss = null,
+                        snackbarMessage    = if (enqueued) "Added to queue: $bossName." else "Queue is full (3/3).",
+                        selectedBoss       = null,
+                        selectedWeaponSlot = null,
+                        selectedSpell      = null,
+                        selectedArrowKey   = null,
+                        selectedPotionKey  = null,
                     )
                 }
                 return@launch

@@ -5,10 +5,12 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import com.fantasyidler.data.db.dao.SkillSessionDao
+import com.fantasyidler.data.model.SessionFrame
 import com.fantasyidler.data.model.SkillSession
 import com.fantasyidler.receiver.SessionAlarmReceiver
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
+import kotlinx.serialization.json.Json
 import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -17,6 +19,7 @@ import javax.inject.Singleton
 class SessionRepository @Inject constructor(
     private val sessionDao: SkillSessionDao,
     @ApplicationContext private val context: Context,
+    private val json: Json,
 ) {
     val activeSessionFlow: Flow<SkillSession?> = sessionDao.observeActiveSession()
     val completedCountFlow: Flow<Int> = sessionDao.observeCompletedCount()
@@ -107,6 +110,10 @@ class SessionRepository @Inject constructor(
         sessionDao.markCompleted(sessionId)
     }
 
+    suspend fun markAllExpiredWorkerSessions() {
+        sessionDao.markAllExpiredWorkerSessions(System.currentTimeMillis())
+    }
+
     /**
      * Called on boot or app open to recover from a lost alarm.
      * - If the active session has already passed its end time, marks it complete and
@@ -114,36 +121,52 @@ class SessionRepository @Inject constructor(
      * - If it's still running, reschedules the alarm so it fires at the correct time.
      */
     suspend fun recoverActiveSession(starter: QueuedSessionStarter) {
-        val session = getActiveSession() ?: run {
-            // No session in DB at all — try to drain any leftover queue items.
+        val session = try { getActiveSession() } catch (_: Exception) { null } ?: run {
             starter.startNextQueued()
             return
         }
         if (session.completed) {
-            // Alarm already fired and marked the session complete, but startNextQueued may
-            // not have run yet (race) or the queue was empty at that time. Backdate the
-            // next session by however long ago the completed session ended.
             val backdateMs = maxOf(0L, System.currentTimeMillis() - session.endsAt)
-            starter.startNextQueued(backdateMs = backdateMs)
+            try { starter.startNextQueued(backdateMs = backdateMs) } catch (_: Exception) { markCompleted(session.sessionId) }
             return
         }
-        val now = System.currentTimeMillis()
-        if (now >= session.endsAt) {
-            markCompleted(session.sessionId)
-            var catchUpMs = now - session.endsAt
-            while (catchUpMs > 0) {
-                val used = starter.insertNextQueuedAsOffline(catchUpMs)
-                if (used == 0L) break
-                catchUpMs -= used
+        // For boss sessions: if the boss was already defeated in the pre-simulated frames,
+        // mark complete immediately regardless of endsAt so the session is collectable.
+        if (session.skillName == "boss") {
+            try {
+                val frames: List<SessionFrame> = json.decodeFromString(session.frames)
+                if ((frames.lastOrNull()?.kills ?: 0) > 0) {
+                    markCompleted(session.sessionId)
+                    starter.startNextQueued()
+                    return
+                }
+            } catch (_: Exception) {
+                markCompleted(session.sessionId)
+                starter.startNextQueued()
+                return
             }
-            starter.startNextQueued(backdateMs = catchUpMs)
-        } else {
-            scheduleAlarm(session.sessionId, session.endsAt, session.skillName)
+        }
+        val now = System.currentTimeMillis()
+        try {
+            if (now >= session.endsAt) {
+                markCompleted(session.sessionId)
+                var catchUpMs = now - session.endsAt
+                while (catchUpMs > 0) {
+                    val used = starter.insertNextQueuedAsOffline(catchUpMs)
+                    if (used == 0L) break
+                    catchUpMs -= used
+                }
+                starter.startNextQueued(backdateMs = catchUpMs)
+            } else {
+                scheduleAlarm(session.sessionId, session.endsAt, session.skillName)
+            }
+        } catch (_: Exception) {
+            markCompleted(session.sessionId)
         }
     }
 
     suspend fun recoverActiveWorkerSession(slot: Int, workerStarter: WorkerQueuedSessionStarter) {
-        val session = getActiveWorkerSession(slot) ?: run {
+        val session = try { getActiveWorkerSession(slot) } catch (_: Exception) { null } ?: run {
             workerStarter.startNextQueued(slot)
             return
         }
@@ -152,11 +175,15 @@ class SessionRepository @Inject constructor(
             return
         }
         val now = System.currentTimeMillis()
-        if (now >= session.endsAt) {
+        try {
+            if (now >= session.endsAt) {
+                markCompleted(session.sessionId)
+                workerStarter.startNextQueued(slot)
+            } else {
+                scheduleAlarm(session.sessionId, session.endsAt, session.skillName)
+            }
+        } catch (_: Exception) {
             markCompleted(session.sessionId)
-            workerStarter.startNextQueued(slot)
-        } else {
-            scheduleAlarm(session.sessionId, session.endsAt, session.skillName)
         }
     }
 
