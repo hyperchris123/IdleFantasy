@@ -942,7 +942,7 @@
     <string name="bone_altar_title">Knochenaltar</string>
     <string name="bone_altar_open">Altar nutzen</string>
     <string name="bone_altar_select_prompt">Knochen zum Vergraben auswählen</string>
-    <string name="bone_altar_tap">Zum Begraben Tippen</string>
+    <string name="bone_altar_tap">Zum Vergraben Tippen</string>
     <string name="bone_altar_change_bone">Ändern</string>
     <string name="bone_altar_combo_count">Combo ×%d</string>
     <string name="bone_altar_bonus_active">+50% XP-Bonus!</string>
