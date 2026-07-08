@@ -236,6 +236,14 @@ class PlayerRepository @Inject constructor(
         if (changed) playerDao.upsert(player.copy(inventory = json.encode<Map<String, Int>>(inventory)))
     }
 
+    /** Adds qty of item to the player's inventory at no coin cost (prize/drop grant). */
+    suspend fun grantItem(key: String, qty: Int = 1) {
+        val player = getOrCreatePlayer()
+        val inventory: MutableMap<String, Int> = json.decodeFromString(player.inventory)
+        inventory[key] = (inventory[key] ?: 0) + qty
+        playerDao.upsert(player.copy(inventory = json.encode<Map<String, Int>>(inventory)))
+    }
+
     /** Returns false if the player has insufficient coins. */
     suspend fun spendCoins(amount: Long): Boolean {
         val player = getOrCreatePlayer()
