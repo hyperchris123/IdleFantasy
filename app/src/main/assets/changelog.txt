@@ -1,3 +1,7 @@
-• Fix: Boss fight timer now ends as soon as the fight concludes (win or loss)
-• Fix: French translation corrections (scimitars, arrow shaft, woodcutting)
-• Fix: French and Spanish added to system-level per-app language settings
+• Fix: Daily quests now filter to activities achievable at your current skill level
+• Fix: Daily cooking quests now correctly track progress (lobster, swordfish, etc.)
+• Fix: Daily coal mining quest now tracks correctly
+• Fix: Bandits and other dungeon enemies now spawn correctly in all dungeons
+• Fix: Fish sell prices corrected for mackerel, monkfish, sea turtle, and manta ray
+• Fix: German "add to session queue" button now right-aligned correctly
+• Translation: Turkish (ItsAzazelMorningstar)
