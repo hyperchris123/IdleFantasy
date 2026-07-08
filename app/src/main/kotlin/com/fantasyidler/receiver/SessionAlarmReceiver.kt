@@ -7,7 +7,6 @@ import android.os.PowerManager
 import com.fantasyidler.notification.SessionNotificationManager
 import com.fantasyidler.repository.QueuedSessionStarter
 import com.fantasyidler.repository.SessionRepository
-import com.fantasyidler.repository.WorkerQueuedSessionStarter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -20,7 +19,6 @@ class SessionAlarmReceiver : BroadcastReceiver() {
     @Inject lateinit var sessionRepository: SessionRepository
     @Inject lateinit var notificationManager: SessionNotificationManager
     @Inject lateinit var queuedSessionStarter: QueuedSessionStarter
-    @Inject lateinit var workerQueuedSessionStarter: WorkerQueuedSessionStarter
 
     override fun onReceive(context: Context, intent: Intent) {
         // Acquire a partial wake lock so the CPU stays awake after onReceive() returns.
@@ -36,16 +34,11 @@ class SessionAlarmReceiver : BroadcastReceiver() {
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val session = sessionRepository.getSession(sessionId)
                 sessionRepository.markCompleted(sessionId)
-                if (session?.isWorkerSession == true) {
-                    workerQueuedSessionStarter.startNextQueued()
-                } else {
-                    val started = queuedSessionStarter.startNextQueued()
-                    if (!started) {
-                        val hasRunning = sessionRepository.getActiveSession()?.completed == false
-                        if (!hasRunning) notificationManager.showSessionComplete(skillDisplayName)
-                    }
+                val started = queuedSessionStarter.startNextQueued()
+                if (!started) {
+                    val hasRunning = sessionRepository.getActiveSession()?.completed == false
+                    if (!hasRunning) notificationManager.showSessionComplete(skillDisplayName)
                 }
             } finally {
                 pending.finish()

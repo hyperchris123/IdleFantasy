@@ -411,7 +411,7 @@ private fun ActiveSessionBanner(
 // ---------------------------------------------------------------------------
 
 @Composable
-internal fun SkillRow(
+private fun SkillRow(
     skillKey: String,
     level: Int,
     xp: Long,
@@ -536,7 +536,7 @@ private fun SectionHeader(title: String) {
 // ---------------------------------------------------------------------------
 
 @Composable
-internal fun MiningSheet(
+private fun MiningSheet(
     ores: Map<String, OreData>,
     isStarting: Boolean,
     hasActiveSession: Boolean,
@@ -597,7 +597,7 @@ internal fun MiningSheet(
 }
 
 @Composable
-internal fun WoodcuttingSheet(
+private fun WoodcuttingSheet(
     trees: Map<String, TreeData>,
     isStarting: Boolean,
     hasActiveSession: Boolean,
@@ -658,7 +658,7 @@ internal fun WoodcuttingSheet(
 }
 
 @Composable
-internal fun FishingSheet(
+private fun FishingSheet(
     fish: Map<String, FishData>,
     isStarting: Boolean,
     hasActiveSession: Boolean,
@@ -719,7 +719,7 @@ internal fun FishingSheet(
 }
 
 @Composable
-internal fun ComingSoonSheet() {
+private fun ComingSoonSheet() {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -735,7 +735,7 @@ internal fun ComingSoonSheet() {
 }
 
 @Composable
-internal fun ActivityRow(
+private fun ActivityRow(
     name: String,
     detail: String,
     isStarting: Boolean,
@@ -774,7 +774,7 @@ internal fun ActivityRow(
 }
 
 @Composable
-internal fun ActivityDetailDialog(
+private fun ActivityDetailDialog(
     name: String,
     detail: String,
     description: String,
@@ -815,7 +815,7 @@ internal fun ActivityDetailDialog(
 // ---------------------------------------------------------------------------
 
 @Composable
-internal fun AgilitySheet(
+private fun AgilitySheet(
     courses: Map<String, AgilityCourseData>,
     isStarting: Boolean,
     hasActiveSession: Boolean,
@@ -880,7 +880,7 @@ internal fun AgilitySheet(
 // ---------------------------------------------------------------------------
 
 @Composable
-internal fun FiremakingSheet(
+private fun FiremakingSheet(
     availableLogs: Map<String, LogData>,
     isStarting: Boolean,
     hasActiveSession: Boolean,
@@ -958,7 +958,7 @@ internal fun FiremakingSheet(
 // ---------------------------------------------------------------------------
 
 @Composable
-internal fun PrayerSheet(
+private fun PrayerSheet(
     availableBones: Map<String, BoneData>,
     inventory: Map<String, Int>,
     prayerLevel: Int,
@@ -967,7 +967,6 @@ internal fun PrayerSheet(
     isQueueFull: Boolean,
     sessionDurationMs: Long,
     onStart: (boneKey: String, qty: Int) -> Unit,
-    tierMaxQty: Int = Int.MAX_VALUE,
 ) {
     var selectedKey by remember { mutableStateOf<String?>(null) }
     val selectedBone = selectedKey?.let { availableBones[it] }
@@ -1035,8 +1034,7 @@ internal fun PrayerSheet(
             }
         } else {
             // ── Quantity picker ──────────────────────────────────────────
-            val inventoryMax = inventory[selectedKey] ?: 0
-            val maxQty = minOf(inventoryMax, tierMaxQty)
+            val maxQty = inventory[selectedKey] ?: 0
             var qty by remember(selectedKey) { androidx.compose.runtime.mutableIntStateOf(maxQty.coerceAtLeast(1)) }
             var textValue by remember(selectedKey) { mutableStateOf(maxQty.coerceAtLeast(1).toString()) }
 
@@ -1051,7 +1049,7 @@ internal fun PrayerSheet(
                 modifier = Modifier.padding(horizontal = 16.dp),
             )
             Text(
-                text     = stringResource(R.string.skills_bone_selected, selectedBone.xpPerBone.toInt(), inventoryMax),
+                text     = stringResource(R.string.skills_bone_selected, selectedBone.xpPerBone.toInt(), maxQty),
                 style    = MaterialTheme.typography.bodySmall,
                 color    = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
@@ -1072,13 +1070,8 @@ internal fun PrayerSheet(
                     value         = textValue,
                     onValueChange = { new ->
                         val filtered = new.filter { it.isDigit() }
-                        val parsed   = filtered.toIntOrNull()
-                        if (parsed != null) {
-                            val clamped = parsed.coerceIn(1, maxQty.coerceAtLeast(1))
-                            qty = clamped; textValue = clamped.toString()
-                        } else {
-                            textValue = filtered
-                        }
+                        textValue = filtered
+                        filtered.toIntOrNull()?.let { qty = it.coerceIn(1, maxQty.coerceAtLeast(1)) }
                     },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Number,
@@ -1140,14 +1133,13 @@ internal fun PrayerSheet(
 // ---------------------------------------------------------------------------
 
 @Composable
-internal fun RunecraftingSheet(
+private fun RunecraftingSheet(
     sheet: SheetState.Runecrafting,
     isStarting: Boolean,
     hasActiveSession: Boolean,
     isQueueFull: Boolean,
     sessionDurationMs: Long,
     onStart: (String, Int) -> Unit,
-    tierMaxQty: Int = Int.MAX_VALUE,
 ) {
     var selectedKey by remember { mutableStateOf<String?>(null) }
     val selectedRune = selectedKey?.let { sheet.availableRunes[it] }
@@ -1228,8 +1220,7 @@ internal fun RunecraftingSheet(
             }
         } else {
             // ── Quantity picker ──────────────────────────────────────────
-            val inventoryMax = sheet.essenceQty
-            val maxQty = minOf(inventoryMax, tierMaxQty)
+            val maxQty = sheet.essenceQty
             var qty by remember(selectedKey) { androidx.compose.runtime.mutableIntStateOf(maxQty.coerceAtLeast(1)) }
             var textValue by remember(selectedKey) { mutableStateOf(maxQty.coerceAtLeast(1).toString()) }
 
@@ -1244,7 +1235,7 @@ internal fun RunecraftingSheet(
                 modifier = Modifier.padding(horizontal = 16.dp),
             )
             Text(
-                text     = stringResource(R.string.skills_rune_selected, selectedRune.xpPerRune.toInt(), inventoryMax),
+                text     = stringResource(R.string.skills_rune_selected, selectedRune.xpPerRune.toInt(), maxQty),
                 style    = MaterialTheme.typography.bodySmall,
                 color    = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
@@ -1265,13 +1256,8 @@ internal fun RunecraftingSheet(
                     value         = textValue,
                     onValueChange = { new ->
                         val filtered = new.filter { it.isDigit() }
-                        val parsed   = filtered.toIntOrNull()
-                        if (parsed != null) {
-                            val clamped = parsed.coerceIn(1, maxQty.coerceAtLeast(1))
-                            qty = clamped; textValue = clamped.toString()
-                        } else {
-                            textValue = filtered
-                        }
+                        textValue = filtered
+                        filtered.toIntOrNull()?.let { qty = it.coerceIn(1, maxQty.coerceAtLeast(1)) }
                     },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Number,

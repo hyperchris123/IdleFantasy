@@ -1,12 +1,3 @@
-• New: Inn daily food menu; three cooked foods (small, medium, large heal) rotate each day at 6am
-• Fix: Sell prices corrected; gems, bars, crops, and monster drops now use fair category prices; marketplace buy price no longer undercuts the category floor
-• Rework: Worker tiers updated; Apprentice and Long Laborer are 1x efficiency, Journeyman 1.25x, Master 2x; crafting/prayer/runecrafting capped per tier; new Long Laborer tier has no crafting cap for very long sessions
-• Fix: Boss fights collected from the home screen now correctly show Victory or Defeat and award XP
-• Fix: Boss session now ends shortly after the player or boss dies instead of running to the full timer
-• Fix: King Black Dragon quests no longer overwrite Dragon Slayer quests
-• New: Hire a Worker at the Inn to gather resources or craft items while you play
-• New: Three worker tiers (Apprentice 8h, Journeyman 6h, Master 4h) with increasing efficiency
-• New: Got a long crafting grind? Queue it up for a worker and let them handle it while you play
-• Fix: Crafting, prayer, and runecrafting now consume materials when the session starts; abandoning a session returns them
-• Fix: Crafting and runecrafting sessions now correctly consume input materials on collect
-• Fix: Dungeons now cycle through all enemy types instead of repeating one enemy for the entire session
+• Fix: Boss fight timer now ends as soon as the fight concludes (win or loss)
+• Fix: French translation corrections (scimitars, arrow shaft, woodcutting)
+• Fix: French and Spanish added to system-level per-app language settings

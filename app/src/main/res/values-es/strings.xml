@@ -301,7 +301,6 @@
     <string name="settings_import_desc">Restore progress from a file</string>
     <string name="settings_import_btn">Import</string>
     <string name="settings_source_code">Source Code</string>
-    <string name="settings_source_url">github.com/tristinbaker/IdleFantasy</string>
     <string name="settings_source_open">Open</string>
     <string name="settings_exported_ok">Save exported</string>
     <string name="settings_imported_ok">Save imported successfully</string>
