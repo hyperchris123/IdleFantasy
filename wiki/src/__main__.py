@@ -155,7 +155,7 @@ def main():
     elif args.command == "write-html":
         run_write_html(args.site_dir)
     elif args.command == "write":
-        run_write(WIKI_DIR, args.pages)
+        run_write(args.wiki_dir, args.pages)
     else:
         raise NotImplementedError
 

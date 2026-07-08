@@ -316,7 +316,7 @@
     <string name="settings_lang_español">Espagnol</string>
     <string name="settings_lang_turkish">Turc</string>
     <string name="settings_lang_italiano">Italien</string>
-    <string name="settings_lang_russian">Русский</string>
+    <string name="settings_lang_russian">Russe</string>
     <string name="settings_lang_system">Système</string>
     <string name="settings_save_data">Sauvegarder les données</string>
     <string name="settings_export">Exporter la sauvegarde</string>
@@ -562,7 +562,7 @@
     <string name="qty_max">Max</string>
 
     <!-- ===== Combat difficulty ratings ===== -->
-    <string name="combat_difficulty_likely">You\'ve got this</string>
+    <string name="combat_difficulty_likely">Vous pouvez le faire</string>
     <string name="combat_difficulty_risky">Risqué dans la configuration actuelle</string>
     <string name="combat_difficulty_unlikely">Risque de mourir</string>
 
