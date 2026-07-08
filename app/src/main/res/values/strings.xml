@@ -700,4 +700,12 @@
     <string name="guild_name_mages">Mages Guild</string>
     <string name="guild_name_prayer">Prayer Guild</string>
 
+    <!-- Expeditions -->
+    <string name="nav_expeditions">Expeditions</string>
+    <string name="expeditions_title">Expeditions</string>
+    <string name="expedition_explore_button">Explore</string>
+    <string name="expedition_dungeon_unlocked">Combat dungeon unlocked!</string>
+    <string name="expedition_discover_hint">Discover via Expeditions</string>
+    <string name="label_notes">Notes</string>
+
 </resources>

@@ -224,6 +224,20 @@ object CombatSimulator {
             if (diedThisMinute) break
         }
 
+        // Roll dungeon rare drops once per completed run (not per kill).
+        if (frames.isNotEmpty() && !frames.last().died && dungeon.rareDrops.isNotEmpty()) {
+            val lastFrame = frames.last()
+            val rareItems = lastFrame.items.toMutableMap()
+            for (rare in dungeon.rareDrops) {
+                if (rnd.nextDouble() < rare.chance) {
+                    rareItems[rare.item] = (rareItems[rare.item] ?: 0) + 1
+                }
+            }
+            if (rareItems != lastFrame.items) {
+                frames[frames.lastIndex] = lastFrame.copy(items = rareItems)
+            }
+        }
+
         val fullDurationMs = SkillSimulator.sessionDurationMs(agilityLevel)
         return SkillSimulator.Result(frames, fullDurationMs)
     }

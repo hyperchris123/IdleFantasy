@@ -3,6 +3,7 @@ package com.fantasyidler.ui.navigation
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Explore
 import androidx.compose.material.icons.filled.Group
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.MenuBook
@@ -11,6 +12,7 @@ import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material.icons.filled.ShowChart
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.outlined.AccountCircle
+import androidx.compose.material.icons.outlined.Explore
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.MenuBook
 import androidx.compose.material.icons.outlined.Settings
@@ -100,6 +102,13 @@ sealed class Screen(
     ) {
         fun createRoute(guild: String) = "guild_detail/$guild"
     }
+
+    object Expeditions : Screen(
+        route        = "expeditions",
+        labelRes     = R.string.nav_expeditions,
+        icon         = Icons.Outlined.Explore,
+        selectedIcon = Icons.Filled.Explore,
+    )
 
     companion object {
         val bottomNavItems = listOf(Skills, Combat, Home, Quests, Profile)

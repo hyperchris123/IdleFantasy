@@ -2637,5 +2637,89 @@
     "requirements": {
       "farming": 65
     }
+  },
+  "deep_iron_pickaxe": {
+    "name": "deep_iron_pickaxe",
+    "display_name": "Deep Iron Pickaxe",
+    "slot": "pickaxe",
+    "combat_style": null,
+    "description": "Forged from ore found in the Collapsed Mine's deepest shafts. Strikes with uncanny precision.",
+    "attack_bonus": 0,
+    "strength_bonus": 0,
+    "defense_bonus": 0,
+    "mining_efficiency": 2.5,
+    "requirements": {
+      "mining": 40
+    }
+  },
+  "forge_pickaxe": {
+    "name": "forge_pickaxe",
+    "display_name": "Forge Pickaxe",
+    "slot": "pickaxe",
+    "combat_style": null,
+    "description": "Tempered in the flames of the Ancient Forge itself. The rarest and most powerful pickaxe in existence.",
+    "attack_bonus": 0,
+    "strength_bonus": 0,
+    "defense_bonus": 0,
+    "mining_efficiency": 3.25,
+    "requirements": {
+      "mining": 70
+    }
+  },
+  "blessed_fishing_rod": {
+    "name": "blessed_fishing_rod",
+    "display_name": "Blessed Fishing Rod",
+    "slot": "fishing_rod",
+    "combat_style": null,
+    "description": "Crafted from driftwood recovered from the Drowned Temple, blessed by ancient sea rites.",
+    "attack_bonus": 0,
+    "strength_bonus": 0,
+    "defense_bonus": 0,
+    "fishing_efficiency": 2.6,
+    "requirements": {
+      "fishing": 40
+    }
+  },
+  "abyssal_rod": {
+    "name": "abyssal_rod",
+    "display_name": "Abyssal Rod",
+    "slot": "fishing_rod",
+    "combat_style": null,
+    "description": "Woven from void-touched filament recovered from the Abyssal Ruins. Fish practically leap onto it.",
+    "attack_bonus": 0,
+    "strength_bonus": 0,
+    "defense_bonus": 0,
+    "fishing_efficiency": 3.5,
+    "requirements": {
+      "fishing": 70
+    }
+  },
+  "ironwood_axe": {
+    "name": "ironwood_axe",
+    "display_name": "Ironwood Axe",
+    "slot": "axe",
+    "combat_style": null,
+    "description": "Hewn from the ironwood trees that once stood in the Ancient Forest Ruins. Exceptionally durable.",
+    "attack_bonus": 0,
+    "strength_bonus": 0,
+    "defense_bonus": 0,
+    "woodcutting_efficiency": 2.5,
+    "requirements": {
+      "woodcutting": 40
+    }
+  },
+  "sanctum_axe": {
+    "name": "sanctum_axe",
+    "display_name": "Sanctum Axe",
+    "slot": "axe",
+    "combat_style": null,
+    "description": "Forged in the shadow of the Corrupted Sanctum. Its blade cuts through even magic logs with ease.",
+    "attack_bonus": 0,
+    "strength_bonus": 0,
+    "defense_bonus": 0,
+    "woodcutting_efficiency": 3.25,
+    "requirements": {
+      "woodcutting": 70
+    }
   }
 }

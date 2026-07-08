@@ -16,12 +16,16 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.BottomSheetDefaults
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
 import androidx.compose.material3.Button
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.CircularProgressIndicator
@@ -49,7 +53,9 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import kotlinx.coroutines.launch
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import kotlinx.coroutines.delay
@@ -63,6 +69,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.fantasyidler.BuildConfig
 import com.fantasyidler.R
+import com.fantasyidler.ui.viewmodel.ExpeditionsViewModel
 import com.fantasyidler.data.json.AgilityCourseData
 import com.fantasyidler.data.json.BoneData
 import com.fantasyidler.data.json.FishData
@@ -100,8 +107,9 @@ import java.util.Locale
 @Composable
 fun SkillsScreen(
     onNavigateToFarming: () -> Unit = {},
-    viewModel: SkillsViewModel  = hiltViewModel(),
+    viewModel: SkillsViewModel       = hiltViewModel(),
     craftingViewModel: CraftingViewModel = hiltViewModel(),
+    expeditionsViewModel: ExpeditionsViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsState()
     val craftSnackState by craftingViewModel.uiState.collectAsState()
@@ -135,70 +143,32 @@ fun SkillsScreen(
             return@Scaffold
         }
 
-        LazyColumn(
-            contentPadding = padding,
-            modifier = Modifier.fillMaxSize(),
-        ) {
-            // Active session banner
-            state.activeSession?.let { session ->
-                item {
-                    ActiveSessionBanner(
-                        skillName      = GameStrings.skillName(context, session.skillName),
-                        activityKey    = session.activityKey,
-                        endsAt         = session.endsAt,
-                        completed      = session.completed,
-                        onCollect      = viewModel::collectSession,
-                        onAbandon      = viewModel::abandonSession,
-                        onDebugFinish  = viewModel::debugFinishSession,
+        val pagerState = rememberPagerState(pageCount = { 2 })
+        val scope = rememberCoroutineScope()
+        Column(modifier = Modifier.fillMaxSize().padding(padding)) {
+            TabRow(selectedTabIndex = pagerState.currentPage) {
+                Tab(
+                    selected = pagerState.currentPage == 0,
+                    onClick  = { scope.launch { pagerState.animateScrollToPage(0) } },
+                    text     = { Text(stringResource(R.string.nav_skills)) },
+                )
+                Tab(
+                    selected = pagerState.currentPage == 1,
+                    onClick  = { scope.launch { pagerState.animateScrollToPage(1) } },
+                    text     = { Text(stringResource(R.string.nav_expeditions)) },
+                )
+            }
+            HorizontalPager(state = pagerState, modifier = Modifier.weight(1f)) { page ->
+                if (page == 1) {
+                    ExpeditionsScreen(viewModel = expeditionsViewModel, showTitle = false)
+                } else {
+                    SkillsTabContent(
+                        state               = state,
+                        viewModel           = viewModel,
+                        context             = context,
+                        onNavigateToFarming = onNavigateToFarming,
                     )
                 }
-            }
-
-            // Gathering skills
-            item { SectionHeader(stringResource(R.string.label_gathering_skills)) }
-            items(Skills.GATHERING) { key ->
-                val efficiency = when (key) {
-                    Skills.MINING      -> state.miningEfficiency
-                    Skills.WOODCUTTING -> state.woodcuttingEfficiency
-                    Skills.FISHING     -> state.fishingEfficiency
-                    Skills.FARMING     -> state.farmingEfficiency
-                    else               -> 1.0f
-                }
-                SkillRow(
-                    skillKey       = key,
-                    level          = state.skillLevels[key] ?: 1,
-                    xp             = state.skillXp[key] ?: 0L,
-                    isActive       = state.activeSession?.skillName == key && state.activeSession?.completed == false,
-                    onClick        = {
-                        if (key == Skills.FARMING) onNavigateToFarming()
-                        else viewModel.onSkillTapped(key)
-                    },
-                    toolEfficiency = efficiency,
-                )
-            }
-
-            // Crafting skills
-            item { SectionHeader(stringResource(R.string.label_crafting_skills)) }
-            items(Skills.CRAFTING_SKILLS) { key ->
-                SkillRow(
-                    skillKey = key,
-                    level    = state.skillLevels[key] ?: 1,
-                    xp       = state.skillXp[key] ?: 0L,
-                    isActive = state.activeSession?.skillName == key && state.activeSession?.completed == false,
-                    onClick  = { viewModel.onSkillTapped(key) },
-                )
-            }
-
-            // Prayer
-            item { SectionHeader(stringResource(R.string.label_prayer)) }
-            item {
-                SkillRow(
-                    skillKey = Skills.PRAYER,
-                    level    = state.skillLevels[Skills.PRAYER] ?: 1,
-                    xp       = state.skillXp[Skills.PRAYER] ?: 0L,
-                    isActive = state.activeSession?.skillName == Skills.PRAYER && state.activeSession?.completed == false,
-                    onClick  = { viewModel.onSkillTapped(Skills.PRAYER) },
-                )
             }
         }
     }
@@ -315,6 +285,78 @@ fun SkillsScreen(
                 }
                 SheetState.ComingSoon -> ComingSoonSheet()
             }
+        }
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Skills tab content (page 0 of the Skills/Expeditions pager)
+// ---------------------------------------------------------------------------
+
+@Composable
+private fun SkillsTabContent(
+    state: SkillsUiState,
+    viewModel: SkillsViewModel,
+    context: android.content.Context,
+    onNavigateToFarming: () -> Unit,
+) {
+    LazyColumn(modifier = Modifier.fillMaxSize()) {
+        state.activeSession?.let { session ->
+            item {
+                ActiveSessionBanner(
+                    skillName      = GameStrings.skillName(context, session.skillName),
+                    activityKey    = session.activityKey,
+                    endsAt         = session.endsAt,
+                    completed      = session.completed,
+                    onCollect      = viewModel::collectSession,
+                    onAbandon      = viewModel::abandonSession,
+                    onDebugFinish  = viewModel::debugFinishSession,
+                )
+            }
+        }
+
+        item { SectionHeader(stringResource(R.string.label_gathering_skills)) }
+        items(Skills.GATHERING) { key ->
+            val efficiency = when (key) {
+                Skills.MINING      -> state.miningEfficiency
+                Skills.WOODCUTTING -> state.woodcuttingEfficiency
+                Skills.FISHING     -> state.fishingEfficiency
+                Skills.FARMING     -> state.farmingEfficiency
+                else               -> 1.0f
+            }
+            SkillRow(
+                skillKey       = key,
+                level          = state.skillLevels[key] ?: 1,
+                xp             = state.skillXp[key] ?: 0L,
+                isActive       = state.activeSession?.skillName == key && state.activeSession?.completed == false,
+                onClick        = {
+                    if (key == Skills.FARMING) onNavigateToFarming()
+                    else viewModel.onSkillTapped(key)
+                },
+                toolEfficiency = efficiency,
+            )
+        }
+
+        item { SectionHeader(stringResource(R.string.label_crafting_skills)) }
+        items(Skills.CRAFTING_SKILLS) { key ->
+            SkillRow(
+                skillKey = key,
+                level    = state.skillLevels[key] ?: 1,
+                xp       = state.skillXp[key] ?: 0L,
+                isActive = state.activeSession?.skillName == key && state.activeSession?.completed == false,
+                onClick  = { viewModel.onSkillTapped(key) },
+            )
+        }
+
+        item { SectionHeader(stringResource(R.string.label_prayer)) }
+        item {
+            SkillRow(
+                skillKey = Skills.PRAYER,
+                level    = state.skillLevels[Skills.PRAYER] ?: 1,
+                xp       = state.skillXp[Skills.PRAYER] ?: 0L,
+                isActive = state.activeSession?.skillName == Skills.PRAYER && state.activeSession?.completed == false,
+                onClick  = { viewModel.onSkillTapped(Skills.PRAYER) },
+            )
         }
     }
 }

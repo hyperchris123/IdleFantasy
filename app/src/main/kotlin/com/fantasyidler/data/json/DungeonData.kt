@@ -11,6 +11,16 @@ data class DungeonData(
     @SerialName("recommended_level") val recommendedLevel: Int,
     @SerialName("encounter_rate") val encounterRate: Double,
     @SerialName("enemy_spawns") val enemySpawns: List<EnemySpawn>,
+    /** When true this dungeon is only accessible via a lore unlock, not the normal level gate. */
+    @SerialName("lore_unlock_only") val loreUnlockOnly: Boolean = false,
+    /** Rolled once per completed dungeon run (not per kill). Uses same type as BossRareDrop. */
+    @SerialName("rare_drops") val rareDrops: List<DungeonRareDrop> = emptyList(),
+)
+
+@Serializable
+data class DungeonRareDrop(
+    val item: String,
+    val chance: Double,
 )
 
 @Serializable

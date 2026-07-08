@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.fantasyidler.data.json.CookingRecipe
 import com.fantasyidler.data.json.EquipmentData
 import com.fantasyidler.data.json.PetData
+import com.fantasyidler.data.json.SkillingDungeonData
 import com.fantasyidler.data.model.EquipSlot
 import com.fantasyidler.data.model.PlayerFlags
 import com.fantasyidler.data.model.Skills
@@ -47,6 +48,8 @@ class InventoryViewModel @Inject constructor(
         val characterGender: String = "",
         val characterRace: String = "",
         val snackbarMessage: String? = null,
+        val skillingDungeonNotes: Map<String, Int> = emptyMap(),
+        val unlockedDungeons: List<String> = emptyList(),
     ) {
         val totalLevel: Int get() = skillLevels.values.sum()
 
@@ -103,10 +106,12 @@ class InventoryViewModel @Inject constructor(
                 skillXp     = json.decodeFromString(player.skillXp),
                 equipped    = json.decodeFromString(player.equipped),
                 ownedPetIds = pets.map { it.id }.toSet(),
-                equippedFood    = flags.equippedFood,
-                characterName   = flags.characterName,
-                characterGender = flags.characterGender,
-                characterRace   = flags.characterRace,
+                equippedFood          = flags.equippedFood,
+                characterName         = flags.characterName,
+                characterGender       = flags.characterGender,
+                characterRace         = flags.characterRace,
+                skillingDungeonNotes  = flags.skillingDungeonNotes,
+                unlockedDungeons      = flags.unlockedDungeons,
                 isLoading   = false,
             )
         }
@@ -201,6 +206,7 @@ class InventoryViewModel @Inject constructor(
     val allPets: Map<String, PetData> get() = gameData.pets
     val cookingRecipes: Map<String, CookingRecipe> get() = gameData.cookingRecipes
     val foodHealValues: Map<String, Int> get() = gameData.foodHealValues
+    val allSkillingDungeons: Map<String, SkillingDungeonData> get() = gameData.skillingDungeons
 
     fun categoryFor(key: String): InventoryCategory {
         val equip = gameData.equipment[key]

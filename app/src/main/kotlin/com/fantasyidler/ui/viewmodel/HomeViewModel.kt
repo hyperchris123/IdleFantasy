@@ -52,6 +52,10 @@ data class SessionSummary(
     val boneBuriedLines: List<Pair<String, String>> = emptyList(),
     /** Whether the 2× XP boost was active during this session. */
     val boostWasActive: Boolean = false,
+    /** Expedition: highlighted lore note lines found during the session. */
+    val noteLines: List<String> = emptyList(),
+    /** Expedition: set when this collect triggered a new combat dungeon unlock. */
+    val unlockMessage: String? = null,
 )
 
 data class HomeUiState(
@@ -260,6 +264,64 @@ class HomeViewModel @Inject constructor(
                         for ((f, q) in food)             combinedFood[f]          = (combinedFood[f] ?: 0) + q
                         combinedCoins += coins
                     }
+                    "expedition" -> {
+                        val dungeonData = gameData.skillingDungeons[session.activityKey]
+                        val totalXp = frames.sumOf { it.xpGain.toLong() }
+                        val its     = mutableMapOf<String, Int>()
+                        for (frame in frames) for ((item, qty) in frame.items) its[item] = (its[item] ?: 0) + qty
+                        val notesFound = its.entries.filter { it.key.startsWith("note_") }.sumOf { it.value }
+                        val regular    = its.filterKeys { !it.startsWith("note_") && it !in petIds }
+                        val pets       = its.filterKeys { it in petIds }
+                        val skillName  = dungeonData?.skill ?: Skills.MINING
+                        awardedCapes += playerRepo.applySessionResults(skillName, totalXp, regular)
+                        questRepo.recordGathering(skillName, regular)
+                        playerRepo.recordDailyGathering(regular)
+                        guildRepo.recordGuildGathering(skillName, regular)
+                        for ((id, _) in pets) {
+                            val pd = gameData.pets[id] ?: continue
+                            if (playerRepo.addPetIfNew(id, pd.boostPercent))
+                                petMessage = "You found a pet: ${pd.displayName}!"
+                        }
+                        combinedXpBySkill[skillName] = (combinedXpBySkill[skillName] ?: 0L) + totalXp
+                        for ((item, qty) in regular) combinedItems[item] = (combinedItems[item] ?: 0) + qty
+                        if (notesFound > 0 && dungeonData != null) {
+                            val currentFlags = playerRepo.getFlags()
+                            val oldCount = currentFlags.skillingDungeonNotes[session.activityKey] ?: 0
+                            val newCount = oldCount + notesFound
+                            val newNotes = currentFlags.skillingDungeonNotes.toMutableMap()
+                            newNotes[session.activityKey] = newCount
+                            val newUnlocked = currentFlags.unlockedDungeons.toMutableList()
+                            val unlockMsg: String?
+                            if (newCount >= dungeonData.noteThreshold && !currentFlags.unlockedDungeons.contains(dungeonData.unlockDungeon)) {
+                                newUnlocked += dungeonData.unlockDungeon
+                                unlockMsg = dungeonData.unlockMessage
+                            } else {
+                                unlockMsg = null
+                            }
+                            playerRepo.updateFlags(currentFlags.copy(
+                                skillingDungeonNotes = newNotes,
+                                unlockedDungeons = newUnlocked,
+                            ))
+                            val revealed = dungeonData.noteTexts.take(newCount.coerceAtMost(dungeonData.noteTexts.size))
+                            val newlyRevealedTexts = revealed.drop(oldCount.coerceAtMost(revealed.size))
+                            val noteLabels = newlyRevealedTexts.map { it }
+                            for (session2 in sessions) sessionRepo.deleteSession(session2.sessionId)
+                            val expeditionSummary = SessionSummary(
+                                title = "${dungeonData.displayName} Expedition Complete",
+                                totalXpLabel = "+${(totalXp * xpMult).formatXp()} XP",
+                                itemLines = regular.entries.sortedByDescending { it.value }
+                                    .map { (key, qty) -> Pair(gameData.itemDisplayName(key), "×$qty") },
+                                noteLines = noteLabels,
+                                unlockMessage = unlockMsg,
+                                boostWasActive = boostActive,
+                            )
+                            _extra.update { it.copy(sessionSummary = expeditionSummary) }
+                            val snackbar2 = listOfNotNull(petMessage).joinToString(" • ").ifEmpty { null }
+                            if (snackbar2 != null) _extra.update { it.copy(snackbarMessage = snackbar2) }
+                            queuedSessionStarter.startNextQueued()
+                            return@launch
+                        }
+                    }
                     else -> {
                         val totalXp = frames.sumOf { it.xpGain.toLong() }
                         val its     = mutableMapOf<String, Int>()
@@ -326,6 +388,10 @@ class HomeViewModel @Inject constructor(
                     val dungeonName = gameData.dungeons[last.activityKey]?.displayName ?: last.activityKey
                     if (anyDied) "$dungeonName — You Died" else "$dungeonName Complete!"
                 }
+                last.skillName == "expedition" -> {
+                    val expName = gameData.skillingDungeons[last.activityKey]?.displayName ?: last.activityKey
+                    "$expName Expedition Complete"
+                }
                 last.skillName == Skills.PRAYER -> "Prayer Session Complete"
                 else -> "${last.skillName.toTitleCase()} Session Complete"
             }
@@ -382,9 +448,10 @@ class HomeViewModel @Inject constructor(
             val qty = if (session.skillName in craftingSkills)
                 frames.firstOrNull()?.kills ?: 0 else 0
             val displayName = when (session.skillName) {
-                "combat" -> gameData.dungeons[session.activityKey]?.displayName ?: session.activityKey
-                "boss"   -> gameData.bosses[session.activityKey]?.displayName ?: session.activityKey
-                else     -> session.skillName.toTitleCase()
+                "combat"     -> gameData.dungeons[session.activityKey]?.displayName ?: session.activityKey
+                "boss"       -> gameData.bosses[session.activityKey]?.displayName ?: session.activityKey
+                "expedition" -> gameData.skillingDungeons[session.activityKey]?.displayName ?: session.activityKey
+                else         -> session.skillName.toTitleCase()
             }
             val materials = playerSessionMaterials(session.skillName, session.activityKey, qty, gameData)
             if (materials != null) {
@@ -533,6 +600,27 @@ class HomeViewModel @Inject constructor(
                         for ((item, qty) in loot)        combinedItems[item]      = (combinedItems[item] ?: 0) + qty
                         for ((e, k) in kills)            combinedKills[e]         = (combinedKills[e] ?: 0) + k
                         combinedCoins += coins
+                    }
+                    "expedition" -> {
+                        val dungeonData = gameData.skillingDungeons[session.activityKey]
+                        val totalXp = frames.sumOf { it.xpGain.toLong() }
+                        val its     = mutableMapOf<String, Int>()
+                        for (frame in frames) for ((item, qty) in frame.items) its[item] = (its[item] ?: 0) + qty
+                        val pets    = its.filterKeys { it in petIds }
+                        val regular = its.filterKeys { !it.startsWith("note_") && it !in petIds }
+                        val skillName = dungeonData?.skill ?: Skills.MINING
+                        awardedCapes += playerRepo.applySessionResults(skillName, totalXp, regular, mult)
+                        questRepo.recordGathering(skillName, regular)
+                        for ((id, _) in pets) {
+                            val pd = gameData.pets[id] ?: continue
+                            if (playerRepo.addPetIfNew(id, pd.boostPercent))
+                                petMessage = "You found a pet: ${pd.displayName}!"
+                        }
+                        val scaledXp      = if (mult == 1.0f) totalXp else (totalXp * mult).toLong()
+                        val scaledRegular = if (mult == 1.0f) regular
+                            else regular.mapValues { (_, v) -> (v * mult).toInt().coerceAtLeast(1) }
+                        combinedXpBySkill[skillName] = (combinedXpBySkill[skillName] ?: 0L) + scaledXp
+                        for ((item, qty) in scaledRegular) combinedItems[item] = (combinedItems[item] ?: 0) + qty
                     }
                     else -> {
                         val totalXp = frames.sumOf { it.xpGain.toLong() }
