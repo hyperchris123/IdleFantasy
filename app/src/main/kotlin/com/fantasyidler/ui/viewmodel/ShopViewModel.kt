@@ -199,13 +199,21 @@ class ShopViewModel @Inject constructor(
             val gem  = gameData.gems[itemKey]
             val crop = gameData.crops[itemKey]
             when {
+                "arrow_shaft" in itemKey -> 1
+                "_arrow_tip" in itemKey -> when {
+                    "runite"     in itemKey -> 8
+                    "adamantite" in itemKey -> 5
+                    "mithril"    in itemKey -> 3
+                    "steel"      in itemKey -> 2
+                    else                   -> 1
+                }
                 "_arrow" in itemKey -> when {
-                    "runite"     in itemKey -> 15
-                    "adamantite" in itemKey -> 10
-                    "mithril"    in itemKey -> 6
-                    "steel"      in itemKey -> 4
-                    "iron"       in itemKey -> 3
-                    else                   -> 2
+                    "runite"     in itemKey -> 20
+                    "adamantite" in itemKey -> 14
+                    "mithril"    in itemKey -> 9
+                    "steel"      in itemKey -> 6
+                    "iron"       in itemKey -> 4
+                    else                   -> 3
                 }
                 "bar" in itemKey -> when {
                     "runite"     in itemKey -> 230

@@ -51,8 +51,35 @@ class InventoryViewModel @Inject constructor(
         val totalLevel: Int get() = skillLevels.values.sum()
 
         /** Items in inventory that can go into [pickingSlot]. */
-        fun candidatesFor(slot: String, allEquipment: Map<String, EquipmentData>): List<EquipmentData> =
-            inventory.keys.mapNotNull { allEquipment[it] }.filter { it.slot == slot }
+        fun candidatesFor(slot: String, allEquipment: Map<String, EquipmentData>): List<EquipmentData> {
+            val style = EquipSlot.combatStyleForSlot(slot)
+            return if (style != null) {
+                inventory.keys.mapNotNull { allEquipment[it] }
+                    .filter { it.slot == EquipSlot.WEAPON && it.combatStyle == style }
+            } else {
+                inventory.keys.mapNotNull { allEquipment[it] }.filter { it.slot == slot }
+            }
+        }
+    }
+
+    init {
+        viewModelScope.launch { migrateWeaponSlots() }
+    }
+
+    private suspend fun migrateWeaponSlots() {
+        val equipped = playerRepo.getEquipped().toMutableMap()
+        val oldWeapon = equipped[EquipSlot.WEAPON] ?: return
+        if (EquipSlot.WEAPON_SLOTS.any { equipped[it] != null }) return
+        val style = gameData.equipment[oldWeapon]?.combatStyle
+        val targetSlot = when (style) {
+            "strength" -> EquipSlot.WEAPON_STR
+            "ranged"   -> EquipSlot.WEAPON_RANGED
+            "magic"    -> EquipSlot.WEAPON_MAGIC
+            else       -> EquipSlot.WEAPON_ATK
+        }
+        equipped[targetSlot] = oldWeapon
+        equipped.remove(EquipSlot.WEAPON)
+        playerRepo.updateEquipped(equipped)
     }
 
     private val _extra = MutableStateFlow(UiState())
@@ -125,9 +152,13 @@ class InventoryViewModel @Inject constructor(
 
             val skillLevels = state.skillLevels
             for (slot in EquipSlot.ALL) {
+                val style = EquipSlot.combatStyleForSlot(slot)
                 val best = state.inventory.keys
                     .mapNotNull { equipment[it] }
-                    .filter { it.slot == slot }
+                    .filter { item ->
+                        if (style != null) item.slot == EquipSlot.WEAPON && item.combatStyle == style
+                        else item.slot == slot
+                    }
                     .filter { item -> item.requirements.all { (skill, lvl) -> (skillLevels[skill] ?: 1) >= lvl } }
                     .maxByOrNull { item ->
                         when (slot) {
@@ -198,7 +229,10 @@ val DISPLAY_SKILL_ORDER = Skills.GATHERING + Skills.CRAFTING_SKILLS + Skills.COM
 
 /** Human-readable label for an equip slot key. */
 fun slotDisplayName(slot: String): String = when (slot) {
-    EquipSlot.WEAPON      -> "Weapon"
+    EquipSlot.WEAPON_ATK    -> "Weapon (Atk)"
+    EquipSlot.WEAPON_STR    -> "Weapon (Str)"
+    EquipSlot.WEAPON_RANGED -> "Weapon (Ranged)"
+    EquipSlot.WEAPON_MAGIC  -> "Weapon (Magic)"
     EquipSlot.HEAD        -> "Head"
     EquipSlot.BODY        -> "Body"
     EquipSlot.LEGS        -> "Legs"

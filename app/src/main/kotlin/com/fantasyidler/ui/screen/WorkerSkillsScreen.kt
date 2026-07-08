@@ -227,6 +227,8 @@ fun WorkerSkillsScreen(
                     hasActiveSession  = true,
                     isQueueFull       = isQueueFull,
                     sessionDurationMs = state.gatheringDurationMs,
+                    currentXp         = state.skillXp[Skills.MINING] ?: 0L,
+                    efficiency        = state.miningEfficiency,
                     onSelect          = { viewModel.startMiningSession(it) },
                 )
                 is SheetState.Woodcutting -> WoodcuttingSheet(
@@ -235,15 +237,19 @@ fun WorkerSkillsScreen(
                     hasActiveSession  = true,
                     isQueueFull       = isQueueFull,
                     sessionDurationMs = state.gatheringDurationMs,
+                    currentXp         = state.skillXp[Skills.WOODCUTTING] ?: 0L,
+                    efficiency        = state.woodcuttingEfficiency,
                     onSelect          = { viewModel.startWoodcuttingSession(it) },
                 )
                 is SheetState.Fishing -> FishingSheet(
-                    fish             = sheet.fish,
-                    isStarting       = false,
-                    hasActiveSession = true,
-                    isQueueFull      = isQueueFull,
+                    fish              = sheet.fish,
+                    isStarting        = false,
+                    hasActiveSession  = true,
+                    isQueueFull       = isQueueFull,
                     sessionDurationMs = state.gatheringDurationMs,
-                    onSelect         = { viewModel.startFishingSession(it) },
+                    currentXp         = state.skillXp[Skills.FISHING] ?: 0L,
+                    efficiency        = state.fishingEfficiency,
+                    onSelect          = { viewModel.startFishingSession(it) },
                 )
                 is SheetState.Agility -> AgilitySheet(
                     courses           = sheet.courses,
@@ -251,6 +257,7 @@ fun WorkerSkillsScreen(
                     hasActiveSession  = true,
                     isQueueFull       = isQueueFull,
                     sessionDurationMs = state.gatheringDurationMs,
+                    currentXp         = state.skillXp[Skills.AGILITY] ?: 0L,
                     onSelect          = { viewModel.startAgilitySession(it) },
                 )
                 is SheetState.Firemaking -> FiremakingSheet(

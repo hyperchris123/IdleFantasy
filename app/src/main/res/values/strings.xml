@@ -398,6 +398,7 @@
     <string name="profile_pet_collected">Collected</string>
     <string name="profile_pet_not_found">Not Yet Found</string>
     <string name="profile_equip_best">Equip Best Gear</string>
+    <string name="profile_weapons">Weapons</string>
     <string name="profile_combat_gear">Combat Gear</string>
     <string name="profile_gathering_tools">Gathering Tools</string>
     <string name="profile_food_dungeon">Food (Dungeon)</string>

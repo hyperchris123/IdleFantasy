@@ -14,6 +14,7 @@ data class PlayerFlags(
     @SerialName("equipped_arrows") val equippedArrows: String? = null,
     @SerialName("equipped_runes") val equippedRunes: String? = null,
     @SerialName("active_spell") val activeSpell: String? = null,
+    @SerialName("active_weapon_slot") val activeWeaponSlot: String? = null,
     @SerialName("battery_prompt_shown") val batteryPromptShown: Boolean = false,
     /** Epoch ms when the 2× XP boost expires; 0 = not active. */
     @SerialName("xp_boost_expires_at") val xpBoostExpiresAt: Long = 0L,
@@ -139,8 +140,15 @@ data class PlayerExport(
 // ---------------------------------------------------------------------------
 
 object EquipSlot {
-    // Combat gear — slot keys match equipment.json "slot" field exactly
+    // One weapon slot per combat style
+    const val WEAPON_ATK    = "weapon_atk"
+    const val WEAPON_STR    = "weapon_str"
+    const val WEAPON_RANGED = "weapon_ranged"
+    const val WEAPON_MAGIC  = "weapon_magic"
+
+    // Legacy single weapon slot — kept for save-game migration only
     const val WEAPON   = "weapon"
+
     const val HEAD     = "head"
     const val BODY     = "body"
     const val LEGS     = "legs"
@@ -156,9 +164,20 @@ object EquipSlot {
     const val FISHING_ROD = "fishing_rod"
     const val HOE         = "hoe"
 
-    val COMBAT_SLOTS = listOf(WEAPON, HEAD, BODY, LEGS, BOOTS, CAPE, RING, NECKLACE, SHIELD)
+    val WEAPON_SLOTS = listOf(WEAPON_ATK, WEAPON_STR, WEAPON_RANGED, WEAPON_MAGIC)
+    val ARMOR_SLOTS  = listOf(HEAD, BODY, LEGS, BOOTS, CAPE, RING, NECKLACE, SHIELD)
+    val COMBAT_SLOTS = WEAPON_SLOTS + ARMOR_SLOTS
     val TOOL_SLOTS   = listOf(PICKAXE, AXE, FISHING_ROD, HOE)
     val ALL          = COMBAT_SLOTS + TOOL_SLOTS
+
+    /** Returns the combat style string that belongs in a given weapon slot, or null for non-weapon slots. */
+    fun combatStyleForSlot(slot: String): String? = when (slot) {
+        WEAPON_ATK    -> "attack"
+        WEAPON_STR    -> "strength"
+        WEAPON_RANGED -> "ranged"
+        WEAPON_MAGIC  -> "magic"
+        else          -> null
+    }
 }
 
 // ---------------------------------------------------------------------------

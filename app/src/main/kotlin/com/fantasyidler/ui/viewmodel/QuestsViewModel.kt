@@ -178,7 +178,9 @@ class QuestsViewModel @Inject constructor(
     fun claimDailyQuest(templateId: String) {
         viewModelScope.launch {
             val flags = playerRepo.getFlags()
-            val (newFlags, reward) = dailyQuestRepo.claimQuest(flags, templateId)
+            val ownedItems = playerRepo.getInventory().keys +
+                playerRepo.getEquipped().values.filterNotNull()
+            val (newFlags, reward) = dailyQuestRepo.claimQuest(flags, templateId, ownedItems.toSet())
             playerRepo.updateFlags(newFlags)
 
             val message = when (reward) {

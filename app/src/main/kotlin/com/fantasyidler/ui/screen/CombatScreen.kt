@@ -67,6 +67,9 @@ import com.fantasyidler.data.json.DungeonData
 import com.fantasyidler.data.json.EnemyData
 import com.fantasyidler.data.json.EquipmentData
 import com.fantasyidler.data.json.SpellData
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
+import com.fantasyidler.data.model.EquipSlot
 import com.fantasyidler.data.model.SessionFrame
 import com.fantasyidler.data.model.SkillSession
 import com.fantasyidler.data.model.Skills
@@ -234,19 +237,22 @@ fun CombatScreen(
             dragHandle       = { BottomSheetDefaults.DragHandle() },
         ) {
             DungeonInfoSheet(
-                dungeon           = dungeon,
-                skillLevels       = state.skillLevels,
-                equippedWeapon    = state.equippedWeapon,
-                inventory         = state.inventory,
-                availableSpells   = viewModel.availableSpells(state.skillLevels),
-                selectedSpell     = state.selectedSpell,
-                availablePotions  = state.availablePotions,
-                selectedPotionKey = state.selectedPotionKey,
-                isStarting        = state.startingSession,
-                onSpellSelected   = viewModel::selectSpell,
-                onPotionSelected  = viewModel::selectPotion,
-                onStart           = { viewModel.startDungeonSession(dungeon.name) },
-                onDismiss         = { viewModel.selectDungeon(null) },
+                dungeon              = dungeon,
+                skillLevels          = state.skillLevels,
+                equippedWeapon       = state.equippedWeapon,
+                equippedWeapons      = state.equippedWeapons,
+                selectedWeaponSlot   = state.selectedWeaponSlot,
+                inventory            = state.inventory,
+                availableSpells      = viewModel.availableSpells(state.skillLevels),
+                selectedSpell        = state.selectedSpell,
+                availablePotions     = state.availablePotions,
+                selectedPotionKey    = state.selectedPotionKey,
+                isStarting           = state.startingSession,
+                onWeaponSlotSelected = viewModel::selectWeaponSlot,
+                onSpellSelected      = viewModel::selectSpell,
+                onPotionSelected     = viewModel::selectPotion,
+                onStart              = { viewModel.startDungeonSession(dungeon.name) },
+                onDismiss            = { viewModel.selectDungeon(null) },
             )
         }
     }
@@ -1057,17 +1063,21 @@ private fun CombatSessionBanner(
 // Dungeon info / start sheet
 // ---------------------------------------------------------------------------
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun DungeonInfoSheet(
     dungeon: DungeonData,
     skillLevels: Map<String, Int>,
     equippedWeapon: EquipmentData?,
+    equippedWeapons: Map<String, EquipmentData>,
+    selectedWeaponSlot: String?,
     inventory: Map<String, Int>,
     availableSpells: List<SpellData>,
     selectedSpell: SpellData?,
     availablePotions: Map<String, Int>,
     selectedPotionKey: String?,
     isStarting: Boolean,
+    onWeaponSlotSelected: (String) -> Unit,
     onSpellSelected: (SpellData) -> Unit,
     onPotionSelected: (String?) -> Unit,
     onStart: () -> Unit,
@@ -1139,6 +1149,42 @@ private fun DungeonInfoSheet(
                     text  = "• ${GameStrings.itemName(context, spawn.enemy)}",
                     style = MaterialTheme.typography.bodySmall,
                 )
+            }
+            Spacer(Modifier.height(12.dp))
+        }
+
+        // Weapon picker (show when 2+ weapon slots are occupied, or always if any weapon is equipped)
+        if (equippedWeapons.isNotEmpty()) {
+            Text(
+                text  = "Weapon",
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Spacer(Modifier.height(4.dp))
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                equippedWeapons.forEach { (slot, weaponData) ->
+                    val isSelected = slot == (selectedWeaponSlot
+                        ?: EquipSlot.WEAPON_SLOTS.firstOrNull { equippedWeapons.containsKey(it) })
+                    FilterChip(
+                        selected = isSelected,
+                        onClick  = { onWeaponSlotSelected(slot) },
+                        label    = {
+                            Column {
+                                Text(
+                                    text  = GameStrings.itemName(context, weaponData.name),
+                                    style = MaterialTheme.typography.bodySmall,
+                                )
+                                weaponData.combatStyle?.let { style ->
+                                    Text(
+                                        text  = style.replaceFirstChar { it.titlecase() },
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    )
+                                }
+                            }
+                        },
+                    )
+                }
             }
             Spacer(Modifier.height(12.dp))
         }
