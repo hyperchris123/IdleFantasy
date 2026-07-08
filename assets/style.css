@@ -288,7 +288,7 @@ hr {
   box-shadow: 0 1px 4px rgba(0,0,0,0.07);
 }
 
-.content thead th, .content .summary th {
+.content thead th, .content tbody th {
   background: var(--table-head-bg);
   color: var(--table-head-fg);
   font-weight: 600;
@@ -298,6 +298,10 @@ hr {
   letter-spacing: 0.03em;
   text-transform: uppercase;
   border: none;
+}
+
+.content tbody th {
+  text-align: right;
 }
 
 .content tbody tr { border-bottom: 1px solid var(--table-border); }
@@ -383,10 +387,16 @@ table.summary {
   float: right;
 }
 
-.content .summary th {
-  text-align: right;
-}
-
 .content .summary thead tr {
   border-bottom: 1px solid var(--table-border);;
+}
+
+.content .footer-links thead th {
+  font-size: 1rem;
+  text-align: center;
+}
+
+.content .footer-links a.active {
+  color: var(--gold);
+  font-weight: 600;
 }
