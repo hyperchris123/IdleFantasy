@@ -424,6 +424,7 @@
     <string name="profile_equip_best">Equip Best Gear</string>
     <string name="profile_weapons">Weapons</string>
     <string name="profile_combat_gear">Combat Gear</string>
+    <string name="profile_view_combat_gear">View Combat Gear</string>
     <string name="profile_gathering_tools">Gathering Tools</string>
     <string name="profile_food_dungeon">Food (Dungeon)</string>
     <string name="profile_no_food">No cooked food in inventory</string>
@@ -621,6 +622,8 @@
     <string name="worker_dismiss_confirm_body">The active session and queue will be cancelled. Your hire fee and any queued materials will be returned.</string>
     <string name="inn_daily_menu">Daily Menu</string>
     <string name="inn_laborers_header">Laborers</string>
+    <string name="inn_slot1_header">Long Laborer</string>
+    <string name="inn_slot2_header">Skilled Worker</string>
 
     <!-- ===== Combat difficulty ratings ===== -->
     <string name="combat_difficulty_likely">Looks manageable</string>

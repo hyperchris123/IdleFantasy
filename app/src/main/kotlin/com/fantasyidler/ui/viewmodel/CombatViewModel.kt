@@ -100,6 +100,8 @@ class CombatViewModel @Inject constructor(
     private val json: Json,
 ) : ViewModel() {
 
+    val potionEffects: Map<String, Map<String, Int>> = gameData.potionEffects
+
     private val _extra = MutableStateFlow(CombatUiState())
 
     val uiState: StateFlow<CombatUiState> = combine(

@@ -768,7 +768,7 @@
     "type": "prayer",
     "target": "bones",
     "amount": 500,
-    "description": "Bury 500 Bones",
+    "description": "Bury 500 Bones of any type",
     "rewards": {
       "coins": 1000,
       "xp": 2000,
@@ -784,7 +784,7 @@
     "type": "prayer",
     "target": "bones",
     "amount": 750,
-    "description": "Bury 750 Bones",
+    "description": "Bury 750 Bones of any type",
     "rewards": {
       "coins": 2000,
       "xp": 5000,
@@ -800,7 +800,7 @@
     "type": "prayer",
     "target": "bones",
     "amount": 1100,
-    "description": "Bury 1100 Bones",
+    "description": "Bury 1100 Bones of any type",
     "rewards": {
       "coins": 4000,
       "xp": 10000,
@@ -816,7 +816,7 @@
     "type": "prayer",
     "target": "bones",
     "amount": 1650,
-    "description": "Bury 1650 Bones",
+    "description": "Bury 1650 Bones of any type",
     "rewards": {
       "coins": 8000,
       "xp": 20000,
@@ -832,7 +832,7 @@
     "type": "prayer",
     "target": "bones",
     "amount": 2450,
-    "description": "Bury 2450 Bones",
+    "description": "Bury 2450 Bones of any type",
     "rewards": {
       "coins": 16000,
       "xp": 40000,
@@ -848,7 +848,7 @@
     "type": "prayer",
     "target": "bones",
     "amount": 3650,
-    "description": "Bury 3650 Bones",
+    "description": "Bury 3650 Bones of any type",
     "rewards": {
       "coins": 32000,
       "xp": 80000,

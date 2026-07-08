@@ -42,6 +42,8 @@ data class PlayerFlags(
     @SerialName("daily_quest_generated_at") val dailyQuestGeneratedAt: Long = 0L,
     /** Currently hired worker, or null if none. */
     @SerialName("hired_worker") val hiredWorker: HiredWorker? = null,
+    /** Second worker slot (Apprentice / Journeyman / Master), or null if none. */
+    @SerialName("hired_worker_2") val hiredWorker2: HiredWorker? = null,
     /** Persists the "hide completed quests" toggle across sessions. */
     @SerialName("hide_completed_quests") val hideCompletedQuests: Boolean = false,
     /** Guild reputation totals: guild key → total rep earned (guild level is derived from this). */
@@ -169,6 +171,46 @@ data class OwnedPet(
 
 /** Portable save file written by export and read by import. */
 @Serializable
+data class SkillSessionExport(
+    @SerialName("session_id")           val sessionId: String,
+    @SerialName("skill_name")           val skillName: String,
+    @SerialName("activity_key")         val activityKey: String,
+    @SerialName("started_at")           val startedAt: Long,
+    @SerialName("ends_at")             val endsAt: Long,
+    @SerialName("frames")               val frames: String,
+    @SerialName("completed")            val completed: Boolean,
+    @SerialName("is_worker_session")    val isWorkerSession: Boolean,
+    @SerialName("efficiency_multiplier") val efficiencyMultiplier: Float = 1.0f,
+    @SerialName("worker_slot")          val workerSlot: Int = if (isWorkerSession) 1 else 0,
+)
+
+fun SkillSession.toExport() = SkillSessionExport(
+    sessionId            = sessionId,
+    skillName            = skillName,
+    activityKey          = activityKey,
+    startedAt            = startedAt,
+    endsAt               = endsAt,
+    frames               = frames,
+    completed            = completed,
+    isWorkerSession      = isWorkerSession,
+    efficiencyMultiplier = efficiencyMultiplier,
+    workerSlot           = workerSlot,
+)
+
+fun SkillSessionExport.toSkillSession() = SkillSession(
+    sessionId            = sessionId,
+    skillName            = skillName,
+    activityKey          = activityKey,
+    startedAt            = startedAt,
+    endsAt               = endsAt,
+    frames               = frames,
+    completed            = completed,
+    isWorkerSession      = isWorkerSession,
+    efficiencyMultiplier = efficiencyMultiplier,
+    workerSlot           = workerSlot,
+)
+
+@Serializable
 data class PlayerExport(
     val skillLevels: String,
     val skillXp: String,
@@ -179,6 +221,8 @@ data class PlayerExport(
     val coins: Long,
     val questProgress: List<QuestProgress> = emptyList(),
     val farmingPatches: List<FarmingPatch> = emptyList(),
+    val sessions: List<SkillSessionExport> = emptyList(),
+    @SerialName("exported_at") val exportedAt: Long = 0L,
 )
 
 // ---------------------------------------------------------------------------

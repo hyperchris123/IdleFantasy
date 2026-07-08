@@ -3087,7 +3087,7 @@
     "type": "prayer",
     "target": "any",
     "amount": 200,
-    "description": "Bury 200 bones for the Prayer Guild.",
+    "description": "Bury 200 bones of any type for the Prayer Guild.",
     "rewards": {
       "coins": 1000,
       "xp": 3000,
@@ -3108,7 +3108,7 @@
     "type": "prayer",
     "target": "any",
     "amount": 400,
-    "description": "Bury 400 bones for the Prayer Guild.",
+    "description": "Bury 400 bones of any type for the Prayer Guild.",
     "rewards": {
       "coins": 2500,
       "xp": 6000,
@@ -3129,7 +3129,7 @@
     "type": "prayer",
     "target": "any",
     "amount": 800,
-    "description": "Bury 800 bones for the Prayer Guild.",
+    "description": "Bury 800 bones of any type for the Prayer Guild.",
     "rewards": {
       "coins": 5000,
       "xp": 12000,
@@ -3150,7 +3150,7 @@
     "type": "prayer",
     "target": "any",
     "amount": 1500,
-    "description": "Bury 1,500 bones for the Prayer Guild.",
+    "description": "Bury 1,500 bones of any type for the Prayer Guild.",
     "rewards": {
       "coins": 8000,
       "xp": 20000,
@@ -3171,7 +3171,7 @@
     "type": "prayer",
     "target": "any",
     "amount": 3000,
-    "description": "Bury 3,000 bones for the Prayer Guild.",
+    "description": "Bury 3,000 bones of any type for the Prayer Guild.",
     "rewards": {
       "coins": 15000,
       "xp": 35000,
@@ -3192,7 +3192,7 @@
     "type": "prayer",
     "target": "any",
     "amount": 5000,
-    "description": "Bury 5,000 bones for the Prayer Guild.",
+    "description": "Bury 5,000 bones of any type for the Prayer Guild.",
     "rewards": {
       "coins": 25000,
       "xp": 55000,
@@ -3213,7 +3213,7 @@
     "type": "prayer",
     "target": "any",
     "amount": 8000,
-    "description": "Bury 8,000 bones for the Prayer Guild.",
+    "description": "Bury 8,000 bones of any type for the Prayer Guild.",
     "rewards": {
       "coins": 40000,
       "xp": 90000,
@@ -3234,7 +3234,7 @@
     "type": "prayer",
     "target": "any",
     "amount": 12000,
-    "description": "Bury 12,000 bones for the Prayer Guild.",
+    "description": "Bury 12,000 bones of any type for the Prayer Guild.",
     "rewards": {
       "coins": 60000,
       "xp": 140000,
@@ -3255,7 +3255,7 @@
     "type": "prayer",
     "target": "any",
     "amount": 18000,
-    "description": "Bury 18,000 bones for the Prayer Guild.",
+    "description": "Bury 18,000 bones of any type for the Prayer Guild.",
     "rewards": {
       "coins": 80000,
       "xp": 200000,

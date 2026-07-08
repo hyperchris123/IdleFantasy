@@ -35,30 +35,30 @@ class WorkerQueuedSessionStarter @Inject constructor(
 ) {
     private val mutex = Mutex()
 
-    suspend fun startNextQueued(): Boolean {
+    suspend fun startNextQueued(slot: Int = 1): Boolean {
         mutex.withLock {
-            val current = sessionRepo.getActiveWorkerSession()
+            val current = sessionRepo.getActiveWorkerSession(slot)
             if (current != null && !current.completed) return false
-            val next = playerRepo.dequeueNextWorkerAction() ?: return false
+            val next = playerRepo.dequeueNextWorkerAction(slot) ?: return false
             return try {
-                startQueuedAction(next)
+                startQueuedAction(slot, next)
                 true
             } catch (_: Exception) {
-                playerRepo.requeueWorkerActionAtFront(next)
+                playerRepo.requeueWorkerActionAtFront(slot, next)
                 false
             }
         }
         return false
     }
 
-    private suspend fun startQueuedAction(action: QueuedAction) {
+    private suspend fun startQueuedAction(slot: Int, action: QueuedAction) {
         val player    = playerRepo.getOrCreatePlayer()
         val levels:   Map<String, Int>     = json.decodeFromString(player.skillLevels)
         val xpMap:    Map<String, Long>    = json.decodeFromString(player.skillXp)
         val equipped: Map<String, String?> = json.decodeFromString(player.equipped)
         val inventory: Map<String, Int>    = json.decodeFromString(player.inventory)
         val flags: PlayerFlags             = json.decodeFromString(player.flags)
-        val worker = flags.hiredWorker ?: return
+        val worker = (if (slot == 2) flags.hiredWorker2 else flags.hiredWorker) ?: return
         val tier = worker.tier
         val agilityLevel = levels[Skills.AGILITY] ?: 1
 
@@ -83,7 +83,7 @@ class WorkerQueuedSessionStarter @Inject constructor(
                     petDropKey     = null,
                     petDropChance  = 0.0,
                 )
-                startSession(action, result.frames, durationMs, efficiencyMultiplier)
+                startSession(slot, action, result.frames, durationMs, efficiencyMultiplier)
             }
             Skills.WOODCUTTING -> {
                 val treeKey  = action.activityKey
@@ -97,7 +97,7 @@ class WorkerQueuedSessionStarter @Inject constructor(
                     petDropKey     = null,
                     petDropChance  = 0.0,
                 )
-                startSession(action, result.frames, durationMs, efficiencyMultiplier)
+                startSession(slot, action, result.frames, durationMs, efficiencyMultiplier)
             }
             Skills.FISHING -> {
                 val fishKey  = action.activityKey
@@ -112,7 +112,7 @@ class WorkerQueuedSessionStarter @Inject constructor(
                     petDropKey     = null,
                     petDropChance  = 0.0,
                 )
-                startSession(action, result.frames, durationMs, efficiencyMultiplier)
+                startSession(slot, action, result.frames, durationMs, efficiencyMultiplier)
             }
             Skills.AGILITY -> {
                 val courseKey  = action.activityKey
@@ -123,7 +123,7 @@ class WorkerQueuedSessionStarter @Inject constructor(
                     agilityLevel = agilityLevel,
                     petBoostPct  = 0,
                 )
-                startSession(action, result.frames, durationMs, efficiencyMultiplier)
+                startSession(slot, action, result.frames, durationMs, efficiencyMultiplier)
             }
             Skills.FIREMAKING -> {
                 val logKey  = action.activityKey
@@ -135,7 +135,7 @@ class WorkerQueuedSessionStarter @Inject constructor(
                     petBoostPct        = 0,
                     forcedDropPerFrame = ashKey,
                 )
-                startSession(action, result.frames, durationMs, efficiencyMultiplier)
+                startSession(slot, action, result.frames, durationMs, efficiencyMultiplier)
             }
             Skills.RUNECRAFTING -> {
                 val runeKey  = action.activityKey
@@ -158,7 +158,7 @@ class WorkerQueuedSessionStarter @Inject constructor(
                     leveledUp   = XpTable.levelForXp(xpAfter) > level,
                     kills       = qty,
                 ))
-                startSession(action, frames, durationMs, efficiencyMultiplier)
+                startSession(slot, action, frames, durationMs, efficiencyMultiplier)
             }
             Skills.PRAYER -> {
                 val boneKey     = action.activityKey
@@ -177,37 +177,37 @@ class WorkerQueuedSessionStarter @Inject constructor(
                     leveledUp   = XpTable.levelForXp(xpAfter) > XpTable.levelForXp(startXp),
                     kills       = qty,
                 ))
-                startSession(action, frames, durationMs, efficiencyMultiplier)
+                startSession(slot, action, frames, durationMs, efficiencyMultiplier)
             }
             Skills.SMITHING -> {
                 val r   = gameData.smithingRecipes[action.activityKey] ?: return
                 val qty = action.qty.takeIf { it > 0 } ?: return
                 val frames = buildCraftFrames(xpMap[Skills.SMITHING] ?: 0L, qty, r.xpPerItem, r.outputQuantity, action.activityKey)
-                startSession(action, frames, durationMs, efficiencyMultiplier)
+                startSession(slot, action, frames, durationMs, efficiencyMultiplier)
             }
             Skills.COOKING -> {
                 val r: CookingRecipe = gameData.cookingRecipes[action.activityKey] ?: return
                 val qty = action.qty.takeIf { it > 0 } ?: return
                 val frames = buildCraftFrames(xpMap[Skills.COOKING] ?: 0L, qty, r.xpPerItem, 1, r.cookedItem)
-                startSession(action, frames, durationMs, efficiencyMultiplier)
+                startSession(slot, action, frames, durationMs, efficiencyMultiplier)
             }
             Skills.FLETCHING -> {
                 val r   = gameData.fletchingRecipes[action.activityKey] ?: return
                 val qty = action.qty.takeIf { it > 0 } ?: return
                 val frames = buildCraftFrames(xpMap[Skills.FLETCHING] ?: 0L, qty, r.xpPerItem, r.outputQuantity, r.itemName)
-                startSession(action, frames, durationMs, efficiencyMultiplier)
+                startSession(slot, action, frames, durationMs, efficiencyMultiplier)
             }
             Skills.CRAFTING -> {
                 val r   = gameData.craftingRecipes[action.activityKey] ?: return
                 val qty = action.qty.takeIf { it > 0 } ?: return
                 val frames = buildCraftFrames(xpMap[Skills.CRAFTING] ?: 0L, qty, r.xpPerItem, r.outputQuantity, action.activityKey)
-                startSession(action, frames, durationMs, efficiencyMultiplier)
+                startSession(slot, action, frames, durationMs, efficiencyMultiplier)
             }
             Skills.HERBLORE -> {
                 val r   = gameData.herbloreRecipes[action.activityKey] ?: return
                 val qty = action.qty.takeIf { it > 0 } ?: return
                 val frames = buildCraftFrames(xpMap[Skills.HERBLORE] ?: 0L, qty, r.xpPerItem, r.outputQuantity, action.activityKey)
-                startSession(action, frames, durationMs, efficiencyMultiplier)
+                startSession(slot, action, frames, durationMs, efficiencyMultiplier)
             }
             "boss" -> {
                 val bossKey = action.activityKey
@@ -233,7 +233,7 @@ class WorkerQueuedSessionStarter @Inject constructor(
                     foodHealValues    = gameData.foodHealValues,
                     blessingDefBonus  = ChurchRepository.defBonus(flags),
                 )
-                startSession(action, bossFrames, durationMs, efficiencyMultiplier)
+                startSession(slot, action, bossFrames, durationMs, efficiencyMultiplier)
             }
             "combat" -> {
                 val dungeonKey = action.activityKey
@@ -277,18 +277,20 @@ class WorkerQueuedSessionStarter @Inject constructor(
                     equippedFood        = availableFood,
                     foodHealValues      = gameData.foodHealValues,
                 )
-                startSession(action, result.frames, durationMs, efficiencyMultiplier)
+                startSession(slot, action, result.frames, durationMs, efficiencyMultiplier)
             }
         }
     }
 
     private suspend fun startSession(
+        slot: Int,
         action: QueuedAction,
         frames: List<SessionFrame>,
         durationMs: Long,
         efficiencyMultiplier: Float,
     ) {
         sessionRepo.startWorkerSession(
+            workerSlot           = slot,
             skillName            = action.skillName,
             activityKey          = action.activityKey,
             frames               = encodeFrames(frames),

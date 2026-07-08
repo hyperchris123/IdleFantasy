@@ -500,8 +500,6 @@ fun HomeScreen(
             }
 
             // ── Town card ───────────────────────────────────────────────
-            val workerSession = state.workerSession
-            val hiredWorker   = state.hiredWorker
             var townExpanded by remember { mutableStateOf(false) }
             Surface(
                 shape    = RoundedCornerShape(16.dp),
@@ -576,27 +574,6 @@ fun HomeScreen(
                 }
             }
 
-            // ── Worker session card ──────────────────────────────────────
-            if (hiredWorker != null) {
-                if (workerSession != null && !workerSession.completed) {
-                    LaunchedEffect(workerSession.sessionId) {
-                        val remaining = workerSession.endsAt - System.currentTimeMillis()
-                        if (remaining > 0) delay(remaining)
-                        viewModel.onWorkerSessionExpiredLocally(workerSession.sessionId)
-                    }
-                }
-                WorkerSessionCard(
-                    hiredWorker              = hiredWorker,
-                    session                  = workerSession,
-                    pendingCollect           = state.workerPendingCollect,
-                    context                  = context,
-                    onCollect                = viewModel::collectWorkerSession,
-                    onDismiss                = viewModel::dismissWorker,
-                    onDebugFinish            = viewModel::debugFinishWorkerSession,
-                    onNavigateToWorkerSkills = onNavigateToWorkerSkills,
-                )
-            }
-
             // ── Active session card ──────────────────────────────────────
             val session = state.activeSession
             if (session != null) {
@@ -656,6 +633,52 @@ fun HomeScreen(
                     context     = context,
                     onRemove    = viewModel::removeFromQueue,
                     onMove      = viewModel::moveQueueItem,
+                )
+            }
+
+            // ── Worker session cards ─────────────────────────────────────
+            val workerSession = state.workerSession
+            val hiredWorker   = state.hiredWorker
+            if (hiredWorker != null) {
+                if (workerSession != null && !workerSession.completed) {
+                    LaunchedEffect(workerSession.sessionId) {
+                        val remaining = workerSession.endsAt - System.currentTimeMillis()
+                        if (remaining > 0) delay(remaining)
+                        viewModel.onWorkerSessionExpiredLocally(workerSession.sessionId)
+                    }
+                }
+                WorkerSessionCard(
+                    slot                     = 1,
+                    hiredWorker              = hiredWorker,
+                    session                  = workerSession,
+                    pendingCollect           = state.workerPendingCollect,
+                    context                  = context,
+                    onCollect                = viewModel::collectWorkerSession,
+                    onDismiss                = { viewModel.dismissWorker(1) },
+                    onDebugFinish            = { viewModel.debugFinishWorkerSession(1) },
+                    onNavigateToWorkerSkills = onNavigateToWorkerSkills,
+                )
+            }
+            val hiredWorker2   = state.hiredWorker2
+            val workerSession2 = state.workerSession2
+            if (hiredWorker2 != null) {
+                if (workerSession2 != null && !workerSession2.completed) {
+                    LaunchedEffect(workerSession2.sessionId) {
+                        val remaining = workerSession2.endsAt - System.currentTimeMillis()
+                        if (remaining > 0) delay(remaining)
+                        viewModel.onWorkerSessionExpiredLocally(workerSession2.sessionId)
+                    }
+                }
+                WorkerSessionCard(
+                    slot                     = 2,
+                    hiredWorker              = hiredWorker2,
+                    session                  = workerSession2,
+                    pendingCollect           = state.workerPendingCollect,
+                    context                  = context,
+                    onCollect                = viewModel::collectWorkerSession,
+                    onDismiss                = { viewModel.dismissWorker(2) },
+                    onDebugFinish            = { viewModel.debugFinishWorkerSession(2) },
+                    onNavigateToWorkerSkills = onNavigateToWorkerSkills,
                 )
             }
         }
@@ -891,6 +914,7 @@ private fun QueueCard(
 
 @Composable
 private fun WorkerSessionCard(
+    slot: Int,
     hiredWorker: HiredWorker,
     session: SkillSession?,
     pendingCollect: Boolean,

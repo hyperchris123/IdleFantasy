@@ -84,9 +84,12 @@ data class HomeUiState(
     /** Epoch ms when the last queued task will finish; 0 if queue is empty. */
     val queueEndsAt: Long = 0L,
     val workerSession: SkillSession? = null,
+    val workerSession2: SkillSession? = null,
     val workerPendingCollect: Boolean = false,
     val hiredWorker: HiredWorker? = null,
+    val hiredWorker2: HiredWorker? = null,
     val workerQueue: List<QueuedAction> = emptyList(),
+    val workerQueue2: List<QueuedAction> = emptyList(),
     val workerSummary: SessionSummary? = null,
     val activeBlessingKey: String = "",
     val activeBlessingRemainingMs: Long = 0L,
@@ -109,17 +112,35 @@ class HomeViewModel @Inject constructor(
 
     init {
         viewModelScope.launch { sessionRepo.recoverActiveSession(queuedSessionStarter) }
-        viewModelScope.launch { sessionRepo.recoverActiveWorkerSession(workerStarter) }
+        viewModelScope.launch { sessionRepo.recoverActiveWorkerSession(1, workerStarter) }
+        viewModelScope.launch { sessionRepo.recoverActiveWorkerSession(2, workerStarter) }
         viewModelScope.launch { playerRepo.awardMissingCapes() }
     }
 
+    private data class WorkerFlowData(
+        val session1: SkillSession?,
+        val session2: SkillSession?,
+        val completedCount: Int,
+        val extra: HomeUiState,
+    )
+
     val uiState: StateFlow<HomeUiState> = combine(
         combine(playerRepo.playerFlow, sessionRepo.activeSessionFlow, sessionRepo.completedCountFlow) { a, b, c -> Triple(a, b, c) },
-        combine(sessionRepo.activeWorkerSessionFlow, sessionRepo.workerCompletedCountFlow, _extra) { a, b, c -> Triple(a, b, c) },
-    ) { (player, session, completedCount), (workerSession, workerCompleted, extra) ->
+        combine(
+            sessionRepo.activeWorkerSessionFlow(1),
+            sessionRepo.activeWorkerSessionFlow(2),
+            sessionRepo.workerCompletedCountFlow,
+            _extra,
+        ) { w1, w2, count, extra -> WorkerFlowData(w1, w2, count, extra) },
+    ) { (player, session, completedCount), workerData ->
+        val workerSession  = workerData.session1
+        val workerSession2 = workerData.session2
+        val workerCompleted = workerData.completedCount
+        val extra = workerData.extra
         if (player == null) extra.copy(
             isLoading = true, activeSession = session, pendingCollectCount = completedCount,
-            workerSession = workerSession, workerPendingCollect = workerCompleted > 0,
+            workerSession = workerSession, workerSession2 = workerSession2,
+            workerPendingCollect = workerCompleted > 0,
         )
         else {
             val flags: PlayerFlags = json.decodeFromString(player.flags)
@@ -149,9 +170,12 @@ class HomeViewModel @Inject constructor(
                 showWhatsNew        = flags.lastSeenVersionCode < BuildConfig.VERSION_CODE,
                 queueEndsAt         = queueEndsAt,
                 workerSession       = workerSession,
+                workerSession2      = workerSession2,
                 workerPendingCollect = workerCompleted > 0,
                 hiredWorker         = flags.hiredWorker,
+                hiredWorker2        = flags.hiredWorker2,
                 workerQueue         = flags.hiredWorker?.sessionQueue ?: emptyList(),
+                workerQueue2        = flags.hiredWorker2?.sessionQueue ?: emptyList(),
                 activeBlessingKey          = flags.activeBlessingKey,
                 activeBlessingRemainingMs  = (flags.activeBlessingExpiresAt - System.currentTimeMillis()).coerceAtLeast(0L),
             )
@@ -582,9 +606,9 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun debugFinishWorkerSession() {
+    fun debugFinishWorkerSession(slot: Int = 1) {
         viewModelScope.launch {
-            val session = sessionRepo.getActiveWorkerSession() ?: return@launch
+            val session = sessionRepo.getActiveWorkerSession(slot) ?: return@launch
             sessionRepo.markCompleted(session.sessionId)
         }
     }
@@ -594,19 +618,22 @@ class HomeViewModel @Inject constructor(
             val session = sessionRepo.getSession(sessionId) ?: return@launch
             if (!session.completed) {
                 sessionRepo.markCompleted(sessionId)
-                workerStarter.startNextQueued()
+                workerStarter.startNextQueued(session.workerSlot.coerceAtLeast(1))
             }
         }
     }
 
     fun collectWorkerSession() {
         viewModelScope.launch {
-            val latest = sessionRepo.getActiveWorkerSession()
-            if (latest != null && !latest.completed && System.currentTimeMillis() >= latest.endsAt) {
-                sessionRepo.markCompleted(latest.sessionId)
+            for (slot in 1..2) {
+                val latest = sessionRepo.getActiveWorkerSession(slot)
+                if (latest != null && !latest.completed && System.currentTimeMillis() >= latest.endsAt) {
+                    sessionRepo.markCompleted(latest.sessionId)
+                }
             }
 
-            val sessions = sessionRepo.getAllCompletedWorkerSessions()
+            val sessions = (sessionRepo.getAllCompletedWorkerSessions(1) +
+                            sessionRepo.getAllCompletedWorkerSessions(2))
             if (sessions.isEmpty()) return@launch
 
             val petIds = gameData.pets.keys
@@ -740,7 +767,8 @@ class HomeViewModel @Inject constructor(
             }
 
             for (session in sessions) sessionRepo.deleteSession(session.sessionId)
-            playerRepo.clearHiredWorker()
+            playerRepo.clearHiredWorker(1)
+            playerRepo.clearHiredWorker(2)
 
             val n    = sessions.size
             val last = sessions.last()
@@ -799,11 +827,12 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun dismissWorker() {
+    fun dismissWorker(slot: Int = 1) {
         viewModelScope.launch {
             val flags: PlayerFlags = json.decodeFromString(playerRepo.getOrCreatePlayer().flags)
+            val worker = if (slot == 2) flags.hiredWorker2 else flags.hiredWorker
 
-            val session = sessionRepo.getActiveWorkerSession()
+            val session = sessionRepo.getActiveWorkerSession(slot)
             if (session != null) {
                 val frames: List<SessionFrame> = json.decodeFromString(session.frames)
                 val qty = frames.sumOf { it.kills }
@@ -812,13 +841,13 @@ class HomeViewModel @Inject constructor(
                 sessionRepo.abandonSession(session.sessionId)
             }
 
-            for (action in flags.hiredWorker?.sessionQueue ?: emptyList()) {
+            for (action in worker?.sessionQueue ?: emptyList()) {
                 workerMaterialsFor(action.skillName, action.activityKey, action.qty)
                     ?.let { playerRepo.addItems(it) }
             }
 
-            flags.hiredWorker?.tier?.hireCost?.let { playerRepo.addCoins(it) }
-            playerRepo.clearHiredWorker()
+            worker?.tier?.hireCost?.let { playerRepo.addCoins(it) }
+            playerRepo.clearHiredWorker(slot)
         }
     }
 

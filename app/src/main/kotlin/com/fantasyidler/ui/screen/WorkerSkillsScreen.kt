@@ -84,12 +84,15 @@ import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WorkerSkillsScreen(
+    initialSlot: Int = 1,
     onBack: () -> Unit = {},
     viewModel: WorkerSkillsViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
+
+    LaunchedEffect(Unit) { viewModel.setSelectedSlot(initialSlot) }
 
     LaunchedEffect(state.snackbarMessage) {
         state.snackbarMessage?.let {
@@ -98,14 +101,14 @@ fun WorkerSkillsScreen(
         }
     }
 
-    val tierLabel = when (state.hiredWorker?.tier) {
+    val tierLabel = when (state.currentWorker?.tier) {
         WorkerTier.LONG_LABORER -> stringResource(R.string.worker_long_laborer)
         WorkerTier.APPRENTICE   -> stringResource(R.string.worker_apprentice)
         WorkerTier.JOURNEYMAN   -> stringResource(R.string.worker_journeyman)
         WorkerTier.MASTER       -> stringResource(R.string.worker_master)
         null                    -> ""
     }
-    val workerName = state.hiredWorker?.dailyName ?: ""
+    val workerName = state.currentWorker?.dailyName ?: ""
     val screenTitle = if (workerName.isNotEmpty())
         stringResource(R.string.worker_skills_title, workerName)
     else
@@ -135,6 +138,39 @@ fun WorkerSkillsScreen(
             contentPadding = padding,
             modifier = Modifier.fillMaxSize(),
         ) {
+            // Slot selector (only shown when both workers are hired)
+            val w1 = state.hiredWorker
+            val w2 = state.hiredWorker2
+            if (w1 != null && w2 != null) {
+                item {
+                    Row(
+                        modifier              = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 4.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        FilterChip(
+                            selected = state.selectedSlot == 1,
+                            onClick  = { viewModel.setSelectedSlot(1) },
+                            label    = {
+                                Text(w1.dailyName.ifEmpty {
+                                    stringResource(R.string.worker_long_laborer)
+                                })
+                            },
+                        )
+                        FilterChip(
+                            selected = state.selectedSlot == 2,
+                            onClick  = { viewModel.setSelectedSlot(2) },
+                            label    = {
+                                Text(w2.dailyName.ifEmpty {
+                                    stringResource(R.string.inn_slot2_header)
+                                })
+                            },
+                        )
+                    }
+                }
+            }
+
             // Tier badge
             if (tierLabel.isNotEmpty()) {
                 item {
@@ -149,7 +185,7 @@ fun WorkerSkillsScreen(
             }
 
             // Active worker session banner
-            state.activeSession?.let { session ->
+            state.currentSession?.let { session ->
                 item {
                     WorkerActiveSessionBanner(session = session)
                 }
@@ -168,7 +204,7 @@ fun WorkerSkillsScreen(
                     skillKey       = key,
                     level          = state.skillLevels[key] ?: 1,
                     xp             = state.skillXp[key] ?: 0L,
-                    isActive       = state.activeSession?.skillName == key && state.activeSession?.completed == false,
+                    isActive       = state.currentSession?.skillName == key && state.currentSession?.completed == false,
                     onClick        = { viewModel.onSkillTapped(key) },
                     toolEfficiency = efficiency,
                 )
@@ -181,7 +217,7 @@ fun WorkerSkillsScreen(
                     skillKey = key,
                     level    = state.skillLevels[key] ?: 1,
                     xp       = state.skillXp[key] ?: 0L,
-                    isActive = state.activeSession?.skillName == key && state.activeSession?.completed == false,
+                    isActive = state.currentSession?.skillName == key && state.currentSession?.completed == false,
                     onClick  = { viewModel.onSkillTapped(key) },
                 )
             }
@@ -193,7 +229,7 @@ fun WorkerSkillsScreen(
                     skillKey = Skills.PRAYER,
                     level    = state.skillLevels[Skills.PRAYER] ?: 1,
                     xp       = state.skillXp[Skills.PRAYER] ?: 0L,
-                    isActive = state.activeSession?.skillName == Skills.PRAYER && state.activeSession?.completed == false,
+                    isActive = state.currentSession?.skillName == Skills.PRAYER && state.currentSession?.completed == false,
                     onClick  = { viewModel.onSkillTapped(Skills.PRAYER) },
                 )
             }

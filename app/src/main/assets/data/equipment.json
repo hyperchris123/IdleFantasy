@@ -527,6 +527,32 @@
       "attack": 50
     }
   },
+  "dragon_scimitar": {
+    "name": "dragon_scimitar",
+    "display_name": "Dragon Scimitar",
+    "slot": "weapon",
+    "combat_style": "attack",
+    "description": "A razor-sharp scimitar forged from dragon metal.",
+    "attack_bonus": 47,
+    "strength_bonus": 65,
+    "defense_bonus": 0,
+    "requirements": {
+      "attack": 60
+    }
+  },
+  "dragon_longsword": {
+    "name": "dragon_longsword",
+    "display_name": "Dragon Longsword",
+    "slot": "weapon",
+    "combat_style": "attack",
+    "description": "A powerful longsword forged from dragon metal.",
+    "attack_bonus": 68,
+    "strength_bonus": 50,
+    "defense_bonus": 0,
+    "requirements": {
+      "attack": 60
+    }
+  },
   "runite_longsword": {
     "name": "runite_longsword",
     "display_name": "Runite Longsword",
@@ -3022,6 +3048,36 @@
     "magic_damage_bonus": 15,
     "requirements": {
       "magic": 55
+    }
+  },
+  "hellfire_staff": {
+    "name": "hellfire_staff",
+    "display_name": "Hellfire Staff",
+    "slot": "weapon",
+    "combat_style": "magic",
+    "description": "A staff wreathed in demonic flame, torn from the Demon Lord's grasp.",
+    "attack_bonus": 48,
+    "strength_bonus": 0,
+    "defense_bonus": 12,
+    "magic_attack_bonus": 72,
+    "magic_damage_bonus": 20,
+    "requirements": {
+      "magic": 70
+    }
+  },
+  "trident_of_the_seas": {
+    "name": "trident_of_the_seas",
+    "display_name": "Trident of the Seas",
+    "slot": "weapon",
+    "combat_style": "magic",
+    "description": "A fearsome trident imbued with the power of the deep, taken from the Kraken's lair.",
+    "attack_bonus": 55,
+    "strength_bonus": 0,
+    "defense_bonus": 15,
+    "magic_attack_bonus": 88,
+    "magic_damage_bonus": 25,
+    "requirements": {
+      "magic": 85
     }
   }
 }

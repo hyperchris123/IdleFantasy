@@ -200,7 +200,10 @@ class SkillsViewModel @Inject constructor(
                     val flags = try { json.decodeFromString<PlayerFlags>(player.flags) } catch (_: Exception) { PlayerFlags() }
                     val reserved = reservedQty(flags.sessionQueue, Skills.PRAYER)
                     val effectiveCounts = inv.mapValues { (k, v) -> v - (reserved[k] ?: 0) }
-                    val available = gameData.bones.filter { (key, _) -> (effectiveCounts[key] ?: 0) > 0 }
+                    val available = gameData.bones
+                        .filter { (key, _) -> (effectiveCounts[key] ?: 0) > 0 }
+                        .entries.sortedBy { it.value.xpPerBone }
+                        .associate { it.key to it.value }
                     _uiState.update {
                         it.copy(sheetSkill = SheetState.Prayer(available, effectiveCounts.filterKeys { k -> k in gameData.bones }))
                     }

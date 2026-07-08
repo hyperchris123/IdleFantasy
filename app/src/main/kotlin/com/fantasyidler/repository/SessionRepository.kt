@@ -20,12 +20,20 @@ class SessionRepository @Inject constructor(
 ) {
     val activeSessionFlow: Flow<SkillSession?> = sessionDao.observeActiveSession()
     val completedCountFlow: Flow<Int> = sessionDao.observeCompletedCount()
-    val activeWorkerSessionFlow: Flow<SkillSession?> = sessionDao.observeActiveWorkerSession()
     val workerCompletedCountFlow: Flow<Int> = sessionDao.observeWorkerCompletedCount()
 
+    fun activeWorkerSessionFlow(slot: Int): Flow<SkillSession?> =
+        sessionDao.observeActiveWorkerSession(slot)
+
     suspend fun getActiveSession(): SkillSession? = sessionDao.getActiveSession()
-    suspend fun getActiveWorkerSession(): SkillSession? = sessionDao.getActiveWorkerSession()
-    suspend fun getAllCompletedWorkerSessions(): List<SkillSession> = sessionDao.getAllCompletedWorkerSessions()
+
+    suspend fun getActiveWorkerSession(slot: Int): SkillSession? =
+        sessionDao.getActiveWorkerSession(slot)
+
+    suspend fun getAllCompletedWorkerSessions(slot: Int): List<SkillSession> =
+        sessionDao.getAllCompletedWorkerSessions(slot)
+
+    suspend fun deleteAllWorkerSessions(slot: Int) = sessionDao.deleteAllWorkerSessions(slot)
     suspend fun deleteAllWorkerSessions() = sessionDao.deleteAllWorkerSessions()
 
     /**
@@ -61,6 +69,7 @@ class SessionRepository @Inject constructor(
     }
 
     suspend fun startWorkerSession(
+        workerSlot: Int,
         skillName: String,
         activityKey: String,
         frames: String,
@@ -70,14 +79,15 @@ class SessionRepository @Inject constructor(
     ): SkillSession {
         val now = System.currentTimeMillis()
         val session = SkillSession(
-            sessionId           = UUID.randomUUID().toString(),
-            skillName           = skillName,
-            startedAt           = now,
-            endsAt              = now + durationMs,
-            frames              = frames,
-            activityKey         = activityKey,
-            isWorkerSession     = true,
+            sessionId            = UUID.randomUUID().toString(),
+            skillName            = skillName,
+            startedAt            = now,
+            endsAt               = now + durationMs,
+            frames               = frames,
+            activityKey          = activityKey,
+            isWorkerSession      = true,
             efficiencyMultiplier = efficiencyMultiplier,
+            workerSlot           = workerSlot,
         )
         sessionDao.insert(session)
         scheduleAlarm(session.sessionId, session.endsAt, skillDisplayName)
@@ -115,19 +125,19 @@ class SessionRepository @Inject constructor(
         }
     }
 
-    suspend fun recoverActiveWorkerSession(workerStarter: WorkerQueuedSessionStarter) {
-        val session = getActiveWorkerSession() ?: run {
-            workerStarter.startNextQueued()
+    suspend fun recoverActiveWorkerSession(slot: Int, workerStarter: WorkerQueuedSessionStarter) {
+        val session = getActiveWorkerSession(slot) ?: run {
+            workerStarter.startNextQueued(slot)
             return
         }
         if (session.completed) {
-            workerStarter.startNextQueued()
+            workerStarter.startNextQueued(slot)
             return
         }
         val now = System.currentTimeMillis()
         if (now >= session.endsAt) {
             markCompleted(session.sessionId)
-            workerStarter.startNextQueued()
+            workerStarter.startNextQueued(slot)
         } else {
             scheduleAlarm(session.sessionId, session.endsAt, session.skillName)
         }
@@ -146,6 +156,8 @@ class SessionRepository @Inject constructor(
     }
 
     suspend fun deleteAllSessions() = sessionDao.deleteAll()
+
+    suspend fun insertSession(session: SkillSession) = sessionDao.insert(session)
 
     suspend fun getRecentCompleted(limit: Int = 20): List<SkillSession> =
         sessionDao.getRecentCompleted(limit)
