@@ -78,6 +78,8 @@ def _md_to_html(text: str) -> str:
 # ---------------------------------------------------------------------------
 
 def _build_nav(active_page_id: str | None, items: PageHierarchy | None = None) -> str:
+    # Todo: Allow page hierarchies to be collapsible - this allows for dynamically generated pages like bosses/etc to avoid bloating the navigation
+    # Todo: Cont. Could be worthwhile considering how this should be done for things like the home page, GitHub sidebar, perhaps leave out?
     if items is None:
         items = PAGE_HIERARCHY
     lines = ["<ul>"]

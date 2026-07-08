@@ -45,9 +45,9 @@ def add_static_pages():
     # Add pages in both the directory and hierarchy
     pages = [
         ("home", PageInfo("Home", "Home.md", gen_home)),
-        ["Skills", [
+        ["Skills", False, [
             ("skills", PageInfo("Skills", "Skills.md", gen_skills)),
-            ["Gathering", [
+            ["Gathering", False, [
                 ("mining", PageInfo("Mining", "Mining.md", gen_mining)),
                 ("fishing", PageInfo("Fishing", "Fishing.md", gen_fishing)),
                 ("woodcutting", PageInfo("Woodcutting", "Woodcutting.md", gen_woodcutting)),
@@ -55,7 +55,7 @@ def add_static_pages():
                 ("agility", PageInfo("Agility", "Agility.md", gen_agility)),
                 ("thieving", PageInfo("Thieving", "Thieving.md", gen_thieving))
             ]],
-            ["Crafting", [
+            ["Crafting", False, [
                 ("smithing", PageInfo("Smithing", "Smithing.md", gen_smithing)),
                 ("cooking", PageInfo("Cooking", "Cooking.md", gen_cooking)),
                 ("fletching", PageInfo("Fletching", "Fletching.md", gen_fletching)),
@@ -65,30 +65,30 @@ def add_static_pages():
                 ("herblore", PageInfo("Herblore", "Herblore.md", gen_herblore)),
                 ("construction", PageInfo("Construction", "Construction.md", gen_construction))
             ]],
-            ["Support", [
+            ["Support", False, [
                 ("prayer", PageInfo("Prayer", "Prayer.md", gen_prayer)),
                 ("mercantile", PageInfo("Mercantile", "Mercantile.md", gen_mercantile)),
             ]],
-            ["Combat", [
+            ["Combat", False, [
                 ("slayer", PageInfo("Slayer", "Slayer.md", gen_slayer)),
             ]],
         ]],
-        ["Inventory", [
+        ["Inventory", False, [
             ("equipment", PageInfo("Equipment", "Equipment.md", gen_equipment)),
         ]],
-        ["Combat", [
+        ["Combat", False, [
             ("bosses", PageInfo("Bosses", "Bosses.md", gen_bosses)),
             ("dungeons", PageInfo("Dungeons", "Dungeons.md", gen_dungeons)),
             ("enemies", PageInfo("Enemies", "Enemies.md", gen_enemies)),
             ("spells", PageInfo("Spells", "Spells.md", gen_spells)),
         ]],
-        ["Town", [
+        ["Town", False, [
             ("shop", PageInfo("Shop", "Shop.md", gen_shop)),
             ("workers", PageInfo("Workers", "Workers.md", gen_workers)),
             ("guilds", PageInfo("Guilds", "Guilds.md", gen_guilds)),
             ("buildings", PageInfo("Buildings", "Buildings.md", gen_guilds)),
         ]],
-        ["Miscellaneous", [
+        ["Miscellaneous", False, [
             ("pets", PageInfo("Pets", "Pets.md", gen_pets)),
             ("quests", PageInfo("Quests", "Quests.md", gen_quests)),
         ]],
@@ -99,7 +99,7 @@ def add_static_pages():
         items = []
         for x in page_list:
             if isinstance(x, list): # pagify the contents
-                items.append([x[0], _make_hierarchical(x[1])])
+                items.append([x[0], x[1], _make_hierarchical(x[2])])
             else: # Append only the name
                 items.append(x[0])
         return items
@@ -111,9 +111,9 @@ def add_static_pages():
     # Note: The `pages` variable is no longer in a usable state after running this so it should be done last
     while len(pages) > 0:
         item = pages.pop(0)
-        if isinstance(item, list): # Add all
-            pages += item[1]
-        else:
+        if isinstance(item, list): # Add all subpages
+            pages += item[2]
+        else: # Add page
             PAGE_DIRECTORY.update({item[0]: item[1]})
 
 
@@ -125,11 +125,12 @@ def add_boss_pages():
         for boss_id in bosses.keys()
     }
     PAGE_DIRECTORY.update(boss_pages)
-    PAGE_HIERARCHY.merge([
-        ["Combat", [
-            ["Bosses", [boss_id for boss_id in boss_pages.keys()]],
-        ]]
-    ])
+    # Todo: Remove once Page Hierarchies are collapsible
+    # PAGE_HIERARCHY.merge([
+    #     ["Combat", True, [
+    #         ["Bosses", [boss_id for boss_id in boss_pages.keys()]],
+    #     ]]
+    # ])
 
 
 def add_enemy_pages():
@@ -144,6 +145,34 @@ def add_enemy_pages():
         for enemy_id in enemies.keys()
     }
     PAGE_DIRECTORY.update(enemy_pages)
+    # Todo: Remove once Page Hierarchies are collapsible
+    # PAGE_HIERARCHY.merge([
+    #     ["Combat", True, [
+    #         ["Enemies", [enemy_id for enemy_id in enemy_pages.keys()]],
+    #     ]]
+    # ])
+
+
+def add_dungeon_pages():
+    dungeons = sorted(
+        (load(f, False) for f in (ASSETS / "dungeons").glob("*.json")),
+        key=lambda d: d.get("recommended_level", 0),
+    )
+    dungeon_pages = {
+        dungeon["name"]: PageInfo(
+            dungeon["display_name"],
+            f"{dungeon['name']}.md",
+            lambda entry=dungeon: gen_dungeon(entry),
+        )
+        for dungeon in dungeons
+    }
+    PAGE_DIRECTORY.update(dungeon_pages)
+    # Todo: Remove once Page Hierarchies are collapsible
+    # PAGE_HIERARCHY.merge([
+    #     ["Combat", True, [
+    #         ["Dungeons", [dungeon["name"] for dungeon in dungeons]],
+    #     ]]
+    # ])
 
 # ---------------------------------------------------------------------------
 # Main functions
@@ -759,31 +788,65 @@ def gen_bosses() -> str:
     return get_template("combat/bosses").format(boss_table=table(["Boss", "Combat Level", "Description"], rows))
 
 
+def _dungeon_loot_rows(dungeon: dict, enemies: dict) -> list[list]:
+    loot_enemies: dict[str, list[str]] = {}
+    for spawn in dungeon.get("enemy_spawns", []):
+        enemy_id = spawn.get("enemy")
+        if not enemy_id:
+            continue
+        enemy = enemies.get(enemy_id, {})
+        drops = enemy.get("always_drops", []) + enemy.get("drop_table", [])
+        for drop in drops:
+            item = drop["item"]
+            enemy_ids = loot_enemies.setdefault(item, [])
+            if enemy_id not in enemy_ids:
+                enemy_ids.append(enemy_id)
+    return [
+        [item_link(item), ", ".join(link(enemy_id) for enemy_id in enemy_ids)]
+        for item, enemy_ids in sorted(loot_enemies.items())
+    ]
+
+
+def gen_dungeon(dungeon: dict) -> str:
+    enemies = load("enemies.json")
+    assert isinstance(enemies, dict)
+    # Create spawn rows
+    spawns = dungeon.get("enemy_spawns", [])
+    total_w = sum(s.get("weight", 1) for s in spawns)
+    spawn_rows = [
+        [link(s["enemy"]), s.get("weight", 1), f"{s.get('weight', 1) / total_w * 100:.0f}%"]
+        for s in spawns
+    ]
+    # Create loot rows
+    loot_rows = _dungeon_loot_rows(dungeon, enemies)
+    return get_template("combat/dungeon").format(
+        name=dungeon["display_name"],
+        recommended_level=dungeon.get("recommended_level", "—"),
+        description=dungeon.get("description", ""),
+        spawn_table=table(["Enemy", "Weight", "Spawn Chance"], spawn_rows) if spawn_rows else "",
+        loot_table=table(["Loot", "Dropped By"], loot_rows) if loot_rows else "_No loot._",
+    )
+
+
 def gen_dungeons() -> str:
-    section_template = get_template("combat/dungeon_section")
     dungeons = sorted(
         (load(f, False) for f in (ASSETS / "dungeons").glob("*.json")),
         key=lambda d: d.get("recommended_level", 0),
     )
-    sections = []
-    for dungeon in dungeons:
-        assert isinstance(dungeon, dict)
-        spawns = dungeon.get("enemy_spawns", [])
-        total_w = sum(s.get("weight", 1) for s in spawns)
-        spawn_rows = [
-            [link(s["enemy"]), s.get("weight", 1), f"{s.get('weight', 1) / total_w * 100:.0f}%"] for s in spawns
+    rows = [
+        [
+            link(dungeon["name"]),
+            dungeon.get("recommended_level", "—"),
+            dungeon.get("description", ""),
         ]
-        sections.append(section_template.format(
-            name=dungeon["display_name"],
-            recommended_level=dungeon.get("recommended_level", "—"),
-            description=dungeon.get("description", ""),
-            spawn_table=table(["Enemy", "Weight", "Spawn Chance"], spawn_rows) if spawn_rows else "",
-        ))
-
-    return get_template("combat/dungeons").format(dungeon_sections="\n\n".join(sections))
+        for dungeon in dungeons
+    ]
+    return get_template("combat/dungeons").format(
+        dungeon_table=table(["Dungeon", "Recommended Level", "Description"], rows),
+    )
 
 
-def _enemy_dungeons(enemy_id: str) -> list[tuple[dict, dict]]:
+def _get_dungeons_by_enemy(enemy_id: str) -> list[tuple[dict, dict]]:
     dungeons = sorted(
         (load(f, False) for f in (ASSETS / "dungeons").glob("*.json")),
         key=lambda d: d.get("recommended_level", 0),
@@ -805,7 +868,7 @@ def gen_enemies() -> str:
             link(enemy_id),
             enemy["hp"],
             enemy.get("xp_drops", {}).get("combat", "—"),
-            ", ".join(dungeon["display_name"] for dungeon, _ in _enemy_dungeons(enemy_id)) or "—",
+            ", ".join(dungeon["display_name"] for dungeon, _ in _get_dungeons_by_enemy(enemy_id)) or "—",
         ]
         for enemy_id, enemy in sorted(enemies.items(), key=lambda x: x[1]["hp"])
     ]
@@ -830,11 +893,11 @@ def _enemy_drop_rows(enemy: dict) -> list[list]:
 
 def _enemy_dungeon_rows(enemy_id: str) -> list[list]:
     rows = []
-    for dungeon, spawn in _enemy_dungeons(enemy_id):
+    for dungeon, spawn in _get_dungeons_by_enemy(enemy_id):
         spawns = dungeon.get("enemy_spawns", [])
         total_w = sum(s.get("weight", 1) for s in spawns)
         rows.append([
-            dungeon["display_name"],
+            link(dungeon["name"]),
             dungeon.get("recommended_level", "—"),
             f"{spawn.get('weight', 1) / total_w * 100:.0f}%",
         ])
@@ -1154,7 +1217,8 @@ def gen_boss(boss: dict) -> str:
 # Adding pages to the directory/hierarchy
 # ---------------------------------------------------------------------------
 
-# Add all relevant pages to the hierarchy
+# Add all relevant pages to the hierarchy and page directory
 add_static_pages()
 add_boss_pages()
 add_enemy_pages()
+add_dungeon_pages()

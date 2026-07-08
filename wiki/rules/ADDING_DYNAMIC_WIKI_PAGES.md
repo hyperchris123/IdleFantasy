@@ -21,6 +21,7 @@ Create a registration function in the **Page Listings** section of `pages.py`. T
 
 ```python
 def add_item_pages():
+    # Create all pages for the page directory and hierarchy
     data = load("some_asset.json")
     pages = {
         page_id: PageInfo(
@@ -30,8 +31,13 @@ def add_item_pages():
         )
         for page_id, entry in data.items()
     }
+    # Add pages to the directory and hierarchy
     PAGE_DIRECTORY.update(pages)
-    PAGE_HIERARCHY.merge([["Parent Section", [["Child Section", list(pages)]]]])
+    PAGE_HIERARCHY.merge([
+        ["Parent Section", False, [
+            ["Child Section", True, list(pages)]
+        ]]
+    ])
 ```
 
 Each `PageInfo` needs a page ID, title, output filename, and generator. The `lambda entry=entry` default argument binds each loop entry at definition time — without it, every page would share the last value from the loop.
@@ -43,17 +49,19 @@ See `add_boss_pages()` in `pages.py` for a real implementation.
 Unlike static pages, dynamic pages are merged into `PAGE_HIERARCHY` directly — not via the `pages` list in `add_static_pages()`.
 
 - A **page** is a plain page ID string (e.g. `"goblin_king"`).
-- A **section** is a list `[section_name, children]`.
+- A **section** is a list `[section_name, collapsible, children]`.
 
 ```python
 PAGE_HIERARCHY.merge([
-    ["Combat", [
-        ["Bosses", ["goblin_king", "dragon_lord"]],
+    ["Combat", False, [
+        ["Bosses", True, ["goblin_king", "dragon_lord"]],
     ]],
 ])
 ```
 
-`PageHierarchy.merge()` appends into an existing section when the name already exists (e.g. `"Combat"` from static pages), so you only need to specify the path to the new subsection.
+Set `collapsible` to `True` on subsections that contain one page per asset entry (e.g. Bosses, Enemies, Dungeons). This keeps large generated page lists tucked away in navigation until expanded. Parent sections that already exist from static registration usually stay `False`.
+
+`PageHierarchy.merge()` appends into an existing section when the name already exists (e.g. `"Combat"` from static pages), so you only need to specify the path to the new subsection. The `collapsible` flag is ignored when merging into a section that already exists.
 
 Every dynamic page in `PAGE_DIRECTORY` must appear in the hierarchy merge. Pages with underscore-prefixed filenames are excluded from this requirement.
 

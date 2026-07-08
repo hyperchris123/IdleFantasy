@@ -5,9 +5,10 @@ from typing import Iterator
 
 
 class PageHierarchy:
-    def __init__(self, name: str = ""):
+    def __init__(self, name: str = "", collapsible: bool = False):
         super().__init__()
         self.name = name
+        self.collapsible = collapsible
         self._internal: list[str | PageHierarchy] = []
 
     def _add_item(self, path: list[str], item, index: int | None = None):
@@ -39,7 +40,7 @@ class PageHierarchy:
         path, page_name = path.rsplit("/", 1)
         self._add_item(path.split("/"), page_name, index)
 
-    def insert_section(self, path: str, index: int | None = None):
+    def insert_section(self, path: str, collapsible: bool = False, index: int | None = None):
         """Inserts a section into the hierarchy. A section allows more pages to be added
 
         Usage:
@@ -49,25 +50,25 @@ class PageHierarchy:
             KeyError: If the parent sections going to the section do not exist
         """
         path, section_name = path.rsplit("/", 1)
-        self._add_item(path.split("/"), PageHierarchy(section_name), index)
+        self._add_item(path.split("/"), PageHierarchy(section_name, collapsible), index)
 
     def merge(self, other: PageHierarchy | list):
         """An inplace merge with another PageHierarchy instance or list
 
         All pages get appended to their respective hierarchies. If a nested section already exists, then the existing
-        section will be merged with the listed section.
+        section will be merged with the listed section - Hideable values will be ignored.
         The name of the hierarchy that it is getting merged with is ignored
 
         Example:
             hierarchy1 = PageHierarchy()
             hierarchy1.merge([
-                ["Section 1", [
+                ["Section 1", False, [
                     "page 1",
                     "page 2"
                 ]]
             ])
             hierarchy2 = [
-                ["Section 1", [
+                ["Section 1", False, [
                     "page 3"
                 ]]
             ]
@@ -83,17 +84,17 @@ class PageHierarchy:
                 else:
                     self._internal.append(copy.deepcopy(item))
             elif isinstance(item, list): # Merge with lists using first item as name and second item as list of items
-                if item[0] in self:
-                    self[item[0]].merge(item[1])
-                else:
-                    nested_hierarchy = PageHierarchy(item[0])
-                    nested_hierarchy.merge(item[1])
+                if item[0] in self: # Simply append contents to the existing hierarchy
+                    self[item[0]].merge(item[2])
+                else: # Add a new hierarchical structure and append
+                    nested_hierarchy = PageHierarchy(item[0], item[1])
+                    nested_hierarchy.merge(item[2])
                     self._internal.append(nested_hierarchy)
             else:
                 raise NotImplemented
 
     def __str__(self):
-        return "{" + f"{self.name}: {self._internal.__str__()}" + "}"
+        return "{" + f"{self.name}{" (Collapsible)" if self.collapsible else ""}: {self._internal.__str__()}" + "}"
 
     def __getitem__(self, path: str):
         split_path = path.split("/")
@@ -125,14 +126,14 @@ class PageHierarchy:
         return new_hierarchy
 
     def __copy__(self):
-        duplicate = PageHierarchy(self.name)
+        duplicate = PageHierarchy(self.name, self.collapsible)
         duplicate._internal = self._internal.copy()
         return duplicate
 
     def __deepcopy__(self, memo):
         if id(self) in memo:
             return memo[id(self)]
-        duplicate = PageHierarchy(self.name)
+        duplicate = PageHierarchy(self.name, self.collapsible)
         memo[id(self)] = duplicate
         duplicate._internal = [copy.deepcopy(item, memo) for item in self._internal]
         return duplicate
