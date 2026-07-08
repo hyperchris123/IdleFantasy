@@ -243,7 +243,7 @@ def session_minutes(level: int) -> int:
 
 def link(page_id: str):
     page = PAGE_DIRECTORY[page_id]
-    return f"[[{page.title}|{page.url.removesuffix('.md')}]]"
+    return f"[{page.title}]({page.url.removesuffix('.md')})"
 
 
 def _tool_table(slot: str, efficiency_key: str) -> str:
@@ -310,11 +310,11 @@ def build_item_page_map() -> dict[str, str]:
 
 
 def item_link(key: str) -> str:
-    """Returns a wiki link to the page where this item is documented, or plain title if unknown."""
+    """Returns a markdown link to the page where this item is documented, or plain title if unknown."""
     page_id = build_item_page_map().get(key)
     if page_id:
         page = PAGE_DIRECTORY[page_id]
-        return f"[[{title(key)}|{page.url.removesuffix('.md')}]]"
+        return f"[{title(key)}]({page.url.removesuffix('.md')})"
     return title(key)
 
 
@@ -712,7 +712,7 @@ def _boss_loot_rows(boss) -> list[list]:
     pet = boss.get("pet")
     if pet:
         pet_name = f"{pet.get('emoji', '')} {pet.get('display_name', 'Pet')}".strip()
-        loot_rows.append([f"[[{pet_name}|Pets]]", fmt_pct(pet.get("chance", 0.005)), 1])
+        loot_rows.append([f"[{pet_name}](Pets)", fmt_pct(pet.get("chance", 0.005)), 1])
     # Return rows
     return loot_rows
 

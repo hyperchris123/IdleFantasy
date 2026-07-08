@@ -1,4 +1,4 @@
-"""site.py — HTML static site generator for the Idle Fantasy wiki."""
+"""site.py -- HTML static site generator for the Idle Fantasy wiki."""
 from __future__ import annotations
 
 import re
@@ -14,40 +14,42 @@ HTML_TEMPLATES = WIKI_ROOT / "html_templates"
 
 
 # ---------------------------------------------------------------------------
-# Markdown → HTML helpers
+# Markdown -> HTML helpers
 # ---------------------------------------------------------------------------
 
-# Page titles by URL stem (e.g. "Mining" → "Mining") — used to distinguish
-# page-level links from item cross-links when adding row fragments.
-_PAGE_TITLES_BY_URL: dict[str, str] = {
+# Page URL stems and titles -- used to distinguish page-level links from
+# item cross-links when adding row fragments.
+_PAGE_BY_URL: dict[str, str] = {
     pi.url.removesuffix(".md"): pi.title for pi in PAGE_DIRECTORY.values()
 }
 
 
 def _slugify(text: str) -> str:
-    """Convert a display name to a row-id slug: 'Silver Ore' → 'silver_ore'."""
+    """Convert a display name to a row-id slug: 'Silver Ore' -> 'silver_ore'."""
     text = re.sub(r'<[^>]+>', '', text)      # strip HTML tags
-    text = re.sub(r"['‘’]", '', text)  # strip apostrophes (straight + curly)
+    text = re.sub("['\\u2018\\u2019]", '', text)  # strip apostrophes (straight + curly)
     return re.sub(r'[^a-z0-9]+', '_', text.lower()).strip('_')
 
 
-def _convert_wiki_links(text: str) -> str:
-    """Turn [[Title|PageURL]] into <a href="PageURL.html[#slug]">Title</a>.
+def _fix_page_links(html: str) -> str:
+    """Add .html extension (and item row fragment) to relative wiki page hrefs.
 
-    Item cross-links (display != page title) get a fragment so the browser
-    scrolls to and highlights that item's row on the target page.
-    Page-level links (e.g. [[Mining|Mining]]) are left without a fragment.
+    pages.py emits [text](PageStem) Markdown links.  After the markdown library
+    converts them to <a href="PageStem">text</a> we need to turn PageStem into
+    PageStem.html (or PageStem.html#slug for item cross-links).
     """
-    def replace(m: re.Match) -> str:
-        display, page_url = m.group(1), m.group(2)
-        is_page_link = _PAGE_TITLES_BY_URL.get(page_url) == display
+    def fix(m: re.Match) -> str:
+        href, text = m.group(1), m.group(2)
+        if href not in _PAGE_BY_URL:
+            return m.group(0)
+        is_page_link = _PAGE_BY_URL[href] == text
         if is_page_link:
-            href = f"{page_url}.html"
-        else:
-            href = f"{page_url}.html#{_slugify(display)}"
-        return f'<a href="{href}">{display}</a>'
+            return f'<a href="{href}.html">{text}</a>'
+        slug = _slugify(text)
+        return f'<a href="{href}.html#{slug}">{text}</a>'
 
-    return re.sub(r'\[\[([^\]|]+)\|([^\]]+)\]\]', replace, text)
+    # Match <a href="Stem">display text</a> -- display may include emoji/spaces
+    return re.sub(r'<a href="([^"#]+)">([^<]+)</a>', fix, html)
 
 
 def _add_row_ids(html: str) -> str:
@@ -66,8 +68,8 @@ def _add_row_ids(html: str) -> str:
 
 
 def _md_to_html(text: str) -> str:
-    text = _convert_wiki_links(text)
     html = md_lib.markdown(text, extensions=["tables", "toc"])
+    html = _fix_page_links(html)
     return _add_row_ids(html)
 
 
