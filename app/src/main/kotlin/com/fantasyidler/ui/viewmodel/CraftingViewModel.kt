@@ -315,8 +315,7 @@ class CraftingViewModel @Inject constructor(
                 return@launch
             }
 
-            // Build a single aggregate frame regardless of qty to stay within
-            // Android's 2 MB CursorWindow per-row limit.
+            // Build frames — 1 item crafted per minute
             val player = playerRepo.getOrCreatePlayer()
             val freshInv: Map<String, Int> = json.decodeFromString(player.inventory)
             if (!recipe.materials.all { (item, needed) -> (freshInv[item] ?: 0) >= needed * qty }) {
@@ -324,24 +323,25 @@ class CraftingViewModel @Inject constructor(
                 return@launch
             }
             val xpMap: Map<String, Long> = json.decodeFromString(player.skillXp)
-            val startXp     = xpMap[recipe.skillName] ?: 0L
-            val levelBefore = XpTable.levelForXp(startXp)
-            val totalXpGain = (qty * recipe.xpPerItem).toInt()
-            val xpAfter     = startXp + totalXpGain
-            val levelAfter  = XpTable.levelForXp(xpAfter)
-            val frames = listOf(
-                SessionFrame(
-                    minute      = 1,
-                    xpGain      = totalXpGain,
-                    xpBefore    = startXp,
-                    xpAfter     = xpAfter,
+            var currentXp = xpMap[recipe.skillName] ?: 0L
+            val frames = mutableListOf<SessionFrame>()
+            for (i in 1..qty) {
+                val xpBefore    = currentXp
+                val levelBefore = XpTable.levelForXp(currentXp)
+                val xpGain      = recipe.xpPerItem.toInt()
+                currentXp      += xpGain
+                val levelAfter  = XpTable.levelForXp(currentXp)
+                frames += SessionFrame(
+                    minute      = i,
+                    xpGain      = xpGain,
+                    xpBefore    = xpBefore,
+                    xpAfter     = currentXp,
                     levelBefore = levelBefore,
                     levelAfter  = levelAfter,
-                    items       = mapOf(recipe.outputKey to recipe.outputQty * qty),
+                    items       = mapOf(recipe.outputKey to recipe.outputQty),
                     leveledUp   = levelAfter > levelBefore,
-                    kills       = qty,
                 )
-            )
+            }
 
             val levels: Map<String, Int> = json.decodeFromString(player.skillLevels)
             val agilityLevel = levels[Skills.AGILITY] ?: 1

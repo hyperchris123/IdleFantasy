@@ -1,6 +1,10 @@
-• Fix: Herblore ingredients are now correctly consumed after a brewing session completes
-• Fix: Firemaking logs are now correctly consumed after a session completes
-• Fix: Skill capes are now retroactively awarded on app launch for skills already at level 99
-• Fix: Hoe efficiency values corrected to match other tool tiers (mithril hoe now 1.75x)
-• New: Crafting screens now show output quantity for bulk recipes (e.g. arrow tips)
-• New: Font size setting added to Settings — choose Normal, Large, or Huge
+• Fix: Farming tool bonus now displays correctly in the Skills screen
+• Fix: Queue estimated end time is now accurate for crafting, runecrafting, and prayer sessions
+• Fix: Ranged and magic weapons no longer show an irrelevant Strength bonus in item stats
+• Fix: Strength-style weapons (warhammmers, battleaxes) now correctly require Strength level instead of Attack
+• Fix: Bronze boots no longer disappear when unequipped on a new character
+• Fix: Prayer skill description corrected to reflect how the skill actually works
+• New: Quest objectives now display in your device language where translations are available
+• New: Dungeon names now display in your device language where translations are available
+• New: Combat skill rows are now tappable to view a short description of each skill
+• New: Crafting and Skills screens now show the combat style for weapon recipes

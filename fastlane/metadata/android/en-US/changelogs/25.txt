@@ -1,6 +1,0 @@
-• Fix: Herblore ingredients are now correctly consumed after a brewing session completes
-• Fix: Firemaking logs are now correctly consumed after a session completes
-• Fix: Skill capes are now retroactively awarded on app launch for skills already at level 99
-• Fix: Hoe efficiency values corrected to match other tool tiers (mithril hoe now 1.75x)
-• New: Crafting screens now show output quantity for bulk recipes (e.g. arrow tips)
-• New: Font size setting added to Settings — choose Normal, Large, or Huge

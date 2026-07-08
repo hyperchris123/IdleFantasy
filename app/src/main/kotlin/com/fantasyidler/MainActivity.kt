@@ -8,10 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.Density
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -34,14 +31,8 @@ class MainActivity : AppCompatActivity() {
         setContent {
             val settingsViewModel: SettingsViewModel = hiltViewModel()
             val themePreference by settingsViewModel.themePreference.collectAsStateWithLifecycle()
-            val fontScale       by settingsViewModel.fontScale.collectAsStateWithLifecycle()
-            val baseDensity = LocalDensity.current
             FantasyIdlerTheme(themePreference = themePreference) {
-                CompositionLocalProvider(
-                    LocalDensity provides Density(baseDensity.density, fontScale)
-                ) {
-                    AppNavigation()
-                }
+                AppNavigation()
             }
         }
     }
