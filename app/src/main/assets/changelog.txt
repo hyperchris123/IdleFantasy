@@ -1,3 +1,11 @@
+v1.7.2
+• Fix: Mercantile shop items (Ring of Recoil, Amulet of Strength) can now be equipped
+• Fix: Boss fights now show a weapon selector, matching the dungeon start screen
+• Fix: Collecting a session from the Skills screen now counts quest progress, daily quests, and guild progress correctly; firemaking logs are also consumed at collect time
+• Fix: Collecting one worker's completed session no longer cancels the other worker's active session
+• Update: German item translations (contributed by @selki-latah)
+• Update: French Slayer translations (contributed by @widowild1)
+
 v1.7.1
 • New: Agility expeditions added -- explore the Crumbling Watchtower (level 1) and Shattered Spire (level 40) to uncover lore and unlock two new combat dungeons: the Shadow Den and the Arcane Ruins
 • Fix: Slayer task kill progress now correctly counts when collecting a dungeon session from the Home screen
