@@ -17,7 +17,7 @@
     <string name="notif_xp_boost_expired_title">XP Boost a expiré</string>
     <string name="notif_xp_boost_expired_body">Votre bonus de 2x XP a expiré. Rendez-vous sur la boutique pour le réactiver.</string>
     <string name="notif_blessing_expired_title">La bénédiction a expiré</string>
-    <string name="notif_blessing_expired_body">La bénédiction de votre église s'est finie. Rendez-vous à l'église pour la renouveler.</string>
+    <string name="notif_blessing_expired_body">La bénédiction de votre église s\'est finie. Rendez-vous à l\'église pour la renouveler.</string>
 
     <!-- ===== Farming ready ===== -->
     <string name="notif_farming_ready_title">La récolte est prête !</string>
