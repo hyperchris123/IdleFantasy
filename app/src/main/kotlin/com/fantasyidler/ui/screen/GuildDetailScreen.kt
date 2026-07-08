@@ -98,10 +98,11 @@ fun GuildDetailScreen(
 
         Column(Modifier.fillMaxSize().padding(padding)) {
             GuildRepHeader(
-                level                    = state.guildLevel,
-                repInLevel               = state.repInLevel,
-                repForLevel              = state.repForLevel,
+                level                     = state.guildLevel,
+                repInLevel                = state.repInLevel,
+                repForLevel               = state.repForLevel,
                 allCurrentLevelQuestsDone = state.allCurrentLevelQuestsDone,
+                questGateBlocked          = state.questGateBlocked,
             )
 
             TabRow(selectedTabIndex = selectedTab) {
@@ -145,6 +146,7 @@ private fun GuildRepHeader(
     repInLevel: Long,
     repForLevel: Long,
     allCurrentLevelQuestsDone: Boolean,
+    questGateBlocked: Boolean,
 ) {
     Column(
         modifier = Modifier
@@ -163,7 +165,7 @@ private fun GuildRepHeader(
             LinearProgressIndicator(
                 progress = { (repInLevel.toFloat() / repForLevel.toFloat()).coerceIn(0f, 1f) },
                 modifier = Modifier.fillMaxWidth(),
-                color    = GoldPrimary,
+                color    = if (questGateBlocked) MaterialTheme.colorScheme.error else GoldPrimary,
             )
             Spacer(Modifier.height(2.dp))
             Text(
@@ -171,13 +173,23 @@ private fun GuildRepHeader(
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
-            if (allCurrentLevelQuestsDone && repInLevel < repForLevel) {
-                Spacer(Modifier.height(4.dp))
-                Text(
-                    text  = stringResource(R.string.guild_do_dailies_hint),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = GoldPrimary,
-                )
+            when {
+                questGateBlocked -> {
+                    Spacer(Modifier.height(4.dp))
+                    Text(
+                        text  = stringResource(R.string.guild_quest_gate_blocked),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.error,
+                    )
+                }
+                allCurrentLevelQuestsDone && repInLevel < repForLevel -> {
+                    Spacer(Modifier.height(4.dp))
+                    Text(
+                        text  = stringResource(R.string.guild_do_dailies_hint),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = GoldPrimary,
+                    )
+                }
             }
         }
     }

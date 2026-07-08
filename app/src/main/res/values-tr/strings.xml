@@ -826,4 +826,9 @@
     <string name="profile_view_combat_gear">View Combat Gear</string>
     <string name="inn_slot1_header">Long Laborer</string>
     <string name="inn_slot2_header">Skilled Worker</string>
+    <string name="guild_quest_gate_blocked">Complete quests to advance your rank</string>
+    <string name="guild_quest_required">Quest required to advance</string>
+    <string name="home_xp_boost_active">2× XP Boost active — %1$s remaining</string>
+    <string name="inn_buy_qty">Quantity</string>
+    <string name="inn_buy_total">Total: %1$s</string>
 </resources>

@@ -352,11 +352,14 @@
 
     <!-- ===== translate — HomeScreen ===== -->
     <string name="home_town_title">Town</string>
-    <string name="home_town_desc">Visit the shop, inn, guild, and church</string>
+    <string name="home_town_desc">Visit the shop, inn, guild, church, and slayer master</string>
     <string name="guild_dailies_available">Dailies available</string>
     <string name="guild_do_dailies_hint">Do dailies to increase your reputation</string>
+    <string name="guild_quest_gate_blocked">Complete quests to advance your rank</string>
+    <string name="guild_quest_required">Quest required to advance</string>
     <string name="home_died_message">Du bist gestorben und hast den Großteil deiner Gewinne verloren.</string>
     <string name="home_xp_boost_was_active">2× XP Boost war aktiv</string>
+    <string name="home_xp_boost_active">2× XP Boost aktiv — noch %1$s</string>
     <string name="home_loot">Beute</string>
     <string name="home_food_consumed">Verzehrte Lebensmittel</string>
     <string name="home_bones_buried">Begrabene Knochen</string>
@@ -582,6 +585,8 @@
     <string name="inn_daily_resets">Refreshes daily at 6am</string>
     <string name="inn_food_heal">+%1$d HP</string>
     <string name="inn_food_purchased">Food purchased.</string>
+    <string name="inn_buy_qty">Quantity</string>
+    <string name="inn_buy_total">Total: %1$s</string>
     <string name="inn_card_desc">Hire workers and stock food</string>
     <string name="worker_no_active_session">Worker is idle — no sessions queued</string>
     <string name="worker_add_sessions">Add Sessions</string>

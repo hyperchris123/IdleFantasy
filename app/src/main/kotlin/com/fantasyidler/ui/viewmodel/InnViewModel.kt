@@ -99,9 +99,9 @@ class InnViewModel @Inject constructor(
         }
     }
 
-    fun buyFood(key: String, price: Int) {
+    fun buyFood(key: String, price: Int, qty: Int = 1) {
         viewModelScope.launch {
-            val success = playerRepo.buyItem(key, 1, price)
+            val success = playerRepo.buyItem(key, qty, price)
             _extra.update {
                 it.copy(
                     snackbarMessage = if (success) context.getString(R.string.inn_food_purchased)

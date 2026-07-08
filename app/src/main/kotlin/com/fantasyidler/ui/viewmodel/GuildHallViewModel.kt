@@ -23,6 +23,7 @@ data class GuildSummary(
     val claimableQuestCount: Int,
     val claimableDailyCount: Int,
     val hasDailiesAvailable: Boolean,
+    val questGateBlocked: Boolean,
 )
 
 data class GuildHallUiState(
@@ -64,6 +65,9 @@ class GuildHallViewModel @Inject constructor(
             val claimableDailies = dailies.count { it.progress >= it.template.amount && !it.claimed }
             val hasDailiesAvailable = dailies.isNotEmpty() && dailies.any { !it.claimed }
 
+            val tierQuests = gameData.guildQuests.values.filter { it.guild == guild && it.guildLevelRequired == level }
+            val questGateBlocked = rep > 0L && level < 10 && tierQuests.isNotEmpty() && tierQuests.any { it.id !in completedQuestIds }
+
             GuildSummary(
                 guildKey            = guild,
                 level               = level,
@@ -73,6 +77,7 @@ class GuildHallViewModel @Inject constructor(
                 claimableQuestCount = claimableQuests,
                 claimableDailyCount = claimableDailies,
                 hasDailiesAvailable = hasDailiesAvailable,
+                questGateBlocked    = questGateBlocked,
             )
         }
 

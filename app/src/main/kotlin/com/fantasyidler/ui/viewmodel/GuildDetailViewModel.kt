@@ -35,6 +35,7 @@ data class GuildDetailUiState(
     val dailies: List<GuildDailyWithProgress> = emptyList(),
     val nextResetMs: Long = 0L,
     val allCurrentLevelQuestsDone: Boolean = false,
+    val questGateBlocked: Boolean = false,
     val snackbarMessage: String? = null,
 )
 
@@ -86,20 +87,21 @@ class GuildDetailViewModel @Inject constructor(
 
         val dailies = guildRepo.getGuildDailiesWithProgress(guild, flags)
 
-        val allCurrentLevelQuestsDone = level >= 1 && gameData.guildQuests.values
-            .filter { it.guild == guild && it.guildLevelRequired == level }
-            .all { it.id in completedQuestIds }
+        val tierQuests = gameData.guildQuests.values.filter { it.guild == guild && it.guildLevelRequired == level }
+        val allCurrentLevelQuestsDone = level >= 1 && tierQuests.all { it.id in completedQuestIds }
+        val questGateBlocked = level < 10 && tierQuests.isNotEmpty() && tierQuests.any { it.id !in completedQuestIds }
 
         extra.copy(
-            isLoading                = false,
-            guildKey                 = guild,
-            guildLevel               = level,
-            guildRep                 = rep,
-            repInLevel               = repInLevel,
-            repForLevel              = repForLevel,
-            quests                   = quests,
-            dailies                  = dailies,
+            isLoading                 = false,
+            guildKey                  = guild,
+            guildLevel                = level,
+            guildRep                  = rep,
+            repInLevel                = repInLevel,
+            repForLevel               = repForLevel,
+            quests                    = quests,
+            dailies                   = dailies,
             allCurrentLevelQuestsDone = allCurrentLevelQuestsDone,
+            questGateBlocked          = questGateBlocked,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), GuildDetailUiState(guildKey = guild))
 

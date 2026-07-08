@@ -56,6 +56,8 @@ data class PlayerFlags(
     @SerialName("guild_daily_claimed") val guildDailyClaimed: List<String> = emptyList(),
     /** Epoch ms when today's guild dailies were generated (used to detect 6am rollover). */
     @SerialName("guild_daily_generated_at") val guildDailyGeneratedAt: Long = 0L,
+    /** Tracks the highest guild level whose quest-progress has been reset on tier-up. guild key → level. */
+    @SerialName("guild_quest_reset_levels") val guildQuestResetLevels: Map<String, Int> = emptyMap(),
     /** Notes found per skilling dungeon key (e.g. "copper_caverns" -> 3). */
     @SerialName("skilling_dungeon_notes") val skillingDungeonNotes: Map<String, Int> = emptyMap(),
     /** Combat dungeon keys that have been unlocked via lore completion. */
