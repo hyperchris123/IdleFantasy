@@ -64,12 +64,13 @@ def write_pages(out: Path, pages: dict[str, str]):
 
 def run_update():
     with tempfile.TemporaryDirectory() as tmpdir:
+        wiki_dir = Path(tmpdir)
         pages = get_pages()
         print(f"Generated {len(pages)} pages.")
 
-        clone_wiki(Path(tmpdir))
-        write_pages(WIKI_DIR, pages)
-        commit_and_push(Path(tmpdir))
+        clone_wiki(wiki_dir)
+        write_pages(wiki_dir, pages)
+        commit_and_push(wiki_dir)
         print("Done.")
 
 
