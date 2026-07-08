@@ -589,4 +589,22 @@
     <string name="item_super_ranging_potion_name">Pozione Super Attacco a Distanza</string>
     <string name="item_super_magic_potion_name">Pozione Super Magia</string>
     <string name="item_overload_potion_name">Pozione Sovraccarico</string>
+
+    <!-- Enhanced potions -->
+    <string name="item_enhanced_attack_brew_name">Birra d\'attacco potenziata</string>
+    <string name="item_enhanced_defense_brew_name">Birra di difesa potenziata</string>
+    <string name="item_enhanced_attack_potion_name">Pozione d\'attacco potenziata</string>
+    <string name="item_enhanced_defense_potion_name">Pozione di difesa potenziata</string>
+    <string name="item_enhanced_onion_brew_name">Birra di cipolla potenziata</string>
+    <string name="item_enhanced_carrot_brew_name">Birra di carota potenziata</string>
+    <string name="item_enhanced_strength_brew_name">Birra di forza potenziata</string>
+    <string name="item_enhanced_strength_potion_name">Pozione di forza potenziata</string>
+    <string name="item_enhanced_ranging_potion_name">Pozione di tiro potenziata</string>
+    <string name="item_enhanced_magic_potion_name">Pozione magica potenziata</string>
+    <string name="item_enhanced_super_strength_potion_name">Pozione di super forza potenziata</string>
+    <string name="item_enhanced_super_attack_potion_name">Pozione di super attacco potenziata</string>
+    <string name="item_enhanced_super_defense_potion_name">Pozione di super difesa potenziata</string>
+    <string name="item_enhanced_super_ranging_potion_name">Pozione di super tiro potenziata</string>
+    <string name="item_enhanced_super_magic_potion_name">Pozione di super magia potenziata</string>
+    <string name="item_enhanced_overload_potion_name">Pozione di sovraccarico potenziata</string>
 </resources>

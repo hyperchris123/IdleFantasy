@@ -858,4 +858,77 @@
     <string name="achievement_prestige_all_1_desc">Prestige all skills at least once</string>
     <string name="achievement_prestige_all_3_name">True Prestige</string>
     <string name="achievement_prestige_all_3_desc">Reach Prestige 3 on every skill</string>
+
+    <!-- Shop categories -->
+    <string name="shop_cat_ores_and_materials">Minerales y Materiales</string>
+    <string name="shop_cat_logs_and_wood">Troncos y Madera</string>
+    <string name="shop_cat_seeds_and_farming">Semillas y Agricultura</string>
+    <string name="shop_cat_merchants_guild">Gremio de Mercaderes</string>
+    <string name="shop_cat_equipment">Equipamiento</string>
+    <string name="shop_cat_special">Especial</string>
+    <string name="shop_cat_weapons">Armas</string>
+    <string name="shop_cat_armor">Armadura</string>
+    <string name="shop_cat_tools">Herramientas</string>
+    <string name="shop_cat_food">Comida</string>
+    <string name="shop_cat_materials">Materiales</string>
+    <string name="shop_cat_misc">Varios</string>
+
+    <string name="crafting_per_craft">×%1$d por fabricación</string>
+
+    <!-- Skills screen localisation -->
+    <string name="farming_ready_in">Listo en %1$s</string>
+    <string name="trade_route_local_market_name">Mercado local</string>
+    <string name="trade_route_river_trading_post_name">Puesto comercial del río</string>
+    <string name="trade_route_eastern_caravan_name">Caravana del Este</string>
+    <string name="trade_route_grand_exchange_name">Gran Intercambio</string>
+    <string name="trade_route_merchants_quarter_name">Barrio de los Mercaderes</string>
+    <string name="trade_route_northern_ports_name">Puertos del Norte</string>
+    <string name="trade_route_local_market_desc">Comercia bienes comunes en el mercado local. Las ganancias son modestas pero variables.</string>
+    <string name="trade_route_river_trading_post_desc">Mueve mercancías por la ruta comercial del río. Las ganancias son impredecibles pero a menudo valen la pena.</string>
+    <string name="trade_route_eastern_caravan_desc">Únete a una caravana mercante hacia el este. El largo viaje paga bien cuando el trato se cierra.</string>
+    <string name="trade_route_grand_exchange_desc">Comercia en el legendario Gran Intercambio donde se hacen y se pierden fortunas.</string>
+    <string name="trade_route_merchants_quarter_desc">Comercia mercancías raras en el prestigioso barrio de los mercaderes.</string>
+    <string name="trade_route_northern_ports_desc">Lleva carga preciosa a las ciudades portuarias del norte. Alto riesgo, alta recompensa.</string>
+    <string name="crafting_cat_bar">Lingote</string>
+    <string name="crafting_cat_component">Componente</string>
+    <string name="crafting_cat_tool">Herramienta</string>
+    <string name="crafting_cat_weapon">Arma</string>
+    <string name="crafting_cat_armour">Armadura</string>
+    <string name="crafting_cat_equipment">Equipamiento</string>
+    <string name="crafting_cat_food">Comida</string>
+    <string name="crafting_cat_ammunition">Munición</string>
+    <string name="crafting_cat_jewellery">Joyería</string>
+    <string name="crafting_cat_potion">Poción</string>
+
+    <!-- Crafting tier filter chips -->
+    <string name="crafting_tier_adamantite">Adamantio</string>
+    <string name="crafting_tier_arrow">Flecha</string>
+    <string name="crafting_tier_bronze">Bronce</string>
+    <string name="crafting_tier_gold">Oro</string>
+    <string name="crafting_tier_iron">Hierro</string>
+    <string name="crafting_tier_magic">Mágico</string>
+    <string name="crafting_tier_maple">Arce</string>
+    <string name="crafting_tier_mithril">Mithril</string>
+    <string name="crafting_tier_oak">Roble</string>
+    <string name="crafting_tier_platinum">Platino</string>
+    <string name="crafting_tier_runite">Runite</string>
+    <string name="crafting_tier_shortbow">Arco corto</string>
+    <string name="crafting_tier_silver">Plata</string>
+    <string name="crafting_tier_staff">Bastón</string>
+    <string name="crafting_tier_steel">Acero</string>
+    <string name="crafting_tier_willow">Sauce</string>
+    <string name="crafting_tier_yew">Tejo</string>
+
+    <!-- Firemaking rework + ash catalyst + fertilizer -->
+    <string name="firemaking_logs_in_inventory">en inventario</string>
+    <string name="firemaking_burns_to">Se quema en %1$s</string>
+    <string name="firemaking_burn">Quemar</string>
+    <string name="farming_fertilizer">Fertilizante</string>
+    <string name="farming_fertilizer_optional">Añadir fertilizante (opc.)</string>
+    <string name="farming_fertilizer_yield">+%1$d%% rendimiento</string>
+    <string name="farming_fertilized">Fertilizado</string>
+    <string name="catalyst_optional">Catalizador de ceniza (opc.)</string>
+    <string name="catalyst_enhanced_output">Produce poción mejorada</string>
+    <string name="catalyst_rune_bonus">+%1$d runa por esencia</string>
+    <string name="catalyst_none">Sin catalizador</string>
 </resources>

@@ -18,7 +18,7 @@ import javax.inject.Singleton
 
 private val GATHERING_SKILLS = setOf(
     Skills.MINING, Skills.WOODCUTTING, Skills.FISHING,
-    Skills.FIREMAKING, Skills.AGILITY, "combat", "boss",
+    Skills.AGILITY, "combat", "boss",
 )
 
 /**
@@ -127,15 +127,11 @@ class WorkerQueuedSessionStarter @Inject constructor(
             }
             Skills.FIREMAKING -> {
                 val logKey  = action.activityKey
+                val qty     = action.qty.takeIf { it > 0 } ?: return
+                val logData = gameData.logs[logKey] ?: return
                 val ashKey  = ashForLog(logKey)
-                val result  = SkillSimulator.simulateGathering(
-                    skillData          = gameData.firemakingSkillData,
-                    startXp            = xpMap[Skills.FIREMAKING] ?: 0L,
-                    agilityLevel       = agilityLevel,
-                    petBoostPct        = 0,
-                    forcedDropPerFrame = ashKey,
-                )
-                startSession(slot, action, result.frames, durationMs, efficiencyMultiplier)
+                val frames  = buildCraftFrames(xpMap[Skills.FIREMAKING] ?: 0L, qty, logData.xpPerLog.toDouble(), 1, ashKey)
+                startSession(slot, action, frames, durationMs, 1.0f)
             }
             Skills.RUNECRAFTING -> {
                 val runeKey  = action.activityKey

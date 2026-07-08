@@ -588,4 +588,22 @@
     <string name="item_super_ranging_potion_name">Super potion de tir à distance</string>
     <string name="item_super_magic_potion_name">Super potion magique</string>
     <string name="item_overload_potion_name">Potion de surchage</string>
+
+    <!-- Enhanced potions -->
+    <string name="item_enhanced_attack_brew_name">Bière d\'attaque améliorée</string>
+    <string name="item_enhanced_defense_brew_name">Bière de défense améliorée</string>
+    <string name="item_enhanced_attack_potion_name">Potion d\'attaque améliorée</string>
+    <string name="item_enhanced_defense_potion_name">Potion de défense améliorée</string>
+    <string name="item_enhanced_onion_brew_name">Bière d\'oignon améliorée</string>
+    <string name="item_enhanced_carrot_brew_name">Bière de carotte améliorée</string>
+    <string name="item_enhanced_strength_brew_name">Bière de force améliorée</string>
+    <string name="item_enhanced_strength_potion_name">Potion de force améliorée</string>
+    <string name="item_enhanced_ranging_potion_name">Potion de tir améliorée</string>
+    <string name="item_enhanced_magic_potion_name">Potion de magie améliorée</string>
+    <string name="item_enhanced_super_strength_potion_name">Potion de super force améliorée</string>
+    <string name="item_enhanced_super_attack_potion_name">Potion de super attaque améliorée</string>
+    <string name="item_enhanced_super_defense_potion_name">Potion de super défense améliorée</string>
+    <string name="item_enhanced_super_ranging_potion_name">Potion de super tir améliorée</string>
+    <string name="item_enhanced_super_magic_potion_name">Potion de super magie améliorée</string>
+    <string name="item_enhanced_overload_potion_name">Potion de surcharge améliorée</string>
 </resources>

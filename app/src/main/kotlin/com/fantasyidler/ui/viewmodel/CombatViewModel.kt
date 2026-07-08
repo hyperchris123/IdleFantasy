@@ -389,21 +389,13 @@ class CombatViewModel @Inject constructor(
 
                 val totalAttacks = result.frames.size * CombatSimulator.TICKS_PER_FRAME
 
-                // Consume magic runes: 1 cast per attack attempt (hit or miss)
+                // Consume magic runes: 1 cast per attack attempt (hit or miss); consume what's available
                 if (combatStyle == "magic" && selectedSpell != null && totalAttacks > 0) {
                     val staffCoversRune = weapon?.infiniteRunes == selectedSpell.runeType
                     if (!staffCoversRune) {
                         val runesNeeded = totalAttacks * selectedSpell.runeCost
-                        val ok = playerRepo.consumeItems(mapOf(selectedSpell.runeType to runesNeeded))
-                        if (!ok) {
-                            _extra.update {
-                                it.copy(
-                                    snackbarMessage = "Not enough ${selectedSpell.displayName.substringBefore(" ")} runes (need $runesNeeded).",
-                                    startingSession = false,
-                                )
-                            }
-                            return@launch
-                        }
+                        val runesToConsume = minOf(runesNeeded, inventory[selectedSpell.runeType] ?: 0)
+                        if (runesToConsume > 0) playerRepo.consumeItems(mapOf(selectedSpell.runeType to runesToConsume))
                     }
                 }
 
@@ -529,11 +521,8 @@ class CombatViewModel @Inject constructor(
                     val staffCoversRune = bossWeapon?.infiniteRunes == selectedSpell.runeType
                     if (!staffCoversRune) {
                         val runesNeeded = totalAttacks * selectedSpell.runeCost
-                        val ok = playerRepo.consumeItems(mapOf(selectedSpell.runeType to runesNeeded))
-                        if (!ok) {
-                            _extra.update { it.copy(snackbarMessage = "Not enough ${selectedSpell.displayName.substringBefore(" ")} runes (need $runesNeeded).", startingSession = false) }
-                            return@launch
-                        }
+                        val runesToConsume = minOf(runesNeeded, inventory[selectedSpell.runeType] ?: 0)
+                        if (runesToConsume > 0) playerRepo.consumeItems(mapOf(selectedSpell.runeType to runesToConsume))
                     }
                 }
                 val framesJson = json.encodeToString(

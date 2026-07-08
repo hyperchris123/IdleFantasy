@@ -231,9 +231,8 @@ class HomeViewModel @Inject constructor(
             var bossWon: Boolean? = null  // set when session is a boss fight
             val awardedCapes = mutableListOf<String>()
 
-            val gatheringSkills = setOf(Skills.MINING, Skills.WOODCUTTING, Skills.FISHING,
-                Skills.AGILITY, Skills.FIREMAKING, Skills.RUNECRAFTING)
-            val craftingSkills  = setOf(Skills.SMITHING, Skills.COOKING, Skills.FLETCHING, Skills.CRAFTING, Skills.HERBLORE)
+            val gatheringSkills = setOf(Skills.MINING, Skills.WOODCUTTING, Skills.FISHING, Skills.AGILITY)
+            val craftingSkills  = setOf(Skills.SMITHING, Skills.COOKING, Skills.FLETCHING, Skills.CRAFTING, Skills.HERBLORE, Skills.FIREMAKING, Skills.RUNECRAFTING)
 
             for (session in sessions) {
                 val frames: List<SessionFrame> = json.decodeFromString(session.frames)
@@ -439,10 +438,6 @@ class HomeViewModel @Inject constructor(
                             }
                             Skills.FARMING     -> guildRepo.recordGuildGathering(Skills.FARMING, regular)
                         }
-                        // Firemaking logs consumed at collect time; all other input materials consumed at session start.
-                        if (session.skillName == Skills.FIREMAKING) {
-                            playerRepo.consumeItems(mapOf(session.activityKey to frames.size))
-                        }
                         for ((id, _) in pets) {
                             val pd = gameData.pets[id] ?: continue
                             if (playerRepo.addPetIfNew(id, pd.boostPercent))
@@ -565,7 +560,7 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             val session = sessionRepo.getActiveSession() ?: return@launch
             val craftingSkills = setOf(Skills.SMITHING, Skills.COOKING, Skills.FLETCHING,
-                Skills.CRAFTING, Skills.HERBLORE, Skills.RUNECRAFTING, Skills.PRAYER)
+                Skills.CRAFTING, Skills.HERBLORE, Skills.FIREMAKING, Skills.RUNECRAFTING, Skills.PRAYER)
             val frames = json.decodeFromString<List<SessionFrame>>(session.frames)
             val qty = if (session.skillName in craftingSkills)
                 frames.firstOrNull()?.kills ?: 0 else 0
@@ -680,9 +675,8 @@ class HomeViewModel @Inject constructor(
             var petMessage: String? = null
             val awardedCapes = mutableListOf<String>()
 
-            val gatheringSkills = setOf(Skills.MINING, Skills.WOODCUTTING, Skills.FISHING,
-                Skills.AGILITY, Skills.FIREMAKING, Skills.RUNECRAFTING)
-            val craftingSkills  = setOf(Skills.SMITHING, Skills.COOKING, Skills.FLETCHING, Skills.CRAFTING, Skills.HERBLORE)
+            val gatheringSkills = setOf(Skills.MINING, Skills.WOODCUTTING, Skills.FISHING, Skills.AGILITY)
+            val craftingSkills  = setOf(Skills.SMITHING, Skills.COOKING, Skills.FLETCHING, Skills.CRAFTING, Skills.HERBLORE, Skills.FIREMAKING, Skills.RUNECRAFTING)
 
             for (session in sessions) {
                 val frames: List<SessionFrame> = json.decodeFromString(session.frames)
@@ -882,7 +876,7 @@ class HomeViewModel @Inject constructor(
 
     private fun workerMaterialsFor(skillName: String, activityKey: String, qty: Int): Map<String, Int>? =
         playerSessionMaterials(skillName, activityKey, qty, gameData)
-            ?: if (skillName == Skills.FIREMAKING && qty > 0) mapOf(activityKey to qty) else null
+            ?: null
 
     fun workerSummaryConsumed() = _extra.update { it.copy(workerSummary = null) }
 
@@ -961,6 +955,7 @@ fun playerSessionMaterials(
         Skills.FLETCHING    -> gameData.fletchingRecipes[activityKey]?.materials?.mapValues { it.value * qty }
         Skills.CRAFTING     -> gameData.craftingRecipes[activityKey]?.materials?.mapValues { it.value * qty }
         Skills.HERBLORE     -> gameData.herbloreRecipes[activityKey]?.materials?.mapValues { it.value * qty }
+        Skills.FIREMAKING   -> mapOf(activityKey to qty)
         else                -> null
     }
 }

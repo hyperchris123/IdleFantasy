@@ -589,4 +589,22 @@
     <string name="item_super_ranging_potion_name">Süper Menzilli İksiri</string>
     <string name="item_super_magic_potion_name">Süper Büyü İksiri</string>
     <string name="item_overload_potion_name">Aşırı Yük İksiri</string>
+
+    <!-- Enhanced potions -->
+    <string name="item_enhanced_attack_brew_name">Güçlendirilmiş saldırı birası</string>
+    <string name="item_enhanced_defense_brew_name">Güçlendirilmiş savunma birası</string>
+    <string name="item_enhanced_attack_potion_name">Güçlendirilmiş saldırı iksiri</string>
+    <string name="item_enhanced_defense_potion_name">Güçlendirilmiş savunma iksiri</string>
+    <string name="item_enhanced_onion_brew_name">Güçlendirilmiş soğan birası</string>
+    <string name="item_enhanced_carrot_brew_name">Güçlendirilmiş havuç birası</string>
+    <string name="item_enhanced_strength_brew_name">Güçlendirilmiş güç birası</string>
+    <string name="item_enhanced_strength_potion_name">Güçlendirilmiş güç iksiri</string>
+    <string name="item_enhanced_ranging_potion_name">Güçlendirilmiş menzil iksiri</string>
+    <string name="item_enhanced_magic_potion_name">Güçlendirilmiş büyü iksiri</string>
+    <string name="item_enhanced_super_strength_potion_name">Güçlendirilmiş süper güç iksiri</string>
+    <string name="item_enhanced_super_attack_potion_name">Güçlendirilmiş süper saldırı iksiri</string>
+    <string name="item_enhanced_super_defense_potion_name">Güçlendirilmiş süper savunma iksiri</string>
+    <string name="item_enhanced_super_ranging_potion_name">Güçlendirilmiş süper menzil iksiri</string>
+    <string name="item_enhanced_super_magic_potion_name">Güçlendirilmiş süper büyü iksiri</string>
+    <string name="item_enhanced_overload_potion_name">Güçlendirilmiş aşırı yük iksiri</string>
 </resources>

@@ -37,6 +37,8 @@ data class FarmingUiState(
     val patchCount:     Int                    = 3,
     val patches:        List<FarmingPatch>     = emptyList(),
     val inventory:      Map<String, Int>       = emptyMap(),
+    /** patchNumber.toString() → ash key applied as fertilizer. */
+    val fertilizer:     Map<String, String>    = emptyMap(),
     val availableCrops: List<CropData>         = emptyList(),
     /** Epoch-ms "now" updated every 10 seconds for time-remaining calculations. */
     val now:            Long                   = System.currentTimeMillis(),
@@ -89,6 +91,7 @@ class FarmingViewModel @Inject constructor(
         val levels: Map<String, Int>  = json.decodeFromString(player.skillLevels)
         val xpMap:  Map<String, Long> = json.decodeFromString(player.skillXp)
         val inv:    Map<String, Int>  = json.decodeFromString(player.inventory)
+        val flags = try { json.decodeFromString<com.fantasyidler.data.model.PlayerFlags>(player.flags) } catch (_: Exception) { com.fantasyidler.data.model.PlayerFlags() }
 
         val farmingLevel = levels[Skills.FARMING] ?: 1
         val farmingXp    = xpMap[Skills.FARMING]  ?: 0L
@@ -106,6 +109,7 @@ class FarmingViewModel @Inject constructor(
             patches        = patches,
             inventory      = inv,
             availableCrops = availableCrops,
+            fertilizer     = flags.farmingFertilizer,
             now            = now,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), FarmingUiState())
@@ -146,7 +150,7 @@ class FarmingViewModel @Inject constructor(
         }
     }
 
-    fun plantCrop(patchNumber: Int, crop: CropData) {
+    fun plantCrop(patchNumber: Int, crop: CropData, ashKey: String? = null) {
         viewModelScope.launch {
             closePlantSheet()
             val seedName = crop.seedName.replace('_', ' ')
@@ -155,9 +159,9 @@ class FarmingViewModel @Inject constructor(
                 delay(300)
                 val emptyPatches = farmingRepo.getEmptyPatches(uiState.value.patchCount)
                 var plantedCount = 0
-                
+
                 for (patchNum in emptyPatches) {
-                    if (farmingRepo.plantCrop(patchNum, crop)) plantedCount++ else break
+                    if (farmingRepo.plantCrop(patchNum, crop, ashKey)) plantedCount++ else break
                 }
 
                 val msg = if (plantedCount == 0) {
@@ -169,7 +173,7 @@ class FarmingViewModel @Inject constructor(
                 }
                 _extra.update { it.copy(snackbarMessage = msg) }
             } else {
-                if (!farmingRepo.plantCrop(patchNumber, crop)) {
+                if (!farmingRepo.plantCrop(patchNumber, crop, ashKey)) {
                     _extra.update { it.copy(snackbarMessage = context.getString(R.string.farming_no_seeds_inventory, seedName)) }
                 }
             }

@@ -41,10 +41,18 @@ class FarmingRepository @Inject constructor(
         return (1..patchCount).filter { it !in occupiedNumbers }
     }
 
-    /** Consume seed from inventory and plant it. Returns false if seed is missing. */
-    suspend fun plantCrop(patchNumber: Int, crop: CropData): Boolean {
+    /** Consume seed (and optional fertilizer ash) from inventory and plant the crop. Returns false if seed is missing. */
+    suspend fun plantCrop(patchNumber: Int, crop: CropData, ashKey: String? = null): Boolean {
         val consumed = playerRepo.consumeItems(mapOf(crop.seedName to 1))
         if (!consumed) return false
+
+        if (ashKey != null) {
+            playerRepo.consumeItems(mapOf(ashKey to 1))
+            val flags = playerRepo.getFlags()
+            playerRepo.updateFlags(flags.copy(
+                farmingFertilizer = flags.farmingFertilizer + (patchNumber.toString() to ashKey)
+            ))
+        }
 
         val plantedAt = System.currentTimeMillis()
         patchDao.upsert(FarmingPatch(patchNumber = patchNumber, cropType = crop.id, plantedAt = plantedAt))
@@ -73,8 +81,12 @@ class FarmingRepository @Inject constructor(
         val hoeBonus    = equipped[EquipSlot.HOE]?.let { gameData.equipment[it]?.farmingEfficiency } ?: 0f
         val capedDouble = equipped[EquipSlot.CAPE] == "farming_cape"
 
+        val flags = playerRepo.getFlags()
+        val ashKey = flags.farmingFertilizer[patchNumber.toString()]
+        val ashMult = ashYieldMultiplier(ashKey)
+
         var yield = Random.nextInt(crop.yieldMin, crop.yieldMax + 1)
-        yield = (yield * (1f + hoeBonus)).roundToInt()
+        yield = (yield * (1f + hoeBonus) * ashMult).roundToInt()
         if (capedDouble) yield *= 2
 
         val items = buildMap<String, Int> {
@@ -88,8 +100,27 @@ class FarmingRepository @Inject constructor(
             itemsGained = items,
         )
 
+        if (ashKey != null) {
+            playerRepo.updateFlags(flags.copy(
+                farmingFertilizer = flags.farmingFertilizer - patchNumber.toString()
+            ))
+        }
+
         cancelAlarm(patchNumber)
         patchDao.clear(patchNumber)
+    }
+
+    companion object {
+        fun ashYieldMultiplier(ashKey: String?): Float = when (ashKey) {
+            "ashes"         -> 1.10f
+            "oak_ashes"     -> 1.20f
+            "willow_ashes"  -> 1.35f
+            "maple_ashes"   -> 1.50f
+            "yew_ashes"     -> 1.75f
+            "magic_ashes"   -> 2.00f
+            "redwood_ashes" -> 2.50f
+            else            -> 1.00f
+        }
     }
 
     /** Remove the crop without reward, and claw back the planting XP. */

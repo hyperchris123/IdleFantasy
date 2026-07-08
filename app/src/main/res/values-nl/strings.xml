@@ -834,4 +834,77 @@
     <string name="achievement_prestige_all_1_desc">Prestige all skills at least once</string>
     <string name="achievement_prestige_all_3_name">True Prestige</string>
     <string name="achievement_prestige_all_3_desc">Reach Prestige 3 on every skill</string>
+
+    <!-- Shop categories -->
+    <string name="shop_cat_ores_and_materials">Ertsen &amp; Materialen</string>
+    <string name="shop_cat_logs_and_wood">Houtblokken &amp; Hout</string>
+    <string name="shop_cat_seeds_and_farming">Zaden &amp; Landbouw</string>
+    <string name="shop_cat_merchants_guild">Handelsgilde</string>
+    <string name="shop_cat_equipment">Uitrusting</string>
+    <string name="shop_cat_special">Speciaal</string>
+    <string name="shop_cat_weapons">Wapens</string>
+    <string name="shop_cat_armor">Wapenrusting</string>
+    <string name="shop_cat_tools">Gereedschap</string>
+    <string name="shop_cat_food">Voedsel</string>
+    <string name="shop_cat_materials">Materialen</string>
+    <string name="shop_cat_misc">Overig</string>
+
+    <string name="crafting_per_craft">×%1$d per beurt</string>
+
+    <!-- Skills screen localisation -->
+    <string name="farming_ready_in">Klaar over %1$s</string>
+    <string name="trade_route_local_market_name">Lokale markt</string>
+    <string name="trade_route_river_trading_post_name">Handelspost aan de rivier</string>
+    <string name="trade_route_eastern_caravan_name">Oosterkaravaan</string>
+    <string name="trade_route_grand_exchange_name">Grote Beurs</string>
+    <string name="trade_route_merchants_quarter_name">Koopliedenwijk</string>
+    <string name="trade_route_northern_ports_name">Noordelijke havens</string>
+    <string name="trade_route_local_market_desc">Verhandel gewone goederen op de lokale markt. De opbrengsten zijn bescheiden maar variabel.</string>
+    <string name="trade_route_river_trading_post_desc">Verplaats goederen langs de rivierhandelsroute. De winsten zijn onvoorspelbaar maar vaak de moeite waard.</string>
+    <string name="trade_route_eastern_caravan_desc">Sluit je aan bij een handelskaravaan naar het oosten. De lange reis loont goed als de deal doorgaat.</string>
+    <string name="trade_route_grand_exchange_desc">Handel op de legendarische Grote Beurs waar fortuinen worden gemaakt en verloren.</string>
+    <string name="trade_route_merchants_quarter_desc">Verhandel zeldzame goederen in het prestigieuze koopliedenwijk.</string>
+    <string name="trade_route_northern_ports_desc">Vervoer kostbare lading naar de noordelijke havensteden. Hoog risico, hoge beloning.</string>
+    <string name="crafting_cat_bar">Staaf</string>
+    <string name="crafting_cat_component">Onderdeel</string>
+    <string name="crafting_cat_tool">Gereedschap</string>
+    <string name="crafting_cat_weapon">Wapen</string>
+    <string name="crafting_cat_armour">Wapenrusting</string>
+    <string name="crafting_cat_equipment">Uitrusting</string>
+    <string name="crafting_cat_food">Voedsel</string>
+    <string name="crafting_cat_ammunition">Munitie</string>
+    <string name="crafting_cat_jewellery">Sieraden</string>
+    <string name="crafting_cat_potion">Drankje</string>
+
+    <!-- Crafting tier filter chips -->
+    <string name="crafting_tier_adamantite">Adamantiet</string>
+    <string name="crafting_tier_arrow">Pijl</string>
+    <string name="crafting_tier_bronze">Brons</string>
+    <string name="crafting_tier_gold">Goud</string>
+    <string name="crafting_tier_iron">IJzer</string>
+    <string name="crafting_tier_magic">Magisch</string>
+    <string name="crafting_tier_maple">Esdoorn</string>
+    <string name="crafting_tier_mithril">Mithril</string>
+    <string name="crafting_tier_oak">Eiken</string>
+    <string name="crafting_tier_platinum">Platina</string>
+    <string name="crafting_tier_runite">Runiet</string>
+    <string name="crafting_tier_shortbow">Korte boog</string>
+    <string name="crafting_tier_silver">Zilver</string>
+    <string name="crafting_tier_staff">Staf</string>
+    <string name="crafting_tier_steel">Staal</string>
+    <string name="crafting_tier_willow">Wilg</string>
+    <string name="crafting_tier_yew">Taxus</string>
+
+    <!-- Firemaking rework + ash catalyst + fertilizer -->
+    <string name="firemaking_logs_in_inventory">in inventaris</string>
+    <string name="firemaking_burns_to">Brandt tot %1$s</string>
+    <string name="firemaking_burn">Verbranden</string>
+    <string name="farming_fertilizer">Meststof</string>
+    <string name="farming_fertilizer_optional">Voeg meststof toe (opt.)</string>
+    <string name="farming_fertilizer_yield">+%1$d%% opbrengst</string>
+    <string name="farming_fertilized">Bemest</string>
+    <string name="catalyst_optional">Askatalisator (opt.)</string>
+    <string name="catalyst_enhanced_output">Produceert verbeterd drankje</string>
+    <string name="catalyst_rune_bonus">+%1$d rune per essence</string>
+    <string name="catalyst_none">Geen katalysator</string>
 </resources>

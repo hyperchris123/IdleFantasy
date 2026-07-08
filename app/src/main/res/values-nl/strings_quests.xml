@@ -215,9 +215,11 @@
     <string name="quest_orc_slayer_2_name">Orks Slachter II</string>
     <string name="quest_orc_slayer_2_objective">Versla 50 Ork Krijgers</string>
     <string name="quest_demon_slayer_1_name">Demonen Slachter I</string>
-    <string name="quest_demon_slayer_1_objective">Versla 20 Mindere Demonen</string>
+    <string name="quest_demon_slayer_1_objective">Versla de Demonenheer</string>
     <string name="quest_demon_slayer_2_name">Demonen Slachter II</string>
-    <string name="quest_demon_slayer_2_objective">Versla 40 Mindere Demonen</string>
+    <string name="quest_demon_slayer_2_objective">Versla de Demonenheer 5 keer</string>
+    <string name="quest_demon_slayer_3_name">Demonen Slachter III</string>
+    <string name="quest_demon_slayer_3_objective">Versla de Demonenheer 25 keer</string>
     <string name="quest_dragon_slayer_1_name">Draken Slachter I</string>
     <string name="quest_dragon_slayer_1_objective">Versla 10 Groene Draken</string>
     <string name="quest_dragon_slayer_2_name">Draken Slachter II</string>
@@ -354,14 +356,63 @@
     <string name="quest_herblore_6_objective">Mix 1500 Super Krachtdranken</string>
 
     <!-- Boss extended -->
+    <string name="quest_kbd_slayer_1_objective">Versla de Koning der Zwarte Draken</string>
+    <string name="quest_kbd_slayer_2_objective">Versla de Koning der Zwarte Draken 5 keer</string>
+    <string name="quest_kbd_slayer_3_objective">Versla de Koning der Zwarte Draken 25 keer</string>
     <string name="quest_kbd_slayer_4_name">Koning der Zwarte Draken Slachter IV</string>
     <string name="quest_kbd_slayer_4_objective">Versla de Koning der Zwarte Draken 50 keer</string>
     <string name="quest_demon_slayer_4_name">Demonenheer Slachter IV</string>
     <string name="quest_demon_slayer_4_objective">Versla de Demonenheer 50 keer</string>
+    <string name="quest_kraken_killer_1_name">Kraken Slachter I</string>
+    <string name="quest_kraken_killer_1_objective">Versla de Kraken</string>
+    <string name="quest_kraken_killer_2_name">Kraken Slachter II</string>
+    <string name="quest_kraken_killer_2_objective">Versla de Kraken 5 keer</string>
+    <string name="quest_kraken_killer_3_name">Kraken Slachter III</string>
+    <string name="quest_kraken_killer_3_objective">Versla de Kraken 25 keer</string>
     <string name="quest_kraken_killer_4_name">Kraken Slachter IV</string>
     <string name="quest_kraken_killer_4_objective">Versla de Kraken 50 keer</string>
+    <string name="quest_balrog_bane_1_name">Balrog Slachter I</string>
+    <string name="quest_balrog_bane_1_objective">Versla de Balrog</string>
+    <string name="quest_balrog_bane_2_name">Balrog Slachter II</string>
+    <string name="quest_balrog_bane_2_objective">Versla de Balrog 5 keer</string>
+    <string name="quest_balrog_bane_3_name">Balrog Slachter III</string>
+    <string name="quest_balrog_bane_3_objective">Versla de Balrog 25 keer</string>
     <string name="quest_balrog_bane_4_name">Balrog Slachter IV</string>
     <string name="quest_balrog_bane_4_objective">Versla de Balrog 50 keer</string>
 
 
+
+    <!-- Daily quest verbs -->
+    <string name="daily_verb_mining">Mijn</string>
+    <string name="daily_verb_fishing">Vangen</string>
+    <string name="daily_verb_woodcutting">Hakken</string>
+    <string name="daily_verb_smithing">Smeden</string>
+    <string name="daily_verb_cooking">Koken</string>
+    <string name="daily_verb_combat">Verslaan</string>
+
+    <!-- Daily quest names -->
+    <string name="quest_daily_mine_iron_name">IJzermijnwerker</string>
+    <string name="quest_daily_mine_coal_name">Kolendrager</string>
+    <string name="quest_daily_mine_mithril_name">Mithril Prospector</string>
+    <string name="quest_daily_mine_runite_name">Runite Haast</string>
+    <string name="quest_daily_fish_salmon_name">Zalm Ren</string>
+    <string name="quest_daily_fish_lobster_name">Kreeftenvangst</string>
+    <string name="quest_daily_fish_swordfish_name">Zwaardvisjager</string>
+    <string name="quest_daily_fish_shark_name">Haaientemmer</string>
+    <string name="quest_daily_wc_oak_name">Eikenhakker</string>
+    <string name="quest_daily_wc_willow_name">Wilgenwerker</string>
+    <string name="quest_daily_wc_yew_name">Taxuslogger</string>
+    <string name="quest_daily_wc_magic_name">Magische Houthakker</string>
+    <string name="quest_daily_smith_iron_name">IJzersmid</string>
+    <string name="quest_daily_smith_mithril_name">Mithril Smeder</string>
+    <string name="quest_daily_smith_adamantite_name">Adamantiet Ambachtsman</string>
+    <string name="quest_daily_smith_runite_name">Runite Smelter</string>
+    <string name="quest_daily_cook_trout_name">Forellenchef</string>
+    <string name="quest_daily_cook_salmon_name">Zalmgriller</string>
+    <string name="quest_daily_cook_lobster_name">Kreeftkok</string>
+    <string name="quest_daily_cook_swordfish_name">Zwaardviskok</string>
+    <string name="quest_daily_kill_goblin_name">Goblin Slachter</string>
+    <string name="quest_daily_kill_bandit_name">Bandieten Breker</string>
+    <string name="quest_daily_kill_demon_name">Demonenjager</string>
+    <string name="quest_daily_kill_dragon_name">Drakenslachter</string>
 </resources>

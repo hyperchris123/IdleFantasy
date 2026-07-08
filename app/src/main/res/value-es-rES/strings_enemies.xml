@@ -69,4 +69,22 @@
     <string name="pet_tiny_templar_desc">Un pequeño pez compañero que aumenta tu experiencia de Pesca.</string>
     <string name="pet_tangleroot_name">Tangleroot</string>
     <string name="pet_tangleroot_desc">Una planta mágica que aumenta tu experiencia de Agricultura.</string>
+
+    <!-- Missing dungeons -->
+    <string name="dungeon_collapsed_mine_name">Mina Derrumbada</string>
+    <string name="dungeon_collapsed_mine_desc">Una vasta caverna bajo las minas de cobre. Trolls de cueva y golems de roca acechan entre los escombros, y arañas gigantes tejen sus telarañas en los pozos derrumbados.</string>
+    <string name="dungeon_shadow_den_name">Guarida de Sombras</string>
+    <string name="dungeon_shadow_den_desc">Una red de cámaras subterráneas usada por el gremio de ladrones de la región. Rufianes, asesinos y criaturas de las sombras acechan en cada rincón.</string>
+    <string name="dungeon_abyssal_ruins_name">Ruinas Abisales</string>
+    <string name="dungeon_abyssal_ruins_desc">Ruinas antiguas que existen simultáneamente sobre y bajo el plano mortal. Extrañas criaturas abisales aparecen y desaparecen de la realidad.</string>
+    <string name="dungeon_ancient_forest_ruins_name">Ruinas del Bosque Antiguo</string>
+    <string name="dungeon_ancient_forest_ruins_desc">Ruinas de piedra engullidas por el bosque primigenio, ahora habitadas por criaturas salvajes y espíritus vengadores de druidas.</string>
+    <string name="dungeon_ancient_forge_name">Forja Antigua</string>
+    <string name="dungeon_ancient_forge_desc">Una vasta forja enana que ha ardido durante siglos sin parar. Elementales de fuego y guardianes de la forja protegen sus secretos.</string>
+    <string name="dungeon_arcane_ruins_name">Ruinas Arcanas</string>
+    <string name="dungeon_arcane_ruins_desc">Las cámaras subterráneas funcionales de una torre de mago destruida. Construcciones mágicas y guardianes encantados todavía patrullan sus pasillos.</string>
+    <string name="dungeon_corrupted_sanctum_name">Santuario Corrupto</string>
+    <string name="dungeon_corrupted_sanctum_desc">Un santuario empapado de sombras en el corazón del dosel corrompido. Sacerdotes oscuros y bestias corruptas custodian un mal ancestral.</string>
+    <string name="dungeon_drowned_temple_name">Templo Sumergido</string>
+    <string name="dungeon_drowned_temple_desc">Un templo hundido bajo la gruta marina, sus salas llenas de agua y criaturas marinas que lo han convertido en su hogar.</string>
 </resources>

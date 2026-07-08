@@ -764,10 +764,11 @@ private fun HomeSessionCard(
         else     -> GameStrings.skillName(context, session.skillName)
     }
     val skillEmoji = GameStrings.skillEmoji(session.skillName)
-    val activityLabel = session.activityKey
-        .replace('_', ' ')
-        .replaceFirstChar { it.uppercase() }
-        .takeIf { session.activityKey.isNotEmpty() }
+    val activityLabel = when (session.skillName) {
+        "combat" -> GameStrings.dungeonName(context, session.activityKey)
+        "boss"   -> GameStrings.bossName(context, session.activityKey)
+        else     -> GameStrings.itemName(context, session.activityKey)
+    }.takeIf { session.activityKey.isNotEmpty() }
 
     Surface(
         shape  = RoundedCornerShape(16.dp),
@@ -885,13 +886,12 @@ private fun QueueCard(
                     val labelBoss       = stringResource(R.string.label_boss)
                     val (prefix, suffix) = when (action.skillName) {
                         "expedition" -> labelExpedition to action.skillDisplayName
-                        "combat"     -> labelDungeon    to action.skillDisplayName
-                        "boss"       -> labelBoss       to action.skillDisplayName
+                        "combat"     -> labelDungeon    to GameStrings.dungeonName(context, action.activityKey)
+                        "boss"       -> labelBoss       to GameStrings.bossName(context, action.activityKey)
                         "farming"    -> action.skillDisplayName to null
-                        else         -> action.skillDisplayName to action.activityKey
-                            .replace('_', ' ')
-                            .replaceFirstChar { it.uppercase() }
-                            .takeIf { action.activityKey.isNotEmpty() }
+                        else         -> GameStrings.skillName(context, action.skillName) to
+                            GameStrings.itemName(context, action.activityKey)
+                                .takeIf { action.activityKey.isNotEmpty() }
                     }
                     Column(Modifier.weight(1f)) {
                         Text(
@@ -1044,10 +1044,11 @@ private fun WorkerSessionCard(
                     else     -> GameStrings.skillName(context, session.skillName)
                 }
                 val skillEmoji    = GameStrings.skillEmoji(session.skillName)
-                val activityLabel = session.activityKey
-                    .replace('_', ' ')
-                    .replaceFirstChar { it.uppercase() }
-                    .takeIf { session.activityKey.isNotEmpty() }
+                val activityLabel = when (session.skillName) {
+                    "combat" -> GameStrings.dungeonName(context, session.activityKey)
+                    "boss"   -> GameStrings.bossName(context, session.activityKey)
+                    else     -> GameStrings.itemName(context, session.activityKey)
+                }.takeIf { session.activityKey.isNotEmpty() }
                 Text(
                     text       = buildString {
                         append("$skillEmoji $skillLabel")

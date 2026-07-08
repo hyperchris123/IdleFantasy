@@ -873,4 +873,77 @@
     <string name="achievement_prestige_all_1_desc">Prestige all skills at least once</string>
     <string name="achievement_prestige_all_3_name">True Prestige</string>
     <string name="achievement_prestige_all_3_desc">Reach Prestige 3 on every skill</string>
+
+    <!-- Shop categories -->
+    <string name="shop_cat_ores_and_materials">Cevher &amp; Malzeme</string>
+    <string name="shop_cat_logs_and_wood">Kütük &amp; Odun</string>
+    <string name="shop_cat_seeds_and_farming">Tohum &amp; Tarım</string>
+    <string name="shop_cat_merchants_guild">Tüccar Loncası</string>
+    <string name="shop_cat_equipment">Ekipman</string>
+    <string name="shop_cat_special">Özel</string>
+    <string name="shop_cat_weapons">Silahlar</string>
+    <string name="shop_cat_armor">Zırh</string>
+    <string name="shop_cat_tools">Aletler</string>
+    <string name="shop_cat_food">Yiyecek</string>
+    <string name="shop_cat_materials">Malzemeler</string>
+    <string name="shop_cat_misc">Diğer</string>
+
+    <string name="crafting_per_craft">×%1$d üretim başına</string>
+
+    <!-- Skills screen localisation -->
+    <string name="farming_ready_in">%1$s içinde hazır</string>
+    <string name="trade_route_local_market_name">Yerel pazar</string>
+    <string name="trade_route_river_trading_post_name">Nehir ticaret istasyonu</string>
+    <string name="trade_route_eastern_caravan_name">Doğu kervanı</string>
+    <string name="trade_route_grand_exchange_name">Büyük Borsa</string>
+    <string name="trade_route_merchants_quarter_name">Tüccar mahallesi</string>
+    <string name="trade_route_northern_ports_name">Kuzey limanları</string>
+    <string name="trade_route_local_market_desc">Yerel pazarda yaygın mallar satın. Getiriler mütevazı ama değişken.</string>
+    <string name="trade_route_river_trading_post_desc">Nehir ticaret yolu boyunca mal taşı. Kârlar tahmin edilemez ama çoğu zaman değer.</string>
+    <string name="trade_route_eastern_caravan_desc">Doğuya giden bir tüccar kervanına katıl. Uzun yolculuk, anlaşma gerçekleştiğinde iyi ödüyor.</string>
+    <string name="trade_route_grand_exchange_desc">Servetlerin yapıldığı ve kaybedildiği efsanevi Büyük Borsada işlem yap.</string>
+    <string name="trade_route_merchants_quarter_desc">Prestijli tüccar semtinde nadir emtia ticareti yap.</string>
+    <string name="trade_route_northern_ports_desc">Kuzey liman şehirlerine değerli kargo taşı. Yüksek risk, yüksek ödül.</string>
+    <string name="crafting_cat_bar">Külçe</string>
+    <string name="crafting_cat_component">Bileşen</string>
+    <string name="crafting_cat_tool">Alet</string>
+    <string name="crafting_cat_weapon">Silah</string>
+    <string name="crafting_cat_armour">Zırh</string>
+    <string name="crafting_cat_equipment">Ekipman</string>
+    <string name="crafting_cat_food">Yiyecek</string>
+    <string name="crafting_cat_ammunition">Mühimmat</string>
+    <string name="crafting_cat_jewellery">Mücevher</string>
+    <string name="crafting_cat_potion">İksir</string>
+
+    <!-- Crafting tier filter chips -->
+    <string name="crafting_tier_adamantite">Adamantit</string>
+    <string name="crafting_tier_arrow">Ok</string>
+    <string name="crafting_tier_bronze">Bronz</string>
+    <string name="crafting_tier_gold">Altın</string>
+    <string name="crafting_tier_iron">Demir</string>
+    <string name="crafting_tier_magic">Büyülü</string>
+    <string name="crafting_tier_maple">Akçaağaç</string>
+    <string name="crafting_tier_mithril">Mithril</string>
+    <string name="crafting_tier_oak">Meşe</string>
+    <string name="crafting_tier_platinum">Platin</string>
+    <string name="crafting_tier_runite">Runite</string>
+    <string name="crafting_tier_shortbow">Kısa yay</string>
+    <string name="crafting_tier_silver">Gümüş</string>
+    <string name="crafting_tier_staff">Asa</string>
+    <string name="crafting_tier_steel">Çelik</string>
+    <string name="crafting_tier_willow">Söğüt</string>
+    <string name="crafting_tier_yew">Porsuk</string>
+
+    <!-- Firemaking rework + ash catalyst + fertilizer -->
+    <string name="firemaking_logs_in_inventory">envanterde</string>
+    <string name="firemaking_burns_to">%1$s yapılır</string>
+    <string name="firemaking_burn">Yak</string>
+    <string name="farming_fertilizer">Gübre</string>
+    <string name="farming_fertilizer_optional">Gübre ekle (opsiyonel)</string>
+    <string name="farming_fertilizer_yield">+%1$d%% verim</string>
+    <string name="farming_fertilized">Gübrelenmiş</string>
+    <string name="catalyst_optional">Kül katalizörü (opsiyonel)</string>
+    <string name="catalyst_enhanced_output">Güçlendirilmiş iksir üretir</string>
+    <string name="catalyst_rune_bonus">Esans başına +%1$d rün</string>
+    <string name="catalyst_none">Katalizör yok</string>
 </resources>

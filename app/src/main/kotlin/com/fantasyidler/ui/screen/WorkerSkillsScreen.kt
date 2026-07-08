@@ -289,20 +289,22 @@ fun WorkerSkillsScreen(
                 )
                 is SheetState.Firemaking -> FiremakingSheet(
                     availableLogs     = sheet.availableLogs,
+                    inventory         = state.inventory,
                     isStarting        = false,
                     hasActiveSession  = true,
                     isQueueFull       = isQueueFull,
                     sessionDurationMs = state.gatheringDurationMs,
-                    onSelect          = { viewModel.startFiremakingSession(it) },
+                    onStart           = { logKey, qty -> viewModel.startFiremakingSession(logKey, qty) },
                     context           = context,
                 )
                 is SheetState.Runecrafting -> RunecraftingSheet(
                     sheet             = sheet,
+                    inventory         = state.inventory,
                     isStarting        = false,
                     hasActiveSession  = true,
                     isQueueFull       = isQueueFull,
                     sessionDurationMs = state.sessionDurationMs,
-                    onStart           = viewModel::startRunecraftingSession,
+                    onStart           = { runeKey, qty, _ -> viewModel.startRunecraftingSession(runeKey, qty) },
                     tierMaxQty        = state.maxCraftQty,
                 )
                 is SheetState.Prayer -> PrayerSheet(

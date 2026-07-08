@@ -69,4 +69,22 @@
     <string name="pet_tiny_templar_desc">A small fish companion that boosts your Fishing XP.</string>
     <string name="pet_tangleroot_name">Tangleroot</string>
     <string name="pet_tangleroot_desc">A magical plant creature that enhances your Farming XP.</string>
+
+    <!-- Missing dungeons -->
+    <string name="dungeon_collapsed_mine_name">Collapsed Mine</string>
+    <string name="dungeon_collapsed_mine_desc">A vast cavern beneath the copper mines. Cave trolls and rock golems haunt the rubble, and giant spiders spin webs across the collapsed shafts.</string>
+    <string name="dungeon_shadow_den_name">Shadow Den</string>
+    <string name="dungeon_shadow_den_desc">A network of underground chambers used by the region\'s thieves guild. Rogues, assassins, and shadow creatures lurk in every corner.</string>
+    <string name="dungeon_abyssal_ruins_name">Abyssal Ruins</string>
+    <string name="dungeon_abyssal_ruins_desc">Ancient ruins that exist simultaneously above and below the mortal plane. Strange abyssal creatures phase in and out of reality.</string>
+    <string name="dungeon_ancient_forest_ruins_name">Ancient Forest Ruins</string>
+    <string name="dungeon_ancient_forest_ruins_desc">Stone ruins swallowed by the primeval forest, now haunted by feral creatures and vengeful spirits of druids.</string>
+    <string name="dungeon_ancient_forge_name">Ancient Forge</string>
+    <string name="dungeon_ancient_forge_desc">A vast dwarven forge that has burned for centuries without stopping. Fire elementals and forge guardians protect its secrets.</string>
+    <string name="dungeon_arcane_ruins_name">Arcane Ruins</string>
+    <string name="dungeon_arcane_ruins_desc">The functional underground chambers of a destroyed wizard\'s tower. Magical constructs and enchanted guardians still patrol its halls.</string>
+    <string name="dungeon_corrupted_sanctum_name">Corrupted Sanctum</string>
+    <string name="dungeon_corrupted_sanctum_desc">A shadow-drenched sanctum at the heart of the corrupted canopy. Dark priests and corrupted beasts guard an ancient evil.</string>
+    <string name="dungeon_drowned_temple_name">Drowned Temple</string>
+    <string name="dungeon_drowned_temple_desc">A sunken temple beneath the sea grotto, its halls filled with water and sea creatures that have made it their home.</string>
 </resources>

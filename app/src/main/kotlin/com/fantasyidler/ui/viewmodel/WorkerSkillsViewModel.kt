@@ -358,11 +358,11 @@ class WorkerSkillsViewModel @Inject constructor(
     // Firemaking (consumes logs at queue time)
     // ------------------------------------------------------------------
 
-    fun startFiremakingSession(logKey: String) {
+    fun startFiremakingSession(logKey: String, qty: Int) {
         viewModelScope.launch {
             val slot = _uiState.value.selectedSlot
             val tier = uiState.value.currentWorker?.tier ?: return@launch
-            if (!playerRepo.consumeItems(mapOf(logKey to 1))) {
+            if (!playerRepo.consumeItems(mapOf(logKey to qty))) {
                 _uiState.update { it.copy(snackbarMessage = "Not enough logs.", sheetSkill = null) }
                 return@launch
             }
@@ -372,6 +372,7 @@ class WorkerSkillsViewModel @Inject constructor(
                     skillName           = Skills.FIREMAKING,
                     activityKey         = logKey,
                     skillDisplayName    = "Firemaking",
+                    qty                 = qty,
                     estimatedDurationMs = tier.durationMs,
                 )
             )
@@ -379,7 +380,7 @@ class WorkerSkillsViewModel @Inject constructor(
                 workerStarter.startNextQueued(slot)
                 _uiState.update { it.copy(sheetSkill = null) }
             } else {
-                playerRepo.addItem(logKey, 1)
+                playerRepo.addItem(logKey, qty)
                 _uiState.update { it.copy(snackbarMessage = "Worker is already busy.", sheetSkill = null) }
             }
         }

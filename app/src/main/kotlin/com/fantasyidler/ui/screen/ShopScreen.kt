@@ -68,6 +68,25 @@ import com.fantasyidler.ui.theme.GoldPrimary
 import com.fantasyidler.util.GameStrings
 import com.fantasyidler.util.formatCoins
 
+private fun localizedCategory(context: android.content.Context, raw: String): String {
+    val resId = when (raw) {
+        "Ores & Materials" -> R.string.shop_cat_ores_and_materials
+        "Logs & Wood"      -> R.string.shop_cat_logs_and_wood
+        "Seeds & Farming"  -> R.string.shop_cat_seeds_and_farming
+        "Merchant's Guild" -> R.string.shop_cat_merchants_guild
+        "Equipment"        -> R.string.shop_cat_equipment
+        "Special"          -> R.string.shop_cat_special
+        "Weapons"          -> R.string.shop_cat_weapons
+        "Armor"            -> R.string.shop_cat_armor
+        "Tools"            -> R.string.shop_cat_tools
+        "Food"             -> R.string.shop_cat_food
+        "Materials"        -> R.string.shop_cat_materials
+        "Misc"             -> R.string.shop_cat_misc
+        else               -> return raw
+    }
+    return context.getString(resId)
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ShopScreen(
@@ -195,11 +214,12 @@ private fun BuyList(
     discountedPriceFor: (ShopEntry) -> Int,
     onBuy: (ShopEntry) -> Unit,
 ) {
+    val context = LocalContext.current
     val grouped = remember(entries) { entries.groupBy { it.categoryName } }
 
     LazyColumn(Modifier.fillMaxSize()) {
         grouped.forEach { (category, categoryEntries) ->
-            item(key = "hdr_$category") { ShopSectionHeader(category) }
+            item(key = "hdr_$category") { ShopSectionHeader(localizedCategory(context, category)) }
             items(categoryEntries, key = { it.key }) { entry ->
                 val discounted = discountedPriceFor(entry)
                 val hasDiscount = discounted < entry.price
@@ -216,7 +236,8 @@ private fun BuyList(
                     Column(Modifier.weight(1f)) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(
-                                text       = entry.displayName,
+                                text       = if (isXpBoost) entry.displayName
+                                             else GameStrings.itemName(context, entry.key),
                                 style      = MaterialTheme.typography.bodyLarge,
                                 fontWeight = FontWeight.Medium,
                                 color      = if (canAfford) MaterialTheme.colorScheme.onSurface
@@ -232,9 +253,11 @@ private fun BuyList(
                                 )
                             }
                         }
-                        if (entry.description.isNotBlank()) {
+                        val desc = GameStrings.itemDesc(context, entry.key)
+                            .takeIf { it.isNotBlank() } ?: entry.description
+                        if (desc.isNotBlank()) {
                             Text(
-                                text  = entry.description,
+                                text  = desc,
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(
                                     alpha = if (canAfford) 1f else 0.38f,
@@ -331,7 +354,7 @@ private fun SellList(
             }
         } else {
             grouped.forEach { (category, entries) ->
-                item(key = "sell_hdr_$category") { ShopSectionHeader(category) }
+                item(key = "sell_hdr_$category") { ShopSectionHeader(localizedCategory(context, category)) }
                 items(entries, key = { it.key }) { (key, qty) ->
                     val sellPrice  = priceFor(key)
                     val isEquipped = equipped.values.any { it == key }
@@ -393,10 +416,13 @@ private fun TransactionSheet(
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
 ) {
+    val context = LocalContext.current
     val qty   = transaction.qty
     val total = transaction.priceEach.toLong() * qty
     var textValue by remember { mutableStateOf(qty.toString()) }
     LaunchedEffect(qty) { if (textValue.toIntOrNull() != qty) textValue = qty.toString() }
+    val localizedName = GameStrings.itemName(context, transaction.key)
+        .takeIf { it.isNotBlank() } ?: transaction.displayName
 
     Column(
         modifier = Modifier
@@ -405,8 +431,8 @@ private fun TransactionSheet(
             .padding(bottom = 40.dp),
     ) {
         Text(
-            text       = if (transaction.isBuy) stringResource(R.string.shop_buy_prefix, transaction.displayName)
-                         else stringResource(R.string.shop_sell_prefix, transaction.displayName),
+            text       = if (transaction.isBuy) stringResource(R.string.shop_buy_prefix, localizedName)
+                         else stringResource(R.string.shop_sell_prefix, localizedName),
             style      = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
         )
