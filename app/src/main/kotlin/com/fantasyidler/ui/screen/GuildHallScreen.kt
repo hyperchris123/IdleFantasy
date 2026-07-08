@@ -16,7 +16,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Badge
-import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -194,9 +193,7 @@ private fun GuildCard(
         }
 
         if (claimable > 0) {
-            BadgedBox(badge = {
-                Badge { Text("$claimable") }
-            }) {}
+            Badge { Text("$claimable") }
         }
     }
 }

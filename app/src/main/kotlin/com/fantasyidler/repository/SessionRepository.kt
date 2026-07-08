@@ -95,8 +95,17 @@ class SessionRepository @Inject constructor(
      * - If it's still running, reschedules the alarm so it fires at the correct time.
      */
     suspend fun recoverActiveSession(starter: QueuedSessionStarter) {
-        val session = getActiveSession() ?: return
-        if (session.completed) return
+        val session = getActiveSession() ?: run {
+            // No session in DB at all — try to drain any leftover queue items.
+            starter.startNextQueued()
+            return
+        }
+        if (session.completed) {
+            // Session already completed (alarm fired). Advance the queue in case the
+            // alarm + app-open race left it stuck with remaining items.
+            starter.startNextQueued()
+            return
+        }
         val now = System.currentTimeMillis()
         if (now >= session.endsAt) {
             markCompleted(session.sessionId)
@@ -107,8 +116,14 @@ class SessionRepository @Inject constructor(
     }
 
     suspend fun recoverActiveWorkerSession(workerStarter: WorkerQueuedSessionStarter) {
-        val session = getActiveWorkerSession() ?: return
-        if (session.completed) return
+        val session = getActiveWorkerSession() ?: run {
+            workerStarter.startNextQueued()
+            return
+        }
+        if (session.completed) {
+            workerStarter.startNextQueued()
+            return
+        }
         val now = System.currentTimeMillis()
         if (now >= session.endsAt) {
             markCompleted(session.sessionId)

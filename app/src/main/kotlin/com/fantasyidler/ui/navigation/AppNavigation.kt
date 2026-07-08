@@ -26,9 +26,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.fantasyidler.notification.SessionNotificationManager
 import com.fantasyidler.ui.screen.CombatScreen
 import com.fantasyidler.ui.screen.FarmingScreen
 import com.fantasyidler.ui.screen.GuildDetailScreen
@@ -45,7 +47,10 @@ import com.fantasyidler.ui.screen.WorkerSkillsScreen
 import com.fantasyidler.ui.viewmodel.OnboardingViewModel
 
 @Composable
-fun AppNavigation() {
+fun AppNavigation(
+    pendingNavigateTo: String? = null,
+    onNavigateConsumed: () -> Unit = {},
+) {
     val onboardingVm: OnboardingViewModel = hiltViewModel()
     val showOnboarding by onboardingVm.showOnboarding.collectAsState()
 
@@ -57,6 +62,19 @@ fun AppNavigation() {
     }
 
     val navController = rememberNavController()
+
+    LaunchedEffect(pendingNavigateTo) {
+        if (pendingNavigateTo == SessionNotificationManager.NAVIGATE_FARMING) {
+            navController.navigate(Screen.Skills.route) {
+                popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                launchSingleTop = true
+                restoreState = true
+            }
+            navController.navigate(Screen.Farming.route)
+            onNavigateConsumed()
+        }
+    }
+
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = backStackEntry?.destination
 
