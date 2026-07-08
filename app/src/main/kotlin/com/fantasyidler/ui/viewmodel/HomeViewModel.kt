@@ -85,6 +85,7 @@ class HomeViewModel @Inject constructor(
         // If the active session has already passed its end time, complete it and advance
         // the queue — mirrors what SessionAlarmReceiver would have done.
         viewModelScope.launch { sessionRepo.recoverActiveSession(queuedSessionStarter) }
+        viewModelScope.launch { playerRepo.awardMissingCapes() }
     }
 
     val uiState: StateFlow<HomeUiState> = combine(
@@ -159,7 +160,7 @@ class HomeViewModel @Inject constructor(
 
             val gatheringSkills = setOf(Skills.MINING, Skills.WOODCUTTING, Skills.FISHING,
                 Skills.AGILITY, Skills.FIREMAKING, Skills.RUNECRAFTING)
-            val craftingSkills  = setOf(Skills.SMITHING, Skills.COOKING, Skills.FLETCHING, Skills.CRAFTING)
+            val craftingSkills  = setOf(Skills.SMITHING, Skills.COOKING, Skills.FLETCHING, Skills.CRAFTING, Skills.HERBLORE)
 
             for (session in sessions) {
                 val frames: List<SessionFrame> = json.decodeFromString(session.frames)
@@ -220,6 +221,7 @@ class HomeViewModel @Inject constructor(
                                 foodConsumedTotal  = food.values.sum(),
                             )
                             playerRepo.incrementDungeonRun(session.activityKey)
+                            if (kills.isNotEmpty()) playerRepo.recordDailyKills(kills)
                         }
                         if (food.isNotEmpty()) playerRepo.consumeItems(food)
                         for ((skill, xp) in xpPerSkill) combinedXpBySkill[skill] = (combinedXpBySkill[skill] ?: 0L) + xp
@@ -236,16 +238,26 @@ class HomeViewModel @Inject constructor(
                         val regular = its.filterKeys { it !in petIds }
                         awardedCapes += playerRepo.applySessionResults(session.skillName, totalXp, regular)
                         when (session.skillName) {
-                            in gatheringSkills -> questRepo.recordGathering(session.skillName, regular)
-                            in craftingSkills  -> questRepo.recordCrafting(session.skillName, regular)
-                            Skills.PRAYER      -> questRepo.recordBuried(frames.sumOf { it.kills })
+                            in gatheringSkills -> {
+                                questRepo.recordGathering(session.skillName, regular)
+                                playerRepo.recordDailyGathering(regular)
+                            }
+                            in craftingSkills  -> {
+                                questRepo.recordCrafting(session.skillName, regular)
+                                playerRepo.recordDailyCrafting(regular)
+                            }
+                            Skills.PRAYER      -> {
+                                val buried = frames.sumOf { it.kills }
+                                questRepo.recordBuried(buried)
+                                playerRepo.recordDailyPrayer(buried)
+                            }
                         }
                         // Consume input materials at collect time (best-effort, like food)
                         when (session.skillName) {
-                            Skills.PRAYER -> playerRepo.consumeItems(mapOf(session.activityKey to frames.size))
+                            Skills.PRAYER -> playerRepo.consumeItems(mapOf(session.activityKey to frames.sumOf { it.kills }))
                             Skills.RUNECRAFTING -> {
                                 val rune = gameData.runes[session.activityKey]
-                                if (rune != null) playerRepo.consumeItems(mapOf("rune_essence" to rune.essenceCost * frames.size))
+                                if (rune != null) playerRepo.consumeItems(mapOf("rune_essence" to rune.essenceCost * frames.sumOf { it.kills }))
                             }
                             in craftingSkills -> {
                                 val mats = when (session.skillName) {
@@ -253,10 +265,12 @@ class HomeViewModel @Inject constructor(
                                     Skills.COOKING   -> gameData.cookingRecipes[session.activityKey]?.let { mapOf(it.rawItem to 1) }
                                     Skills.FLETCHING -> gameData.fletchingRecipes[session.activityKey]?.materials
                                     Skills.CRAFTING  -> gameData.craftingRecipes[session.activityKey]?.materials
+                                    Skills.HERBLORE  -> gameData.herbloreRecipes[session.activityKey]?.materials
                                     else             -> null
                                 }
-                                if (mats != null) playerRepo.consumeItems(mats.mapValues { (_, needed) -> needed * frames.size })
+                                if (mats != null) playerRepo.consumeItems(mats.mapValues { (_, needed) -> needed * frames.sumOf { it.kills } })
                             }
+                            Skills.FIREMAKING -> playerRepo.consumeItems(mapOf(session.activityKey to frames.size))
                         }
                         for ((id, _) in pets) {
                             val pd = gameData.pets[id] ?: continue

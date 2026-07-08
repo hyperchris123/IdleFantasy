@@ -82,6 +82,18 @@ data class AgilityCourseData(
 )
 
 // ---------------------------------------------------------------------------
+// Fish data (fish.json) — named fishing activities
+// ---------------------------------------------------------------------------
+
+@Serializable
+data class FishData(
+    @SerialName("display_name")    val displayName: String,
+    @SerialName("level_required")  val levelRequired: Int,
+    @SerialName("xp_per_catch")    val xpPerCatch: Int,
+    @SerialName("time_per_catch")  val timePerCatch: Int,
+)
+
+// ---------------------------------------------------------------------------
 // Log data (logs.json) — used for Firemaking
 // ---------------------------------------------------------------------------
 
