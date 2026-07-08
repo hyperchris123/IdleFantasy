@@ -9,6 +9,7 @@ import com.fantasyidler.data.model.PlayerFlags
 import com.fantasyidler.data.model.WorkerTier
 import com.fantasyidler.repository.GameDataRepository
 import com.fantasyidler.repository.PlayerRepository
+import com.fantasyidler.repository.SessionRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -46,6 +47,7 @@ data class InnUiState(
 @HiltViewModel
 class InnViewModel @Inject constructor(
     private val playerRepo: PlayerRepository,
+    private val sessionRepo: SessionRepository,
     private val gameData: GameDataRepository,
     @ApplicationContext private val context: Context,
     private val json: Json,
@@ -84,6 +86,7 @@ class InnViewModel @Inject constructor(
                 _extra.update { it.copy(snackbarMessage = context.getString(R.string.inn_not_enough_coins)) }
                 return@launch
             }
+            sessionRepo.deleteAllWorkerSessions()
             playerRepo.updateFlags(flags.copy(hiredWorker = HiredWorker(tier, name)))
             _extra.update { it.copy(navigateToWorkerSkills = true) }
         }

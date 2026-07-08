@@ -57,6 +57,9 @@ interface SkillSessionDao {
     @Query("DELETE FROM skill_sessions WHERE session_id = :sessionId")
     suspend fun delete(sessionId: String)
 
+    @Query("DELETE FROM skill_sessions WHERE user_id = 1 AND is_worker_session = 1")
+    suspend fun deleteAllWorkerSessions()
+
     @Query("DELETE FROM skill_sessions")
     suspend fun deleteAll()
 }

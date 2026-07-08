@@ -42,6 +42,16 @@ data class PlayerFlags(
     @SerialName("daily_quest_generated_at") val dailyQuestGeneratedAt: Long = 0L,
     /** Currently hired worker, or null if none. */
     @SerialName("hired_worker") val hiredWorker: HiredWorker? = null,
+    /** Guild reputation totals: guild key → total rep earned (guild level is derived from this). */
+    @SerialName("guild_reputation") val guildReputation: Map<String, Long> = emptyMap(),
+    /** IDs of today's active guild daily request templates. */
+    @SerialName("guild_daily_ids") val guildDailyIds: List<String> = emptyList(),
+    /** Progress map: templateId → count accumulated today. */
+    @SerialName("guild_daily_progress") val guildDailyProgress: Map<String, Int> = emptyMap(),
+    /** Template IDs whose reward has already been claimed today. */
+    @SerialName("guild_daily_claimed") val guildDailyClaimed: List<String> = emptyList(),
+    /** Epoch ms when today's guild dailies were generated (used to detect 6am rollover). */
+    @SerialName("guild_daily_generated_at") val guildDailyGeneratedAt: Long = 0L,
 )
 
 /** A session to be started when the current one completes. */

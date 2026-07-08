@@ -289,6 +289,7 @@ class QueuedSessionStarter @Inject constructor(
                 }
                 val bestArrow = ARROW_TIERS.firstOrNull { (inventory[it] ?: 0) > 0 }
                 val arrowBonus = bestArrow?.let { ARROW_STRENGTH_BONUS[it] } ?: 0
+                val availableArrows = if (bestArrow != null) mapOf(bestArrow to (inventory[bestArrow] ?: 0)) else emptyMap()
                 val equippedFoodKeys = flags.equippedFood.keys
                 val availableFood    = inventory.filterKeys { it in equippedFoodKeys }
                 val spell = gameData.spells[flags.activeSpell]
@@ -313,6 +314,7 @@ class QueuedSessionStarter @Inject constructor(
                     petBoostPct         = combatPetBoost(player.pets),
                     equippedFood        = availableFood,
                     foodHealValues      = gameData.foodHealValues,
+                    availableArrows     = availableArrows,
                 )
                 val totalKills = result.frames.sumOf { it.kills }
                 if (combatStyle == "magic" && spell != null && totalKills > 0) {

@@ -26,6 +26,7 @@ class SessionRepository @Inject constructor(
     suspend fun getActiveSession(): SkillSession? = sessionDao.getActiveSession()
     suspend fun getActiveWorkerSession(): SkillSession? = sessionDao.getActiveWorkerSession()
     suspend fun getAllCompletedWorkerSessions(): List<SkillSession> = sessionDao.getAllCompletedWorkerSessions()
+    suspend fun deleteAllWorkerSessions() = sessionDao.deleteAllWorkerSessions()
 
     /**
      * Persist a new session and schedule an AlarmManager alarm for completion.
