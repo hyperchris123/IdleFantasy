@@ -49,6 +49,12 @@ object GameStrings {
     fun bossName(context: Context, key: String): String =
         context.stringByName("boss_${key}_name") ?: key.toTitleCase()
 
+    fun bossDesc(context: Context, key: String): String =
+        context.stringByName("boss_${key}_desc") ?: ""
+
+    fun slotName(context: Context, slot: String): String =
+        context.stringByName("equip_slot_$slot") ?: slot.toTitleCase()
+
     fun questName(context: Context, key: String, fallback: String = key.toTitleCase()): String =
         context.stringByName("quest_${key}_name") ?: fallback
 

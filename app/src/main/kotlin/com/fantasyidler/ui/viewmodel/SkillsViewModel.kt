@@ -327,6 +327,7 @@ class SkillsViewModel @Inject constructor(
                 return@launch
             }
 
+            playerRepo.consumeItems(mapOf(logKey to actualQty))
             _uiState.update { it.copy(startingSession = true, sheetSkill = null) }
             try {
                 playerRepo.enqueueAction(action)
@@ -644,9 +645,12 @@ class SkillsViewModel @Inject constructor(
                 }
                 Skills.PRAYER -> {
                     val buried = frames.sumOf { it.kills }
-                    questRepo.recordBuried(buried)
+                    val isAshSession = gameData.bones[session.activityKey]?.isAsh == true
+                    if (!isAshSession) {
+                        questRepo.recordBuried(buried)
+                        guildRepo.recordGuildPrayer(buried)
+                    }
                     playerRepo.recordDailyPrayer(buried)
-                    guildRepo.recordGuildPrayer(buried)
                 }
                 Skills.MERCANTILE -> {
                     val coins = regularItems["_coins"]?.toLong() ?: 0L
