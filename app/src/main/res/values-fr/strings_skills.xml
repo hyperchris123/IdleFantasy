@@ -7,7 +7,7 @@
     <string name="skill_mining_desc">Extraire des minerais et des gemmes précieux de la terre.</string>
     <string name="skill_fishing_name">Pêche</string>
     <string name="skill_fishing_desc">Attraper des poissons et des trésors aquatiques dans les eaux.</string>
-    <string name="skill_woodcutting_name">Cueillette du bois</string>
+    <string name="skill_woodcutting_name">Bûcheron</string>
     <string name="skill_woodcutting_desc">Couper des arbres et récolter différents types de bois.</string>
     <string name="skill_farming_name">Agriculture</string>
     <string name="skill_farming_desc">Planter et récolter des cultures dans vos parcelles agricoles.</string>
