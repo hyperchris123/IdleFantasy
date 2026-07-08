@@ -288,7 +288,7 @@ hr {
   box-shadow: 0 1px 4px rgba(0,0,0,0.07);
 }
 
-.content thead th {
+.content thead th, .content .summary th {
   background: var(--table-head-bg);
   color: var(--table-head-fg);
   font-weight: 600;
@@ -375,4 +375,18 @@ tr:target {
   .sidebar.open { transform: translateX(0); }
 
   .content { padding: 1.25rem 1rem 2rem; }
+}
+
+/* Summary table for pages */
+table.summary {
+  width: inherit;
+  float: right;
+}
+
+.content .summary th {
+  text-align: right;
+}
+
+.content .summary thead tr {
+  border-bottom: 1px solid var(--table-border);;
 }
