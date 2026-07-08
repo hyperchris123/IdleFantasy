@@ -71,7 +71,7 @@ class GuildRepository @Inject constructor(
         )
 
         fun countForTarget(items: Map<String, Int>, target: String): Int =
-            (items[target] ?: 0) + (POTION_SUBSTITUTES[target]?.sumOf { items[it] ?: 0 } ?: 0)
+            (items[target] ?: 0) + (items["enhanced_$target"] ?: 0) + (POTION_SUBSTITUTES[target]?.sumOf { items[it] ?: 0 } ?: 0)
     }
 
     // -------------------------------------------------------------------------
