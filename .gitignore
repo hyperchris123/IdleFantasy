@@ -14,3 +14,4 @@ local.properties
 CLAUDE.md
 docs/fdroid/config.yml
 docs/fdroid/tmp/
+__pycache__
