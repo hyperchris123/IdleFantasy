@@ -410,7 +410,7 @@ class CombatViewModel @Inject constructor(
                     skillName        = "boss",
                     activityKey      = bossKey,
                     frames           = framesJson,
-                    durationMs       = boss.durationMinutes * 60_000L,
+                    durationMs       = bossFrames.size * 60_000L,
                     skillDisplayName = boss.displayName,
                 )
             } catch (e: Exception) {
