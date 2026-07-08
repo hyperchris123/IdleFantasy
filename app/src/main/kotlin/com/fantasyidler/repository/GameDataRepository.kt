@@ -297,6 +297,8 @@ class GameDataRepository @Inject constructor(
             herbloreRecipes.forEach { (key, r) -> add(key); addAll(r.materials.keys) }
             // Farming: protect seeds so they aren't sold as junk
             addAll(crops.values.map { it.seedName })
+            // Marketplace items not in equipment.json
+            addAll(marketplace.values.flatMap { it.items.keys })
         }
     }
 

@@ -115,7 +115,7 @@ object CombatSimulator {
 
             // --- Enemy combat stats ---
             val enemyEffStr    = enemy.combatStats.strengthLevel + enemy.combatStats.strengthBonus
-            val enemyMaxHit    = max(1, 1 + enemyEffStr * (enemy.combatStats.strengthBonus + 64) / 640)
+            val enemyMaxHit    = if (enemyEffStr == 0) 0 else max(0, 1 + enemyEffStr * (enemy.combatStats.strengthBonus + 64) / 640)
             val enemyEffAtk    = enemy.combatStats.attackLevel + enemy.combatStats.attackBonus
             val enemyHitChance = when {
                 enemyEffAtk > effDefence ->
@@ -320,7 +320,7 @@ object CombatSimulator {
         }.coerceIn(0.10, 0.95)
 
         val bossEffStr = boss.combatStats.strengthLevel + boss.combatStats.strengthBonus
-        val bossMax    = max(1, 1 + bossEffStr * (boss.combatStats.strengthBonus + 64) / 640)
+        val bossMax    = if (bossEffStr == 0) 0 else max(0, 1 + bossEffStr * (boss.combatStats.strengthBonus + 64) / 640)
         val bossEffAtk = boss.combatStats.attackLevel + boss.combatStats.attackBonus
         val effPlayerDefence = playerDefence + blessingDefBonus
         val bossHitChance = when {
@@ -495,7 +495,7 @@ object CombatSimulator {
             val enemy = enemies[spawn.enemy] ?: continue
             val weight      = spawn.weight.toDouble() / totalWeight
             val enemyEffStr = enemy.combatStats.strengthLevel + enemy.combatStats.strengthBonus
-            val enemyMaxHit = max(1, 1 + enemyEffStr * (enemy.combatStats.strengthBonus + 64) / 640)
+            val enemyMaxHit = if (enemyEffStr == 0) 0 else max(0, 1 + enemyEffStr * (enemy.combatStats.strengthBonus + 64) / 640)
             val enemyEffAtk = enemy.combatStats.attackLevel + enemy.combatStats.attackBonus
             val enemyHit    = when {
                 enemyEffAtk > playerDefence -> 1.0 - playerDefence / (2.0 * enemyEffAtk.coerceAtLeast(1))

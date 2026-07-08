@@ -1,3 +1,8 @@
+v1.7.8
+• Fix: Dwarven Warhammer is now correctly strength-based; its equip requirement is now Strength 60 (was Attack 60 + Strength 60)
+• Fix: Farm animals (Chicken, Sheep, Cow) now deal zero damage; the Farm dungeon shows "Looks manageable" instead of "Likely to die"
+• Fix: Items purchased from the Merchants Guild (Ring of Wealth, Berserker Ring, Amulet of Fury, etc.) are no longer treated as junk and will not be auto-sold
+
 v1.7.7
 • New: Basic Staff added to the Equipment shop for 500 coins, so magic builds no longer require combat drops to get started
 • Fix: Prestiging a skill now cancels any active session and evicts queued actions for that skill, refunding materials and coins; previously queued high-XP actions could complete after the reset and slingshot the skill back up from level 1
