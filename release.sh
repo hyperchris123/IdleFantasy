@@ -179,6 +179,26 @@ git push
 echo "==> Custom F-Droid repo updated and pushed"
 
 # ---------------------------------------------------------------------------
+# Create GitHub release
+# ---------------------------------------------------------------------------
+
+echo "==> Creating GitHub release..."
+cd "$REPO_DIR"
+
+PREV_TAG=$(git tag --sort=-version:refname | grep -A1 "^${TAG}$" | tail -1)
+
+RELEASE_FLAGS=(
+    --title "$TAG"
+    --notes-file "$FASTLANE_CHANGELOG"
+    --latest
+    --verify-tag
+)
+[[ -n "$PREV_TAG" ]] && RELEASE_FLAGS+=(--previous-tag "$PREV_TAG")
+
+gh release create "$TAG" "$APK#app-release.apk" "${RELEASE_FLAGS[@]}"
+echo "==> GitHub release created (previous: ${PREV_TAG:-none})"
+
+# ---------------------------------------------------------------------------
 # Regenerate wiki
 # ---------------------------------------------------------------------------
 
@@ -192,6 +212,6 @@ echo "======================================================"
 echo "  Release $TAG complete"
 echo "  APK:     $APK"
 echo "  F-Droid: https://tristinbaker.github.io/IdleFantasy/fdroid/repo"
-echo "  Upload:  https://github.com/tristinbaker/IdleFantasy/releases/tag/$TAG"
+echo "  GitHub:  https://github.com/tristinbaker/IdleFantasy/releases/tag/$TAG"
 echo "  Wiki:    https://github.com/tristinbaker/IdleFantasy/wiki"
 echo "======================================================"
