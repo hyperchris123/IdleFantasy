@@ -85,7 +85,7 @@ fun AppNavigation(
 
     val tabSubScreens: Map<String, Set<String>> = mapOf(
         "home"   to setOf("shop", "settings", "inn", Screen.WorkerSkills.route, "guild_hall", "guild_detail/{guild}", "church", "slayer"),
-        "skills" to setOf("farming", "mercantile", Screen.Slayer.route),
+        "skills" to setOf("farming", "mercantile"),
     )
 
     Scaffold(
@@ -103,8 +103,8 @@ fun AppNavigation(
                         onClick = {
                             val currentRoute = currentDestination?.route
                             val isInSubScreen = tabSubScreens[screen.route]?.contains(currentRoute) == true
-                            if (isInSubScreen && navController.popBackStack(screen.route, inclusive = false)) {
-                                // popped back to the tab root
+                            if (isInSubScreen) {
+                                navController.popBackStack(screen.route, inclusive = false)
                             } else {
                                 navController.navigate(screen.route) {
                                     popUpTo(navController.graph.findStartDestination().id) {

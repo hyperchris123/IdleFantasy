@@ -197,7 +197,7 @@ fun HomeScreen(
                         summary.itemLines.forEach { (item, qty) -> SummaryRow(item, qty) }
                     }
                     if (summary.coinsGained > 0) {
-                        SummaryRow(stringResource(R.string.label_coins), "+${summary.coinsGained.formatCoins()}")
+                        SummaryRow("Coins", "+${summary.coinsGained.formatCoins()}")
                     }
                     if (summary.coinBlessingBonus > 0) {
                         Text(
@@ -323,7 +323,7 @@ fun HomeScreen(
                         summary.itemLines.forEach { (item, qty) -> SummaryRow(item, qty) }
                     }
                     if (summary.coinsGained > 0) {
-                        SummaryRow(stringResource(R.string.label_coins), "+${summary.coinsGained.formatCoins()}")
+                        SummaryRow("Coins", "+${summary.coinsGained.formatCoins()}")
                     }
                     if (summary.coinBlessingBonus > 0) {
                         Text(
@@ -1164,7 +1164,6 @@ private fun RecentSessionsSheet(
     sessions: List<RecentSession>,
     onDismiss: () -> Unit,
 ) {
-    val context = androidx.compose.ui.platform.LocalContext.current
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -1172,29 +1171,19 @@ private fun RecentSessionsSheet(
             .padding(bottom = 40.dp),
     ) {
         Text(
-            text       = stringResource(R.string.label_recent_activity),
+            text       = "Recent Activity",
             style      = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
         )
         Spacer(Modifier.height(12.dp))
         if (sessions.isEmpty()) {
             Text(
-                text  = stringResource(R.string.label_no_sessions_yet),
+                text  = "No sessions completed yet.",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         } else {
             sessions.forEachIndexed { index, entry ->
-                val activityDisplay = if (entry.activityKey.isNotEmpty()) {
-                    when (entry.skillName) {
-                        "boss"       -> GameStrings.bossName(context, entry.activityKey)
-                        "combat"     -> GameStrings.dungeonName(context, entry.activityKey)
-                        "expedition" -> GameStrings.skillingDungeonName(context, entry.activityKey, entry.activityKey.toTitleCase())
-                        else         -> GameStrings.itemName(context, entry.activityKey)
-                    }
-                } else {
-                    entry.activityDisplayName
-                }
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -1209,12 +1198,12 @@ private fun RecentSessionsSheet(
                         modifier = Modifier.width(28.dp),
                     )
                     Text(
-                        text     = GameStrings.skillName(context, entry.skillName),
+                        text     = entry.skillName.toTitleCase(),
                         style    = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.weight(1f),
                     )
                     Text(
-                        text  = activityDisplay,
+                        text  = entry.activityDisplayName,
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )

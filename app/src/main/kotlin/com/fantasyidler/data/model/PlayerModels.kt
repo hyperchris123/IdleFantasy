@@ -91,7 +91,6 @@ data class PlayerFlags(
 data class RecentSession(
     @SerialName("skill_name") val skillName: String,
     @SerialName("activity_display_name") val activityDisplayName: String,
-    @SerialName("activity_key") val activityKey: String = "",
 )
 
 /** An active Slayer task assigned by the Slayer Master. */
