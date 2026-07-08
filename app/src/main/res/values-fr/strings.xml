@@ -1029,9 +1029,9 @@
     <string name="item_yew_wardrobe_name">Armoire en If</string>
     <string name="item_magic_throne_name">Trône Magique</string>
     <string name="town_upgrade_section_title">Bâtiment de Ville</string>
-    <string name="town_building_inn_name">Inn</string>
-    <string name="town_building_guild_hall_name">Guild Hall</string>
-    <string name="town_building_church_name">Church</string>
+    <string name="town_building_inn_name">Hôtel</string>
+    <string name="town_building_guild_hall_name">Salle de la guilde</string>
+    <string name="town_building_church_name">Église</string>
     <string name="town_building_current_tier">Niveau %1$d / 3</string>
     <string name="town_building_maxed_label">Entièrement Amélioré</string>
     <string name="town_upgrade_next_label">Prochaine Amélioration</string>
