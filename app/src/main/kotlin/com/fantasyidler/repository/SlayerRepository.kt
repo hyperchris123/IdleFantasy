@@ -72,7 +72,6 @@ class SlayerRepository @Inject constructor(
                 )
             )
             questRepo.recordSlayerTaskCompleted()
-            playerRepo.recordWeeklyProgress("slayer_task", "any", 1)
         } else {
             playerRepo.updateFlags(
                 flags.copy(
