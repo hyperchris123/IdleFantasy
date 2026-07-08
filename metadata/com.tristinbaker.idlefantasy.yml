@@ -244,9 +244,16 @@ Builds:
     gradle:
       - yes
 
+  - versionName: '1.5.0'
+    versionCode: 34
+    commit: 720bf40853c06bf9923981e687138943c0f151ec
+    subdir: app
+    gradle:
+      - yes
+
 AllowedAPKSigningKeys: 99a980a934cb0149bfbdd5f4358471ffe69302e0467bae4d8574d4feeda34010
 
 AutoUpdateMode: Version
 UpdateCheckMode: Tags
-CurrentVersion: 1.4.3
-CurrentVersionCode: 33
+CurrentVersion: 1.5.0
+CurrentVersionCode: 34
