@@ -92,6 +92,7 @@ sealed class SheetState {
     /** Opens the inline craft sheet for one of the instant-craft skills. */
     data class Crafting(val skillName: String) : SheetState()
     data object Mercantile : SheetState()
+    data object Farming : SheetState()
     data object ComingSoon : SheetState()
 }
 
@@ -226,6 +227,7 @@ class SkillsViewModel @Inject constructor(
             Skills.CRAFTING,
             Skills.HERBLORE  -> SheetState.Crafting(skillKey)
             Skills.MERCANTILE -> SheetState.Mercantile
+            Skills.FARMING    -> SheetState.Farming
             else             -> SheetState.ComingSoon
         }
         _uiState.update { it.copy(sheetSkill = sheet) }
@@ -320,7 +322,6 @@ class SkillsViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(
                         snackbarMessage = if (enqueued) "Added to queue: Firemaking." else "Queue is full (3/3).",
-                        sheetSkill = null,
                     )
                 }
                 return@launch
@@ -363,11 +364,16 @@ class SkillsViewModel @Inject constructor(
                         catalystKey         = catalystKey,
                     )
                 )
-                if (enqueued) playerRepo.consumeItems(mapOf("rune_essence" to runeData.essenceCost * qty))
+                if (enqueued) {
+                    playerRepo.consumeItems(mapOf("rune_essence" to runeData.essenceCost * qty))
+                    if (catalystKey != null) {
+                        val ashCost = (qty + 9) / 10
+                        playerRepo.consumeItems(mapOf(catalystKey to ashCost))
+                    }
+                }
                 _uiState.update {
                     it.copy(
                         snackbarMessage = if (enqueued) "Added to queue: Runecrafting — $actDisplay." else "Queue is full (3/3).",
-                        sheetSkill = null,
                     )
                 }
                 return@launch
@@ -464,7 +470,6 @@ class SkillsViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(
                         snackbarMessage = if (enqueued) "Added to queue: Prayer — ${bone.displayName}." else "Queue is full (3/3).",
-                        sheetSkill = null,
                     )
                 }
                 return@launch
@@ -562,7 +567,6 @@ class SkillsViewModel @Inject constructor(
                             "Added to queue: $displayName${if (activityKey.isNotEmpty()) " — $actDisplay" else ""}."
                         else
                             "Queue is full (3/3).",
-                        sheetSkill = null,
                     )
                 }
                 return@launch
@@ -721,6 +725,7 @@ class SkillsViewModel @Inject constructor(
                     ?.let { playerRepo.addItems(it) }
             }
             playerRepo.prestigeSkill(skillName)
+            grantStarterGearAfterPrestige(skillName)
             if (abandonedSession != null) queuedSessionStarter.startNextQueued()
         }
     }
@@ -728,6 +733,55 @@ class SkillsViewModel @Inject constructor(
     // ------------------------------------------------------------------
     // Helpers
     // ------------------------------------------------------------------
+
+    private suspend fun grantStarterGearAfterPrestige(prestigedSkill: String) {
+        val levels   = playerRepo.getSkillLevels()
+        val equipped = playerRepo.getEquipped().toMutableMap()
+        val allEquip = gameData.equipment
+
+        val starterForSlot = mapOf(
+            EquipSlot.WEAPON_ATK    to "bronze_sword",
+            EquipSlot.WEAPON_STR    to "bronze_scimitar",
+            EquipSlot.WEAPON_RANGED to "wooden_bow",
+            EquipSlot.WEAPON_MAGIC  to "basic_staff",
+            EquipSlot.HEAD          to "bronze_full_helmet",
+            EquipSlot.BODY          to "bronze_platebody",
+            EquipSlot.LEGS          to "bronze_platelegs",
+            EquipSlot.SHIELD        to "bronze_kiteshield",
+            EquipSlot.BOOTS         to "bronze_boots",
+        )
+
+        val toGrant = mutableMapOf<String, Int>()
+        for ((slot, starterKey) in starterForSlot) {
+            val currentKey = equipped[slot]
+            val currentValid = currentKey != null &&
+                (allEquip[currentKey]?.requirements?.all { (skill, lvl) -> (levels[skill] ?: 1) >= lvl } == true)
+            if (currentValid) continue
+
+            val style = EquipSlot.combatStyleForSlot(slot)
+            val inventory = playerRepo.getOrCreatePlayer().let {
+                json.decodeFromString<Map<String, Int>>(it.inventory)
+            }
+            val bestFromInv = inventory.keys
+                .mapNotNull { k -> allEquip[k]?.let { eq -> k to eq } }
+                .filter { (_, eq) ->
+                    if (style != null) eq.slot == "weapon" && eq.combatStyle == style else eq.slot == slot
+                }
+                .filter { (_, eq) -> eq.requirements.all { (skill, lvl) -> (levels[skill] ?: 1) >= lvl } }
+                .maxByOrNull { (_, eq) -> eq.attackBonus + eq.strengthBonus + eq.defenseBonus }
+                ?.first
+
+            if (bestFromInv != null) {
+                equipped[slot] = bestFromInv
+            } else if (allEquip[starterKey] != null) {
+                toGrant[starterKey] = (toGrant[starterKey] ?: 0) + 1
+                equipped[slot] = starterKey
+            }
+        }
+
+        if (toGrant.isNotEmpty()) playerRepo.addItems(toGrant)
+        playerRepo.updateEquipped(equipped)
+    }
 
     /** Sums qty already committed to the queue for each activityKey under [skillName]. */
     private fun reservedQty(queue: List<QueuedAction>, skillName: String): Map<String, Int> =
@@ -780,11 +834,14 @@ class SkillsViewModel @Inject constructor(
      * Pets store their boosted_skill as a JSON string; we decode inline.
      */
     private fun ashRuneBonusForKey(ashKey: String): Int = when (ashKey) {
-        "ashes", "oak_ashes", "willow_ashes" -> 1
-        "maple_ashes", "yew_ashes"           -> 2
-        "magic_ashes"                        -> 3
-        "redwood_ashes"                      -> 4
-        else                                 -> 0
+        "ashes"         -> 1
+        "oak_ashes"     -> 2
+        "willow_ashes"  -> 3
+        "maple_ashes"   -> 4
+        "yew_ashes"     -> 5
+        "magic_ashes"   -> 6
+        "redwood_ashes" -> 7
+        else            -> 0
     }
 
     private fun petBoostFor(petsJson: String, skillKey: String): Int {
