@@ -185,7 +185,6 @@ class QueuedSessionStarter @Inject constructor(
                 val logData = gameData.logs[logKey] ?: return
                 val qty     = action.qty.takeIf { it > 0 } ?: return
                 val ashKey  = ashForLog(logKey)
-                if (!playerRepo.consumeItems(mapOf(logKey to qty))) return
                 val frames  = buildCraftFrames(xpMap[Skills.FIREMAKING] ?: 0L, qty, logData.xpPerLog.toDouble(), 1, ashKey)
                 val perLogMs = SkillSimulator.sessionDurationMs(agilityLevel) / 60L
                 sessionRepo.startSession(

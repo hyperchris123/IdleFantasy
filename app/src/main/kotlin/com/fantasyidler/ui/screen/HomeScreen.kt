@@ -34,6 +34,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Badge
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
@@ -582,11 +583,10 @@ fun HomeScreen(
             }
 
             // ── Town card ───────────────────────────────────────────────
-            var townExpanded by remember { mutableStateOf(false) }
             Surface(
                 shape    = RoundedCornerShape(16.dp),
                 color    = MaterialTheme.colorScheme.surfaceVariant,
-                modifier = Modifier.fillMaxWidth().clickable { townExpanded = !townExpanded },
+                modifier = Modifier.fillMaxWidth().clickable { viewModel.toggleTownExpanded() },
             ) {
                 Row(
                     modifier          = Modifier.padding(16.dp),
@@ -605,13 +605,13 @@ fun HomeScreen(
                         )
                     }
                     Icon(
-                        imageVector        = if (townExpanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
+                        imageVector        = if (state.townExpanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
                         contentDescription = null,
                         tint               = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
             }
-            if (townExpanded) {
+            if (state.townExpanded) {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     listOf(
                         Triple(Icons.Filled.ShoppingCart, stringResource(R.string.label_shop), stringResource(R.string.label_shop_desc)) to onNavigateToShop,
@@ -654,6 +654,10 @@ fun HomeScreen(
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis,
                                 )
+                                if (i == 2 && state.guildClaimableCount > 0) {
+                                    Spacer(Modifier.width(8.dp))
+                                    Badge { Text("${state.guildClaimableCount}") }
+                                }
                             }
                         }
                     }
@@ -922,7 +926,7 @@ private fun QueueCard(
                     val labelDungeon    = stringResource(R.string.label_dungeon)
                     val labelBoss       = stringResource(R.string.label_boss)
                     val (prefix, suffix) = when (action.skillName) {
-                        "expedition" -> labelExpedition to action.skillDisplayName
+                        "expedition" -> labelExpedition to GameStrings.skillingDungeonName(context, action.activityKey, action.skillDisplayName)
                         "combat"     -> labelDungeon    to GameStrings.dungeonName(context, action.activityKey)
                         "boss"       -> labelBoss       to GameStrings.bossName(context, action.activityKey)
                         "farming"    -> action.skillDisplayName to null

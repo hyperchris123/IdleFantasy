@@ -84,6 +84,8 @@ data class PlayerFlags(
     @SerialName("skill_prestige") val skillPrestige: Map<String, Int> = emptyMap(),
     /** Ash fertilizer per farming patch: patchNumber.toString() → ash item key. */
     @SerialName("farming_fertilizer") val farmingFertilizer: Map<String, String> = emptyMap(),
+    /** Last-used potion key for combat sessions; persisted across app restarts. */
+    @SerialName("active_potion_key") val activePotionKey: String? = null,
 )
 
 /** A single entry in the recent sessions log. */

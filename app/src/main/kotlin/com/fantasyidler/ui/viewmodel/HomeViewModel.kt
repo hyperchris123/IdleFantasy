@@ -109,6 +109,10 @@ data class HomeUiState(
     val xpBoostRemainingMs: Long = 0L,
     val recentSessions: List<com.fantasyidler.data.model.RecentSession> = emptyList(),
     val showRecentActivityLog: Boolean = true,
+    /** Total claimable guild quests + dailies across all guilds. Drives the badge on the town menu button. */
+    val guildClaimableCount: Int = 0,
+    /** Whether the Town section in the home screen is expanded. Survives recomposition. */
+    val townExpanded: Boolean = false,
 )
 
 @HiltViewModel
@@ -149,7 +153,9 @@ class HomeViewModel @Inject constructor(
             combine(sessionRepo.workerCompletedCountFlow(1), sessionRepo.workerCompletedCountFlow(2)) { c1, c2 -> Pair(c1, c2) },
             _extra,
         ) { w1, w2, counts, extra -> WorkerFlowData(w1, w2, counts.first, counts.second, extra) },
-    ) { (player, session, completedCount), workerData ->
+        guildRepo.observeQuestProgress(),
+    ) { playerTriple, workerData, guildProgress ->
+        val (player, session, completedCount) = playerTriple
         val workerSession  = workerData.session1
         val workerSession2 = workerData.session2
         val extra = workerData.extra
@@ -174,6 +180,20 @@ class HomeViewModel @Inject constructor(
                                        else                       -> sessionMs
                                    }
                                }
+            val progressMap      = guildProgress.associateBy { it.questId }
+            val completedQuestIds = guildProgress.filter { it.completed }.map { it.questId }.toSet()
+            val guildClaimableCount = GuildRepository.ALL_GUILDS.sumOf { guild ->
+                val rep   = flags.guildReputation[guild] ?: 0L
+                val level = guildRepo.guildLevel(guild, rep, completedQuestIds)
+                val claimableQuests = gameData.guildQuests.values
+                    .filter { it.guild == guild && level >= it.guildLevelRequired }
+                    .count { quest ->
+                        val row = progressMap[quest.id]
+                        row != null && !row.completed && row.progress >= quest.amount
+                    }
+                val dailies = guildRepo.getGuildDailiesWithProgress(guild, flags)
+                claimableQuests + dailies.count { it.progress >= it.template.amount && !it.claimed }
+            }
             extra.copy(
                 isLoading           = false,
                 coins               = player.coins,
@@ -199,6 +219,7 @@ class HomeViewModel @Inject constructor(
                 xpBoostRemainingMs         = (flags.xpBoostExpiresAt - System.currentTimeMillis()).coerceAtLeast(0L),
                 recentSessions             = flags.recentSessions,
                 showRecentActivityLog      = flags.showRecentActivityLog,
+                guildClaimableCount        = guildClaimableCount,
             )
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), HomeUiState())
@@ -470,9 +491,12 @@ class HomeViewModel @Inject constructor(
                             }
                             Skills.PRAYER      -> {
                                 val buried = frames.sumOf { it.kills }
-                                questRepo.recordBuried(buried)
+                                val isAshSession = gameData.bones[session.activityKey]?.isAsh == true
+                                if (!isAshSession) {
+                                    questRepo.recordBuried(buried)
+                                    guildRepo.recordGuildPrayer(buried)
+                                }
                                 playerRepo.recordDailyPrayer(buried)
-                                guildRepo.recordGuildPrayer(buried)
                             }
                             Skills.FARMING     -> guildRepo.recordGuildGathering(Skills.FARMING, regular)
                         }
@@ -950,6 +974,8 @@ class HomeViewModel @Inject constructor(
 
     fun summaryConsumed() = _extra.update { it.copy(sessionSummary = null) }
     fun snackbarConsumed() = _extra.update { it.copy(snackbarMessage = null) }
+
+    fun toggleTownExpanded() = _extra.update { it.copy(townExpanded = !it.townExpanded) }
 
     fun dismissWhatsNew() {
         viewModelScope.launch {

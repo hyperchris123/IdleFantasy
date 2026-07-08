@@ -868,6 +868,9 @@
     <string name="slayer_lamp_large_desc">+50 000 XP à n’importe quelle compétence</string>
     <string name="slayer_found_in">Trouvé dans : %1$s</string>
     <string name="slayer_requires">Nécessite : %1$s</string>
+    <string name="slayer_add_dungeon_to_queue">Ajouter le Donjon à la File</string>
+    <string name="slayer_queue_added">Ajouté à la file : %1$s.</string>
+    <string name="slayer_queue_full">La file est pleine (3/3).</string>
     <string name="item_slayer_helm_name">Casque Tueur</string>
     <string name="item_slayer_helm_desc">Un casque robuste porté par les tueurs expérimentés.</string>
     <string name="item_abyssal_whip_name">Fouet Abyssal</string>
