@@ -433,6 +433,8 @@
     <string name="skills_no_logs">No logs in inventory</string>
     <!-- Translator note: %1$d = level required, %2$s = XP per log -->
     <string name="skills_log_desc">Lv. %1$d  •  %2$s XP/log</string>
+    <!-- Translator note: %1$d = level required, %2$s = XP per catch -->
+    <string name="skills_fish_desc">Lv. %1$d  •  %2$s XP/catch</string>
     <!-- Translator note: %1$d = required level, %2$s = skill name, %3$d = player level, %4$s = skill name again -->
     <string name="skills_req_with_have">Requires %1$d %2$s (You have %3$d %4$s)</string>
 

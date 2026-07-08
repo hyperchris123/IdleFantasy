@@ -11,6 +11,7 @@ import com.fantasyidler.data.json.EnemyData
 import com.fantasyidler.data.json.EquipmentData
 import com.fantasyidler.data.json.FletchingRecipe
 import com.fantasyidler.data.json.AgilityCourseData
+import com.fantasyidler.data.json.FishData
 import com.fantasyidler.data.json.GatheringSkillData
 import com.fantasyidler.data.json.GemData
 import com.fantasyidler.data.json.HerbloreRecipe
@@ -168,6 +169,11 @@ class GameDataRepository @Inject constructor(
     /** Gem bonus drop table for mining. */
     val gems: Map<String, GemData> by lazy {
         asset("data/gems.json")
+    }
+
+    /** All catchable fish, keyed by item key (e.g. "raw_shrimp"). */
+    val fish: Map<String, FishData> by lazy {
+        asset("data/fish.json")
     }
 
     val fishingSkillData: GatheringSkillData by lazy {

@@ -243,10 +243,10 @@ class HomeViewModel @Inject constructor(
                         }
                         // Consume input materials at collect time (best-effort, like food)
                         when (session.skillName) {
-                            Skills.PRAYER -> playerRepo.consumeItems(mapOf(session.activityKey to frames.size))
+                            Skills.PRAYER -> playerRepo.consumeItems(mapOf(session.activityKey to frames.sumOf { it.kills }))
                             Skills.RUNECRAFTING -> {
                                 val rune = gameData.runes[session.activityKey]
-                                if (rune != null) playerRepo.consumeItems(mapOf("rune_essence" to rune.essenceCost * frames.size))
+                                if (rune != null) playerRepo.consumeItems(mapOf("rune_essence" to rune.essenceCost * frames.sumOf { it.kills }))
                             }
                             in craftingSkills -> {
                                 val mats = when (session.skillName) {
@@ -257,7 +257,7 @@ class HomeViewModel @Inject constructor(
                                     Skills.HERBLORE  -> gameData.herbloreRecipes[session.activityKey]?.materials
                                     else             -> null
                                 }
-                                if (mats != null) playerRepo.consumeItems(mats.mapValues { (_, needed) -> needed * frames.size })
+                                if (mats != null) playerRepo.consumeItems(mats.mapValues { (_, needed) -> needed * frames.sumOf { it.kills } })
                             }
                             Skills.FIREMAKING -> playerRepo.consumeItems(mapOf(session.activityKey to frames.size))
                         }

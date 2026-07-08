@@ -65,6 +65,7 @@ import com.fantasyidler.BuildConfig
 import com.fantasyidler.R
 import com.fantasyidler.data.json.AgilityCourseData
 import com.fantasyidler.data.json.BoneData
+import com.fantasyidler.data.json.FishData
 import com.fantasyidler.data.json.LogData
 import com.fantasyidler.data.json.OreData
 import com.fantasyidler.data.json.TreeData
@@ -244,12 +245,13 @@ fun SkillsScreen(
                     sessionDurationMs = state.sessionDurationMs,
                     onSelect          = { treeKey -> viewModel.startWoodcuttingSession(treeKey) },
                 )
-                SheetState.Fishing -> FishingSheet(
-                    state            = state,
+                is SheetState.Fishing -> FishingSheet(
+                    fish             = sheet.fish,
                     isStarting       = state.startingSession,
                     hasActiveSession = state.anySessionActive,
                     isQueueFull      = state.queueSize >= 3,
-                    onStart          = viewModel::startFishingSession,
+                    sessionDurationMs = state.sessionDurationMs,
+                    onSelect         = { fishKey -> viewModel.startFishingSession(fishKey) },
                 )
                 is SheetState.Agility -> AgilitySheet(
                     courses           = sheet.courses,
@@ -638,55 +640,62 @@ private fun WoodcuttingSheet(
 
 @Composable
 private fun FishingSheet(
-    state: SkillsUiState,
+    fish: Map<String, FishData>,
     isStarting: Boolean,
     hasActiveSession: Boolean,
     isQueueFull: Boolean,
-    onStart: () -> Unit,
+    sessionDurationMs: Long,
+    onSelect: (String) -> Unit,
 ) {
-    val fishLevel = state.skillLevels[Skills.FISHING] ?: 1
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-            .padding(bottom = 24.dp),
-    ) {
+    val context = LocalContext.current
+    var selectedKey by remember { mutableStateOf<String?>(null) }
+    Column(Modifier.padding(bottom = 24.dp)) {
         Text(
-            text  = stringResource(R.string.skill_fishing_name),
-            style = MaterialTheme.typography.titleMedium,
+            text     = stringResource(R.string.label_choose_activity),
+            style    = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
         )
-        Spacer(Modifier.height(4.dp))
         Text(
-            text  = stringResource(R.string.skill_fishing_desc),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            text     = stringResource(R.string.skill_fishing_desc),
+            style    = MaterialTheme.typography.bodySmall,
+            color    = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 4.dp),
         )
-        Spacer(Modifier.height(4.dp))
-        Text(
-            text  = stringResource(R.string.skills_fishing_desc, fishLevel),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-        if (state.sessionDurationMs > 0) {
-            Spacer(Modifier.height(2.dp))
+        if (sessionDurationMs > 0) {
             Text(
-                text  = stringResource(R.string.skills_session_duration, state.sessionDurationMs / 60_000),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                text     = stringResource(R.string.skills_session_duration, sessionDurationMs / 60_000),
+                style    = MaterialTheme.typography.bodySmall,
+                color    = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
             )
         }
-        Spacer(Modifier.height(16.dp))
-        Button(
-            onClick  = onStart,
-            enabled  = !isStarting && !(hasActiveSession && isQueueFull),
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            if (isStarting) {
-                CircularProgressIndicator(Modifier.size(20.dp))
-            } else {
-                Text(if (hasActiveSession) stringResource(R.string.skills_add_to_queue) else stringResource(R.string.btn_start_session))
-            }
+        HorizontalDivider()
+        Column(Modifier.verticalScroll(rememberScrollState())) {
+            fish.entries
+                .sortedBy { it.value.levelRequired }
+                .forEach { (key, f) ->
+                    ActivityRow(
+                        name             = GameStrings.itemName(context, key),
+                        detail           = stringResource(R.string.skills_fish_desc, f.levelRequired, f.xpPerCatch),
+                        isStarting       = isStarting,
+                        hasActiveSession = hasActiveSession,
+                        isQueueFull      = isQueueFull,
+                        onClick          = { selectedKey = key },
+                    )
+                }
         }
+    }
+    selectedKey?.let { key ->
+        val f = fish[key] ?: return@let
+        ActivityDetailDialog(
+            name             = GameStrings.itemName(context, key),
+            detail           = stringResource(R.string.skills_fish_desc, f.levelRequired, f.xpPerCatch),
+            description      = GameStrings.itemDesc(context, key),
+            hasActiveSession = hasActiveSession,
+            isQueueFull      = isQueueFull,
+            onConfirm        = { onSelect(key) },
+            onDismiss        = { selectedKey = null },
+        )
     }
 }
 
