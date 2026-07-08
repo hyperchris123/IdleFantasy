@@ -42,6 +42,8 @@ data class PlayerFlags(
     @SerialName("daily_quest_generated_at") val dailyQuestGeneratedAt: Long = 0L,
     /** Currently hired worker, or null if none. */
     @SerialName("hired_worker") val hiredWorker: HiredWorker? = null,
+    /** Persists the "hide completed quests" toggle across sessions. */
+    @SerialName("hide_completed_quests") val hideCompletedQuests: Boolean = false,
     /** Guild reputation totals: guild key → total rep earned (guild level is derived from this). */
     @SerialName("guild_reputation") val guildReputation: Map<String, Long> = emptyMap(),
     /** IDs of today's active guild daily request templates. */
@@ -143,6 +145,7 @@ data class PlayerExport(
     val pets: String,
     val coins: Long,
     val questProgress: List<QuestProgress> = emptyList(),
+    val farmingPatches: List<FarmingPatch> = emptyList(),
 )
 
 // ---------------------------------------------------------------------------

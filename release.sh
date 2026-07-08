@@ -193,7 +193,7 @@ RELEASE_FLAGS=(
     --latest
     --verify-tag
 )
-[[ -n "$PREV_TAG" ]] && RELEASE_FLAGS+=(--previous-tag "$PREV_TAG")
+[[ -n "$PREV_TAG" ]] && RELEASE_FLAGS+=(--notes-start-tag "$PREV_TAG")
 
 gh release create "$TAG" "$APK#app-release.apk" "${RELEASE_FLAGS[@]}"
 echo "==> GitHub release created (previous: ${PREV_TAG:-none})"

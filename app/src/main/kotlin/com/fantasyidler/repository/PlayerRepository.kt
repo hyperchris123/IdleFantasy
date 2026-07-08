@@ -1,5 +1,6 @@
 package com.fantasyidler.repository
 
+import com.fantasyidler.data.db.dao.FarmingPatchDao
 import com.fantasyidler.data.db.dao.PlayerDao
 import com.fantasyidler.data.db.dao.QuestProgressDao
 import com.fantasyidler.data.model.*
@@ -30,6 +31,7 @@ private fun capeKeyForSkill(skill: String): String? = when (skill) {
 class PlayerRepository @Inject constructor(
     private val playerDao: PlayerDao,
     private val questProgressDao: QuestProgressDao,
+    private val farmingPatchDao: FarmingPatchDao,
     private val json: Json,
     private val dailyQuestRepo: DailyQuestRepository,
 ) {
@@ -500,14 +502,15 @@ class PlayerRepository @Inject constructor(
         val player = getOrCreatePlayer()
         return json.encode<PlayerExport>(
             PlayerExport(
-                skillLevels   = player.skillLevels,
-                skillXp       = player.skillXp,
-                inventory     = player.inventory,
-                equipped      = player.equipped,
-                flags         = player.flags,
-                pets          = player.pets,
-                coins         = player.coins,
-                questProgress = questProgressDao.getAllProgress(),
+                skillLevels    = player.skillLevels,
+                skillXp        = player.skillXp,
+                inventory      = player.inventory,
+                equipped       = player.equipped,
+                flags          = player.flags,
+                pets           = player.pets,
+                coins          = player.coins,
+                questProgress  = questProgressDao.getAllProgress(),
+                farmingPatches = farmingPatchDao.getAllPatches(),
             )
         )
     }
@@ -529,6 +532,8 @@ class PlayerRepository @Inject constructor(
         )
         questProgressDao.deleteAll()
         export.questProgress.forEach { questProgressDao.upsert(it) }
+        farmingPatchDao.clearAll()
+        export.farmingPatches.forEach { farmingPatchDao.upsert(it) }
     }
 
     // Finds the end of the root JSON object and drops any trailing garbage.

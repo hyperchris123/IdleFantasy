@@ -204,19 +204,44 @@ fun SettingsScreen(
                 title    = stringResource(R.string.settings_font_size),
                 subtitle = null,
                 trailing = {
-                    Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                        listOf(
-                            0.7f  to stringResource(R.string.settings_font_tiny),
-                            0.85f to stringResource(R.string.settings_font_small),
-                            1.0f  to stringResource(R.string.settings_font_normal),
-                            1.25f to stringResource(R.string.settings_font_large),
-                            1.5f  to stringResource(R.string.settings_font_huge),
-                        ).forEach { (scale, label) ->
-                            FilterChip(
-                                selected = fontScale == scale,
-                                onClick  = { viewModel.setFontScale(scale) },
-                                label    = { Text(label, style = MaterialTheme.typography.labelSmall) },
-                            )
+                    val fontOptions = listOf(
+                        0.7f  to stringResource(R.string.settings_font_tiny),
+                        0.85f to stringResource(R.string.settings_font_small),
+                        1.0f  to stringResource(R.string.settings_font_normal),
+                        1.25f to stringResource(R.string.settings_font_large),
+                        1.5f  to stringResource(R.string.settings_font_huge),
+                    )
+                    val fontLabel = fontOptions.firstOrNull { it.first == fontScale }?.second
+                        ?: stringResource(R.string.settings_font_normal)
+                    var fontExpanded by remember { mutableStateOf(false) }
+                    ExposedDropdownMenuBox(
+                        expanded = fontExpanded,
+                        onExpandedChange = { fontExpanded = it },
+                    ) {
+                        OutlinedTextField(
+                            value = fontLabel,
+                            onValueChange = {},
+                            readOnly = true,
+                            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = fontExpanded) },
+                            modifier = Modifier
+                                .menuAnchor()
+                                .width(130.dp),
+                            textStyle = MaterialTheme.typography.bodySmall,
+                            singleLine = true,
+                        )
+                        ExposedDropdownMenu(
+                            expanded = fontExpanded,
+                            onDismissRequest = { fontExpanded = false },
+                        ) {
+                            fontOptions.forEach { (scale, label) ->
+                                DropdownMenuItem(
+                                    text = { Text(label) },
+                                    onClick = {
+                                        viewModel.setFontScale(scale)
+                                        fontExpanded = false
+                                    },
+                                )
+                            }
                         }
                     }
                 }
