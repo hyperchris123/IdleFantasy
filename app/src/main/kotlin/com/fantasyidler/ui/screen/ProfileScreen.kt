@@ -1173,8 +1173,9 @@ internal fun buildEquipDetail(item: com.fantasyidler.data.json.EquipmentData, co
     if ((item.rangedStrengthBonus ?: 0) != 0) parts.add("${context.getString(R.string.profile_stat_ranged)} ${context.getString(R.string.profile_stat_str)} +${item.rangedStrengthBonus}")
     if ((item.magicAttackBonus    ?: 0) != 0) parts.add("${context.getString(R.string.profile_stat_magic)} ${context.getString(R.string.profile_stat_atk)} +${item.magicAttackBonus}")
     if ((item.magicDamageBonus    ?: 0) != 0) parts.add("${context.getString(R.string.profile_stat_magic)} Dmg +${item.magicDamageBonus}")
-    val req = item.requirements.entries.firstOrNull()
-    if (req != null) parts.add("${context.getString(R.string.profile_req_lv)}${req.value} ${req.key}")
+    for ((skill, lvl) in item.requirements) {
+        parts.add("${context.getString(R.string.profile_req_lv)}$lvl ${skill.replaceFirstChar { it.uppercase() }}")
+    }
     return parts.joinToString("  •  ")
 }
 
