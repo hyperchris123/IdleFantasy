@@ -1272,43 +1272,29 @@ private fun CombatSessionBanner(
                             )
                             Spacer(Modifier.height(2.dp))
                             Column {
-                                val youHit    = stringResource(R.string.combat_log_you_hit)
-                                val dmgLabel  = stringResource(R.string.combat_log_dmg)
-                                val youMissed = stringResource(R.string.combat_log_you_missed)
-                                val hitYou    = stringResource(R.string.combat_log_hit_you)
-                                val missed    = stringResource(R.string.combat_log_missed)
                                 for (entry in combatLog) {
                                     if (entry.isKill) {
                                         Text(
-                                            text  = "☠ ${entry.enemyName} defeated",
+                                            text  = stringResource(R.string.combat_log_kill, entry.enemyName),
                                             style = MaterialTheme.typography.bodySmall,
                                             color = GoldPrimary,
                                         )
+                                    } else if (entry.isPlayer) {
+                                        val color = if (entry.damage > 0) Color(0xFF4CAF50)
+                                                    else MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.45f)
+                                        val text = if (entry.damage > 0)
+                                            stringResource(R.string.combat_log_player_hit, entry.enemyName, entry.damage)
+                                        else
+                                            stringResource(R.string.combat_log_player_miss, entry.enemyName)
+                                        Text(text = text, style = MaterialTheme.typography.bodySmall, color = color)
                                     } else {
-                                        val (arrow, dmgText, color) = if (entry.isPlayer) {
-                                            val c = if (entry.damage > 0) Color(0xFF4CAF50)
+                                        val color = if (entry.damage > 0) MaterialTheme.colorScheme.error
                                                     else MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.45f)
-                                            Triple(
-                                                "→",
-                                                if (entry.damage > 0) "$youHit ${entry.enemyName}: ${entry.damage} $dmgLabel"
-                                                else "$youMissed ${entry.enemyName}",
-                                                c,
-                                            )
-                                        } else {
-                                            val c = if (entry.damage > 0) MaterialTheme.colorScheme.error
-                                                    else MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.45f)
-                                            Triple(
-                                                "←",
-                                                if (entry.damage > 0) "${entry.enemyName} $hitYou: ${entry.damage} $dmgLabel"
-                                                else "${entry.enemyName} $missed",
-                                                c,
-                                            )
-                                        }
-                                        Text(
-                                            text  = "$arrow $dmgText",
-                                            style = MaterialTheme.typography.bodySmall,
-                                            color = color,
-                                        )
+                                        val text = if (entry.damage > 0)
+                                            stringResource(R.string.combat_log_enemy_hit, entry.enemyName, entry.damage)
+                                        else
+                                            stringResource(R.string.combat_log_enemy_miss, entry.enemyName)
+                                        Text(text = text, style = MaterialTheme.typography.bodySmall, color = color)
                                     }
                                 }
                             }

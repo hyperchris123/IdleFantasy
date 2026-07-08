@@ -607,4 +607,7 @@
     <string name="item_enhanced_super_ranging_potion_name">Güçlendirilmiş süper menzil iksiri</string>
     <string name="item_enhanced_super_magic_potion_name">Güçlendirilmiş süper büyü iksiri</string>
     <string name="item_enhanced_overload_potion_name">Güçlendirilmiş aşırı yük iksiri</string>
+
+    <string name="item_any_fish_name">balık (herhangi tür)</string>
+
 </resources>

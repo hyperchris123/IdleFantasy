@@ -33,6 +33,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.fantasyidler.notification.SessionNotificationManager
+import com.fantasyidler.ui.screen.BoneAltarScreen
 import com.fantasyidler.ui.screen.ChurchScreen
 import com.fantasyidler.ui.screen.CombatScreen
 import com.fantasyidler.ui.screen.FarmingScreen
@@ -84,7 +85,7 @@ fun AppNavigation(
 
     val tabSubScreens: Map<String, Set<String>> = mapOf(
         "home"   to setOf("shop", "settings", "inn", Screen.WorkerSkills.route, "guild_hall", "guild_detail/{guild}", "church", "slayer"),
-        "skills" to setOf("farming", "mercantile", Screen.Slayer.route),
+        "skills" to setOf("farming", "mercantile", Screen.Slayer.route, Screen.BoneAltar.route),
     )
 
     Scaffold(
@@ -153,7 +154,8 @@ fun AppNavigation(
         ) {
             composable(Screen.Skills.route)   {
                 SkillsScreen(
-                    onNavigateToSlayer = { navController.navigate(Screen.Slayer.route) },
+                    onNavigateToSlayer    = { navController.navigate(Screen.Slayer.route) },
+                    onNavigateToBoneAltar = { navController.navigate(Screen.BoneAltar.route) },
                 )
             }
             composable(Screen.Farming.route) { entry ->
@@ -220,6 +222,11 @@ fun AppNavigation(
             }
             composable(Screen.Slayer.route) { entry ->
                 SlayerScreen(
+                    onBack = { if (navController.currentBackStackEntry == entry) navController.popBackStack() },
+                )
+            }
+            composable(Screen.BoneAltar.route) { entry ->
+                BoneAltarScreen(
                     onBack = { if (navController.currentBackStackEntry == entry) navController.popBackStack() },
                 )
             }

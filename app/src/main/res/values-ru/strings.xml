@@ -424,6 +424,11 @@
     <string name="combat_log_dmg">урон</string>
     <string name="combat_log_missed">промах</string>
     <string name="combat_log_you_missed">Вы промахнулись</string>
+    <string name="combat_log_kill">☠ %1$s повержен</string>
+    <string name="combat_log_player_hit">→ Вы попали по %1$s: %2$d урон</string>
+    <string name="combat_log_player_miss">→ Вы промахнулись по %1$s</string>
+    <string name="combat_log_enemy_hit">← %1$s попал по вам: %2$d урон</string>
+    <string name="combat_log_enemy_miss">← %1$s промах</string>
     <string name="combat_rec_level">Рекомендуемый боевой уровень</string>
     <string name="combat_your_level">Ваш боевой уровень</string>
     <string name="combat_no_strength_bonus">Нет (бонус силы отсутствует)</string>
@@ -1002,4 +1007,15 @@
     <string name="catalyst_enhanced_output">Производит усиленное зелье</string>
     <string name="catalyst_rune_bonus">%1$d рун за эссенцию</string>
     <string name="catalyst_none">Без катализатора</string>
+    <string name="bone_altar_title">Алтарь Костей</string>
+    <string name="bone_altar_open">Использовать алтарь</string>
+    <string name="bone_altar_select_prompt">Выберите кость для захоронения</string>
+    <string name="bone_altar_tap">Нажмите, чтобы захоронить</string>
+    <string name="bone_altar_change_bone">Изменить</string>
+    <string name="bone_altar_combo_count">Комбо ×%d</string>
+    <string name="bone_altar_bonus_active">+50%% к XP!</string>
+    <string name="bone_altar_session_xp">+%s XP за сессию</string>
+    <string name="bone_altar_buried_count">%d захоронено</string>
+    <string name="bone_altar_no_bones">Нет костей в инвентаре</string>
+    <string name="bone_altar_cape_awarded">Накидка молитвы получена!</string>
 </resources>

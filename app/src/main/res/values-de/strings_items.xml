@@ -607,4 +607,7 @@
     <string name="item_enhanced_super_ranging_potion_name">Verbesserter Superfernkampftrank</string>
     <string name="item_enhanced_super_magic_potion_name">Verbesserter Supermagietrank</string>
     <string name="item_enhanced_overload_potion_name">Verbesserter Überlasttrank</string>
+
+    <string name="item_any_fish_name">Fisch (beliebig)</string>
+
 </resources>

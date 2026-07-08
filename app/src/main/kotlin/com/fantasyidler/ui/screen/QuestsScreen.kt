@@ -51,6 +51,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import android.content.Context
 import com.fantasyidler.R
 import com.fantasyidler.data.json.DailyQuestTemplate
+import com.fantasyidler.data.json.QuestData
 import com.fantasyidler.repository.DailyQuestWithProgress
 import com.fantasyidler.ui.theme.GoldPrimary
 import com.fantasyidler.ui.viewmodel.QuestWithProgress
@@ -258,6 +259,41 @@ private fun buildDailyObjective(context: Context, template: DailyQuestTemplate):
     return "$verb ${template.amount} $item."
 }
 
+private fun buildQuestObjective(context: Context, quest: QuestData): String {
+    fun verb(skill: String): String {
+        val id = context.resources.getIdentifier("daily_verb_$skill", "string", context.packageName)
+        return if (id != 0) context.getString(id) else skill.replace('_', ' ')
+    }
+    return when (quest.type) {
+        "gather", "gather_any" -> context.getString(
+            R.string.quest_obj_gather,
+            verb(quest.skill), quest.amount, GameStrings.itemName(context, quest.target),
+        )
+        "craft", "craft_any" -> context.getString(
+            R.string.quest_obj_craft,
+            verb(quest.skill), quest.amount, GameStrings.itemName(context, quest.target),
+        )
+        "prayer"     -> context.getString(R.string.quest_obj_prayer, quest.amount)
+        "kill"       -> context.getString(R.string.quest_obj_kill, quest.amount)
+        "kill_enemy" -> context.getString(R.string.quest_obj_kill_enemy, quest.amount, GameStrings.enemyName(context, quest.target))
+        "dungeon"    -> if (quest.amount == 1)
+            context.getString(R.string.quest_obj_dungeon_once, GameStrings.dungeonName(context, quest.target))
+        else
+            context.getString(R.string.quest_obj_dungeon, GameStrings.dungeonName(context, quest.target), quest.amount)
+        "boss"       -> if (quest.amount == 1)
+            context.getString(R.string.quest_obj_boss_once, GameStrings.bossName(context, quest.target))
+        else
+            context.getString(R.string.quest_obj_boss, GameStrings.bossName(context, quest.target), quest.amount)
+        "dungeon_melee_only"  -> context.getString(R.string.quest_obj_dungeon_melee_only, GameStrings.dungeonName(context, quest.target))
+        "dungeon_ranged_only" -> context.getString(R.string.quest_obj_dungeon_ranged_only, GameStrings.dungeonName(context, quest.target))
+        "dungeon_magic_only"  -> context.getString(R.string.quest_obj_dungeon_magic_only, GameStrings.dungeonName(context, quest.target))
+        "dungeon_no_food"     -> context.getString(R.string.quest_obj_dungeon_no_food, GameStrings.dungeonName(context, quest.target))
+        "collect"             -> context.getString(R.string.quest_obj_collect, quest.amount, GameStrings.itemName(context, quest.target))
+        "slayer_task"         -> context.getString(R.string.quest_obj_slayer_task, quest.amount)
+        else                  -> quest.description
+    }
+}
+
 @Composable
 private fun DailyQuestCard(
     quest: DailyQuestWithProgress,
@@ -375,7 +411,7 @@ private fun QuestRow(
 
         // Description / objective
         val objective = GameStrings.questObjective(context, quest.id).takeIf { it.isNotBlank() }
-            ?: quest.description
+            ?: buildQuestObjective(context, quest)
         if (objective.isNotBlank()) {
             Spacer(Modifier.height(2.dp))
             Text(

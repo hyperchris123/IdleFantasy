@@ -372,6 +372,11 @@
     <string name="combat_log_dmg">dégâts</string>
     <string name="combat_log_missed">a raté</string>
     <string name="combat_log_you_missed">Vous avez raté</string>
+    <string name="combat_log_kill">☠ %1$s vaincu</string>
+    <string name="combat_log_player_hit">→ Vous infligez %2$d dégâts à %1$s</string>
+    <string name="combat_log_player_miss">→ Vous avez raté %1$s</string>
+    <string name="combat_log_enemy_hit">← %1$s vous inflige %2$d dégâts</string>
+    <string name="combat_log_enemy_miss">← %1$s a raté</string>
     <string name="combat_rec_level">Niveau de combat recommandé</string>
     <string name="combat_your_level">Votre niveau de combat</string>
     <string name="combat_no_strength_bonus">Aucun (pas de bonus de force)</string>
@@ -958,4 +963,15 @@
     <string name="catalyst_enhanced_output">Produit une potion améliorée</string>
     <string name="catalyst_rune_bonus">%1$d runes par essence</string>
     <string name="catalyst_none">Sans catalyseur</string>
+    <string name="bone_altar_title">Autel des Os</string>
+    <string name="bone_altar_open">Utiliser l\'Autel</string>
+    <string name="bone_altar_select_prompt">Choisir un os à enterrer</string>
+    <string name="bone_altar_tap">Appuyer pour Enterrer</string>
+    <string name="bone_altar_change_bone">Changer</string>
+    <string name="bone_altar_combo_count">Combo ×%d</string>
+    <string name="bone_altar_bonus_active">+50%% bonus XP !</string>
+    <string name="bone_altar_session_xp">+%s XP cette session</string>
+    <string name="bone_altar_buried_count">%d enterrés</string>
+    <string name="bone_altar_no_bones">Aucun os dans l\'inventaire</string>
+    <string name="bone_altar_cape_awarded">Cape de Prière obtenue !</string>
 </resources>

@@ -358,6 +358,11 @@
     <string name="combat_log_dmg">hasar</string>
     <string name="combat_log_missed">kaçırdı</string>
     <string name="combat_log_you_missed">Iskaladın</string>
+    <string name="combat_log_kill">☠ %1$s yenildi</string>
+    <string name="combat_log_player_hit">→ Vurdun %1$s: %2$d hasar</string>
+    <string name="combat_log_player_miss">→ Iskaladın %1$s</string>
+    <string name="combat_log_enemy_hit">← %1$s sana vurdu: %2$d hasar</string>
+    <string name="combat_log_enemy_miss">← %1$s kaçırdı</string>
     <string name="combat_rec_level">Önerilen savaş seviyesi</string>
     <string name="combat_your_level">Senin savaş seviyen</string>
     <string name="combat_no_strength_bonus">Hiçbiri (güç bonusu yok)</string>
@@ -965,4 +970,15 @@
     <string name="catalyst_enhanced_output">Güçlendirilmiş iksir üretir</string>
     <string name="catalyst_rune_bonus">Esans başına %1$d rün</string>
     <string name="catalyst_none">Katalizör yok</string>
+    <string name="bone_altar_title">Kemik Sunağı</string>
+    <string name="bone_altar_open">Sunağı Kullan</string>
+    <string name="bone_altar_select_prompt">Gömmek için bir kemik seçin</string>
+    <string name="bone_altar_tap">Gömmek için Dokun</string>
+    <string name="bone_altar_change_bone">Değiştir</string>
+    <string name="bone_altar_combo_count">Kombo ×%d</string>
+    <string name="bone_altar_bonus_active">+50%% XP bonusu!</string>
+    <string name="bone_altar_session_xp">+%s XP bu oturumda</string>
+    <string name="bone_altar_buried_count">%d gömüldü</string>
+    <string name="bone_altar_no_bones">Envanterde kemik yok</string>
+    <string name="bone_altar_cape_awarded">Dua pelerini kazanıldı!</string>
 </resources>

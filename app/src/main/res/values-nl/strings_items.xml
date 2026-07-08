@@ -607,4 +607,7 @@
     <string name="item_enhanced_super_ranging_potion_name">Verbeterd superschietdrank</string>
     <string name="item_enhanced_super_magic_potion_name">Verbeterd supermagiedrank</string>
     <string name="item_enhanced_overload_potion_name">Verbeterd overbelasdrank</string>
+
+    <string name="item_any_fish_name">vis (elk type)</string>
+
 </resources>

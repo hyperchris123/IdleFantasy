@@ -644,11 +644,15 @@ fun HomeScreen(
                                     style      = MaterialTheme.typography.bodyMedium,
                                     fontWeight = FontWeight.Medium,
                                     modifier   = Modifier.weight(1f),
+                                    maxLines   = 1,
+                                    overflow   = TextOverflow.Ellipsis,
                                 )
                                 Text(
-                                    text  = desc,
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    text     = desc,
+                                    style    = MaterialTheme.typography.bodySmall,
+                                    color    = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
                                 )
                             }
                         }

@@ -107,6 +107,7 @@ import java.util.Locale
 @Composable
 fun SkillsScreen(
     onNavigateToSlayer: () -> Unit = {},
+    onNavigateToBoneAltar: () -> Unit = {},
     viewModel: SkillsViewModel       = hiltViewModel(),
     craftingViewModel: CraftingViewModel = hiltViewModel(),
     expeditionsViewModel: ExpeditionsViewModel = hiltViewModel(),
@@ -163,10 +164,11 @@ fun SkillsScreen(
                     ExpeditionsScreen(viewModel = expeditionsViewModel, showTitle = false)
                 } else {
                     SkillsTabContent(
-                        state              = state,
-                        viewModel          = viewModel,
-                        context            = context,
-                        onNavigateToSlayer = onNavigateToSlayer,
+                        state                 = state,
+                        viewModel             = viewModel,
+                        context               = context,
+                        onNavigateToSlayer    = onNavigateToSlayer,
+                        onNavigateToBoneAltar = onNavigateToBoneAltar,
                     )
                 }
             }
@@ -266,15 +268,19 @@ fun SkillsScreen(
                     currentXp         = state.skillXp[Skills.RUNECRAFTING] ?: 0L,
                 )
                 is SheetState.Prayer -> PrayerSheet(
-                    availableBones    = sheet.availableBones,
-                    inventory         = sheet.inventory,
-                    prayerLevel       = state.skillLevels[Skills.PRAYER] ?: 1,
-                    currentXp         = state.skillXp[Skills.PRAYER] ?: 0L,
-                    isStarting        = state.startingSession,
-                    hasActiveSession  = state.anySessionActive,
-                    isQueueFull       = state.queueSize >= 3,
-                    sessionDurationMs = state.sessionDurationMs,
-                    onStart           = viewModel::startPrayerSession,
+                    availableBones        = sheet.availableBones,
+                    inventory             = sheet.inventory,
+                    prayerLevel           = state.skillLevels[Skills.PRAYER] ?: 1,
+                    currentXp             = state.skillXp[Skills.PRAYER] ?: 0L,
+                    isStarting            = state.startingSession,
+                    hasActiveSession      = state.anySessionActive,
+                    isQueueFull           = state.queueSize >= 3,
+                    sessionDurationMs     = state.sessionDurationMs,
+                    onStart               = viewModel::startPrayerSession,
+                    onNavigateToBoneAltar = {
+                        viewModel.dismissSheet()
+                        onNavigateToBoneAltar()
+                    },
                 )
                 is SheetState.Crafting -> {
                     val craftState by craftingViewModel.uiState.collectAsState()
@@ -310,6 +316,7 @@ private fun SkillsTabContent(
     viewModel: SkillsViewModel,
     context: android.content.Context,
     onNavigateToSlayer: () -> Unit = {},
+    onNavigateToBoneAltar: () -> Unit = {},
 ) {
     LazyColumn(modifier = Modifier.fillMaxSize()) {
         state.activeSession?.let { session ->
@@ -1207,6 +1214,7 @@ internal fun PrayerSheet(
     isQueueFull: Boolean,
     sessionDurationMs: Long,
     onStart: (boneKey: String, qty: Int) -> Unit,
+    onNavigateToBoneAltar: () -> Unit = {},
     tierMaxQty: Int = Int.MAX_VALUE,
 ) {
     val context = LocalContext.current
@@ -1233,12 +1241,22 @@ internal fun PrayerSheet(
 
         if (selectedBone == null) {
             // ── Bone selection ───────────────────────────────────────────
-            Text(
-                text     = stringResource(R.string.skills_prayer_desc, prayerLevel),
-                style    = MaterialTheme.typography.bodySmall,
-                color    = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-            )
+            Row(
+                modifier          = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 16.dp, end = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text     = stringResource(R.string.skills_prayer_desc, prayerLevel),
+                    style    = MaterialTheme.typography.bodySmall,
+                    color    = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.weight(1f).padding(vertical = 8.dp),
+                )
+                TextButton(onClick = onNavigateToBoneAltar) {
+                    Text(stringResource(R.string.bone_altar_open))
+                }
+            }
             if (availableBones.isEmpty()) {
                 Box(
                     modifier         = Modifier.fillMaxWidth().padding(32.dp),

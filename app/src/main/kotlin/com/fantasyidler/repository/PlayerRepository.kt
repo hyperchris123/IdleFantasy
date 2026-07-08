@@ -155,6 +155,44 @@ class PlayerRepository @Inject constructor(
         ))
     }
 
+    data class BuryBoneResult(val xpGained: Long, val awardedCape: String?)
+
+    /**
+     * Atomically consume one [boneKey] from inventory and award [xpToAward] prayer XP.
+     * Returns a result with xpGained=0 if the bone is not in inventory.
+     */
+    suspend fun buryBoneAtomic(boneKey: String, xpToAward: Long): BuryBoneResult {
+        val player    = getOrCreatePlayer()
+        val inventory: MutableMap<String, Int> = json.decodeFromString(player.inventory)
+        if ((inventory[boneKey] ?: 0) <= 0) return BuryBoneResult(0L, null)
+
+        val newQty = (inventory[boneKey] ?: 0) - 1
+        if (newQty <= 0) inventory.remove(boneKey) else inventory[boneKey] = newQty
+
+        val levels: MutableMap<String, Int> = json.decodeFromString(player.skillLevels)
+        val xpMap:  MutableMap<String, Long> = json.decodeFromString(player.skillXp)
+        val oldLevel = XpTable.levelForXp(xpMap[Skills.PRAYER] ?: 0L)
+        val newXp    = (xpMap[Skills.PRAYER] ?: 0L) + xpToAward
+        xpMap[Skills.PRAYER]  = newXp
+        levels[Skills.PRAYER] = XpTable.levelForXp(newXp)
+
+        var awardedCape: String? = null
+        if (oldLevel < 99 && levels[Skills.PRAYER]!! >= 99) {
+            val capeKey = capeKeyForSkill(Skills.PRAYER)
+            if (capeKey != null && !inventory.containsKey(capeKey)) {
+                inventory[capeKey] = 1
+                awardedCape = capeKey
+            }
+        }
+
+        playerDao.upsert(player.copy(
+            inventory   = json.encode<Map<String, Int>>(inventory),
+            skillLevels = json.encode<Map<String, Int>>(levels),
+            skillXp     = json.encode<Map<String, Long>>(xpMap),
+        ))
+        return BuryBoneResult(xpToAward, awardedCape)
+    }
+
     /**
      * Remove items from the player's inventory.
      * Returns false (and makes no change) if any item is in insufficient quantity.

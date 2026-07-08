@@ -419,4 +419,30 @@
     <string name="quest_daily_kill_bandit_name">Bandit Buster</string>
     <string name="quest_daily_kill_demon_name">Demon Hunter</string>
     <string name="quest_daily_kill_dragon_name">Dragon Slayer</string>
+
+    <!-- Quest objective verb strings for craft skills -->
+    <string name="daily_verb_crafting">Craft</string>
+    <string name="daily_verb_firemaking">Burn</string>
+    <string name="daily_verb_fletching">Fletch</string>
+    <string name="daily_verb_herblore">Brew</string>
+    <string name="daily_verb_runecrafting">Craft</string>
+    <string name="daily_verb_prayer">Bury</string>
+
+    <!-- Quest objective format strings -->
+    <string name="quest_obj_gather">%1$s %2$d %3$s</string>
+    <string name="quest_obj_craft">%1$s %2$d %3$s</string>
+    <string name="quest_obj_prayer">Bury %1$d bones of any type</string>
+    <string name="quest_obj_kill">Defeat %1$d enemies</string>
+    <string name="quest_obj_kill_enemy">Defeat %1$d %2$s</string>
+    <string name="quest_obj_dungeon">Complete the %1$s %2$d times</string>
+    <string name="quest_obj_dungeon_once">Complete the %1$s</string>
+    <string name="quest_obj_boss">Defeat the %1$s %2$d times</string>
+    <string name="quest_obj_boss_once">Defeat the %1$s</string>
+    <string name="quest_obj_dungeon_melee_only">Complete %1$s using only melee combat</string>
+    <string name="quest_obj_dungeon_ranged_only">Complete %1$s using only ranged combat</string>
+    <string name="quest_obj_dungeon_magic_only">Complete %1$s using only magic combat</string>
+    <string name="quest_obj_dungeon_no_food">Complete %1$s without using any food</string>
+    <string name="quest_obj_collect">Collect %1$d %2$s from combat</string>
+    <string name="quest_obj_slayer_task">Complete %1$d Slayer tasks</string>
+
 </resources>
