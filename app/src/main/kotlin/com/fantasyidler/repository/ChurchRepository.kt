@@ -17,7 +17,6 @@ sealed class BlessingActivateResult {
 class ChurchRepository @Inject constructor(
     private val playerRepo: PlayerRepository,
     private val townRepoProvider: Provider<TownRepository>,
-    private val buffNotifScheduler: BuffNotificationScheduler,
 ) {
     companion object {
         const val BLESSING_DURATION_MS = 24L * 3_600_000L
@@ -144,7 +143,6 @@ class ChurchRepository @Inject constructor(
                 activeBlessingExpiresAt = now + durationMs,
             )
         )
-        buffNotifScheduler.scheduleBlessingExpiry(now + durationMs)
         return BlessingActivateResult.Success
     }
 }

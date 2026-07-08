@@ -262,7 +262,7 @@ echo "==> GitHub release created (previous: ${PREV_TAG:-none})"
 
 echo "==> Regenerating wiki..."
 cd "$REPO_DIR"
-python3 -m wiki.src update
+python3 scripts/generate_wiki.py
 echo "==> Wiki updated"
 
 echo ""

@@ -713,10 +713,7 @@ class SkillsViewModel @Inject constructor(
                 in gatheringSkills -> {
                     questRepo.recordGathering(session.skillName, regularItems)
                     playerRepo.recordDailyGathering(regularItems)
-                    when (session.skillName) {
-                        Skills.AGILITY -> guildRepo.recordGuildSessions()
-                        else           -> guildRepo.recordGuildGathering(session.skillName, regularItems)
-                    }
+                    guildRepo.recordGuildGathering(session.skillName, regularItems)
                 }
                 in craftingSkills -> {
                     questRepo.recordCrafting(session.skillName, regularItems)

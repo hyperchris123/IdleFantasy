@@ -51,10 +51,6 @@
             android:exported="false" />
 
         <receiver
-            android:name=".receiver.BuffAlarmReceiver"
-            android:exported="false" />
-
-        <receiver
             android:name=".receiver.BootReceiver"
             android:exported="true">
             <intent-filter>

@@ -446,7 +446,6 @@ private fun LampSkillPickerDialog(
     onSkillSelected: (String) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    val context = LocalContext.current
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(stringResource(R.string.slayer_lamp_pick_skill)) },
@@ -457,7 +456,8 @@ private fun LampSkillPickerDialog(
             ) {
                 Skills.ALL.forEach { skillKey ->
                     val level = skillLevels[skillKey] ?: 1
-                    val name  = GameStrings.skillName(context, skillKey)
+                    val name  = skillKey.split('_')
+                        .joinToString(" ") { it.replaceFirstChar { c -> c.uppercase() } }
                     Surface(
                         onClick  = { onSkillSelected(skillKey) },
                         shape    = RoundedCornerShape(8.dp),

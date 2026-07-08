@@ -44,8 +44,6 @@ PAGE_DIRECTORY: dict[str, PageInfo] = {
     "firemaking": PageInfo("Firemaking", "Firemaking.md"),
     "runecrafting": PageInfo("Runecrafting", "Runecrafting.md"),
     "herblore": PageInfo("Herblore", "Herblore.md"),
-    "construction": PageInfo("Construction", "Construction.md"),
-    "thieving": PageInfo("Thieving", "Thieving.md"),
     "prayer": PageInfo("Prayer", "Prayer.md"),
     "mercantile": PageInfo("Mercantile", "Mercantile.md"),
     "slayer": PageInfo("Slayer", "Slayer.md"),
@@ -58,9 +56,6 @@ PAGE_DIRECTORY: dict[str, PageInfo] = {
     "spells": PageInfo("Spells", "Spells.md"),
     # Town
     "shop": PageInfo("Shop", "Shop.md"),
-    "workers": PageInfo("Workers", "Workers.md"),
-    "guilds": PageInfo("Guilds", "Guilds.md"),
-    "buildings": PageInfo("Buildings", "Buildings.md"),
     # Miscellaneous
     "pets": PageInfo("Pets", "Pets.md"),
     "quests": PageInfo("Quests", "Quests.md")
@@ -77,7 +72,6 @@ PAGE_HIERARCHY = (
             "woodcutting",
             "farming",
             "agility",
-            "thieving",
         )),
         ("Crafting", (
             "smithing",
@@ -87,7 +81,6 @@ PAGE_HIERARCHY = (
             "firemaking",
             "runecrafting",
             "herblore",
-            "construction",
         )),
         ("Support", (
             "prayer",
@@ -107,10 +100,7 @@ PAGE_HIERARCHY = (
         "spells"
     )),
     ("Town", (
-        "shop",
-        "workers",
-        "guilds",
-        "buildings",
+        "shop"
     )),
     ("Miscellaneous", (
         "pets",
@@ -138,8 +128,6 @@ def _get_page_to_content() -> dict[str, str]:
         "firemaking": gen_firemaking(),
         "runecrafting": gen_runecrafting(),
         "herblore": gen_herblore(),
-        "construction": gen_construction(),
-        "thieving": gen_thieving(),
         "prayer": gen_prayer(),
         "mercantile": gen_mercantile(),
         "slayer": gen_slayer(),
@@ -152,9 +140,6 @@ def _get_page_to_content() -> dict[str, str]:
         "spells": gen_spells(),
         # Town
         "shop": gen_shop(),
-        "workers": gen_workers(),
-        "guilds": gen_guilds(),
-        "buildings": gen_buildings(),
         # Miscellaneous
         "pets": gen_pets(),
         "quests": gen_quests(),
@@ -231,7 +216,7 @@ def title(key: str) -> str:
 
 
 def fmt_materials(mats: dict) -> str:
-    return ", ".join(f"{qty}× {item_link(item)}" for item, qty in mats.items())
+    return ", ".join(f"{qty}× {title(item)}" for item, qty in mats.items())
 
 
 def fmt_pct(chance: float) -> str:
@@ -255,7 +240,7 @@ def session_minutes(level: int) -> int:
 
 def link(page_id: str):
     page = PAGE_DIRECTORY[page_id]
-    return f"[{page.title}]({page.url.removesuffix('.md')})"
+    return f"[[{page.title}|{page.url.removesuffix('.md')}]]"
 
 
 def _tool_table(slot: str, efficiency_key: str) -> str:
@@ -266,69 +251,6 @@ def _tool_table(slot: str, efficiency_key: str) -> str:
     )
     rows = [[t["display_name"], list(t.get("requirements", {}).values() or [1])[0], f"{t[efficiency_key]:.2f}×"] for t in tools]
     return table(["Tool", "Level Required", "Efficiency"], rows)
-
-_ITEM_PAGE_MAP: dict[str, str] | None = None
-
-
-def build_item_page_map() -> dict[str, str]:
-    global _ITEM_PAGE_MAP
-    if _ITEM_PAGE_MAP is not None:
-        return _ITEM_PAGE_MAP
-
-    m: dict[str, str] = {}
-
-    def _add(keys: list[str], page_id: str):
-        for k in keys:
-            if k and k not in m:
-                m[k] = page_id
-
-    # Equipment first — specific named items, highest priority
-    _add(list(load("equipment.json").keys()), "equipment")
-    # Bones and ashes → prayer
-    _add(list(load("bones.json").keys()), "prayer")
-    # Ores (including coal, rune_essence) → mining
-    _add(list(load("ores.json").keys()), "mining")
-    # Logs → woodcutting (keys from logs.json + log_name fields from trees.json)
-    tree_log_names = [t["log_name"] for t in load("trees.json").values()]
-    _add(list(load("logs.json").keys()) + tree_log_names, "woodcutting")
-    # Runes → runecrafting
-    _add(list(load("runes.json").keys()), "runecrafting")
-    # Smithing outputs → smithing
-    _add(list(load("recipes/smithing.json").keys()), "smithing")
-    # Fish and raw fishing drops → fishing (before cooking so raw fish link here, not to cooking)
-    fishing_data = load("skills/fishing.json")
-    fish_items: list[str] = []
-    for dt in fishing_data.get("drop_tables", {}).values():
-        entries = dt if isinstance(dt, list) else dt.get("items", [])
-        for drop in entries:
-            if isinstance(drop, dict) and "item" in drop:
-                fish_items.append(drop["item"])
-    _add(fish_items, "fishing")
-    # Cooked food outputs → cooking (raw ingredients intentionally excluded so raw fish link to fishing)
-    _add(list(load("recipes/cooking.json").keys()), "cooking")
-    # Fletching outputs → fletching
-    _add(list(load("recipes/fletching.json").keys()), "fletching")
-    # Crafting outputs → crafting
-    _add(list(load("recipes/crafting.json").keys()), "crafting")
-    # Herblore outputs → herblore
-    _add(list(load("recipes/herblore.json").keys()), "herblore")
-    # Crops and seeds → farming
-    crops = load("crops.json")
-    seed_keys = [c["seed_name"] for c in crops.values() if "seed_name" in c]
-    _add(list(crops.keys()) + seed_keys, "farming")
-
-    _ITEM_PAGE_MAP = m
-    return m
-
-
-def item_link(key: str) -> str:
-    """Returns a markdown link to the page where this item is documented, or plain title if unknown."""
-    page_id = build_item_page_map().get(key)
-    if page_id:
-        page = PAGE_DIRECTORY[page_id]
-        return f"[{title(key)}]({page.url.removesuffix('.md')})"
-    return title(key)
-
 
 # ---------------------------------------------------------------------------
 # Page Creation
@@ -363,7 +285,6 @@ def gen_skills() -> str:
         ("Farming", "gathering", "Plant seeds and harvest crops."),
         ("Firemaking", "gathering", "Burn logs for XP. Produces ashes for Prayer."),
         ("Agility", "gathering", "Reduces session time across all skills (60→40 min at level 99)."),
-        ("Thieving", "gathering", "Pickpocket NPCs in the Town for coins and loot."),
         ("Mercantile", "gathering",
          "Send trade caravans and explore skilling expeditions for lore and dungeon unlocks."),
         ("Smithing", "crafting", "Smelt ores into bars and forge equipment."),
@@ -372,7 +293,6 @@ def gen_skills() -> str:
         ("Crafting", "crafting", "Make jewellery and other items."),
         ("Runecrafting", "crafting", "Craft runes from rune essence."),
         ("Herblore", "crafting", "Brew potions for combat stat boosts."),
-        ("Construction", "crafting", "Build furniture used to upgrade town buildings (Inn, Guild Hall, Church)."),
         ("Attack", "combat", "Increases melee accuracy."),
         ("Strength", "combat", "Increases max melee damage."),
         ("Defense", "combat", "Reduces damage taken."),
@@ -384,21 +304,7 @@ def gen_skills() -> str:
     ]
     rows = [[link(skill.lower()) if skill.lower() in PAGE_DIRECTORY else skill, cat, desc] for skill, cat, desc
             in skill_list]
-
-    prestige_rows = [
-        ["Attack",    "+5 Attack per prestige level (up to +15 at prestige 3)"],
-        ["Strength",  "+5 Strength per prestige level (up to +15 at prestige 3)"],
-        ["Defense",   "+5 Defense per prestige level (up to +15 at prestige 3)"],
-        ["Ranged",    "+5 Ranged per prestige level (up to +15 at prestige 3)"],
-        ["Magic",     "+5 Magic per prestige level (up to +15 at prestige 3)"],
-        ["Hitpoints", "+5 Hitpoints per prestige level (+50 max HP per level, up to +150 at prestige 3)"],
-        ["All other skills", "XP bonus only"],
-    ]
-
-    return get_template("skills/skills").format(
-        skills_table=table(["Skill", "Category", "Description"], rows),
-        prestige_table=table(["Skill", "Bonus (in addition to +10% XP)"], prestige_rows),
-    )
+    return get_template("skills/skills").format(skills_table=table(["Skill", "Category", "Description"], rows))
 
 
 def gen_mining() -> str:
@@ -530,7 +436,7 @@ def gen_smithing() -> str:
 def gen_cooking() -> str:
     recipes = load("recipes/cooking.json")
     rows = sorted(
-        [[r["display_name"], r["level_required"], item_link(r["raw_item"]), r["xp_per_item"], r.get("healing_value", "—")]
+        [[r["display_name"], r["level_required"], title(r["raw_item"]), r["xp_per_item"], r.get("healing_value", "—")]
          for r in recipes.values()],
         key=lambda r: r[1]
     )
@@ -603,43 +509,6 @@ def gen_herblore() -> str:
     return get_template("skills/crafting/herblore").format(potion_table=table(['Potion','Level','Ingredients','Effect','XP'], rows))
 
 
-def gen_construction() -> str:
-    recipes = load("recipes/construction.json")
-    rows = sorted(
-        [
-            [r["display_name"], r["level_required"], fmt_materials(r["materials"]), int(r["xp_per_item"])]
-            for r in recipes.values()
-        ],
-        key=lambda r: r[1],
-    )
-    return get_template("skills/crafting/construction").format(
-        item_table=table(["Item", "Level", "Materials", "XP / Item"], rows)
-    )
-
-
-def gen_thieving() -> str:
-    npcs = load("thieving_npcs.json")
-    assert isinstance(npcs, list)
-    rows = []
-    for npc in npcs:
-        loot_parts = []
-        for entry in npc.get("loot_table", []):
-            qty_str = ""
-            if entry.get("min_qty") and entry.get("max_qty"):
-                qty_str = f" ({entry['min_qty']}-{entry['max_qty']})"
-            loot_parts.append(f"{fmt_pct(entry['chance'])} {item_link(entry['item'])}{qty_str}")
-        rows.append([
-            npc["display_name"],
-            npc["level_required"],
-            npc["base_xp"],
-            f"{npc['coins_min']}-{npc['coins_max']}",
-            ", ".join(loot_parts),
-        ])
-    return get_template("skills/gathering/thieving").format(
-        npc_table=table(["NPC", "Level", "XP / Steal", "Coins", "Possible Loot"], rows)
-    )
-
-
 def gen_prayer() -> str:
     # Todo: Add info about bone altar
     bones = load("bones.json")
@@ -697,7 +566,7 @@ def gen_slayer() -> str:
     tasks = load("slayer_tasks.json")
     rows = sorted(
         [
-            [f"[{title(enemy)}](Enemies)", t["slayer_level"], f"{t['min_kills']}–{t['max_kills']}", t["xp_per_kill"]]
+            [title(enemy), t["slayer_level"], f"{t['min_kills']}–{t['max_kills']}", t["xp_per_kill"]]
             for enemy, t in tasks.items()
         ],
         key=lambda r: r[1],
@@ -754,16 +623,16 @@ def _boss_loot_rows(boss) -> list[list]:
     # Add loot
     for item, info in loot.get("items", {}).items():
         qty = f"{info.get('min',1)}–{info.get('max',1)}" if "min" in info else str(info.get("quantity", 1))
-        loot_rows.append([item_link(item), "100%", qty])
+        loot_rows.append([title(item), "100%", qty])
     # Add rare drops
     for drop in boss.get("rare_drops", []):
         chance = fmt_pct(drop.get("chance", 0.005))
-        loot_rows.append([item_link(drop.get("item", "?")), chance, drop.get("quantity", 1)])
-    # Add pet chance — link to Pets page
+        loot_rows.append([title(drop.get("item", "?")), chance, drop.get("quantity", 1)])
+    # Add pet chance
     pet = boss.get("pet")
     if pet:
-        pet_name = f"{pet.get('emoji', '')} {pet.get('display_name', 'Pet')}".strip()
-        loot_rows.append([f"[{pet_name}](Pets)", fmt_pct(pet.get("chance", 0.005)), 1])
+        pet_label = f"{pet.get("emoji", "")} {pet.get("display_name", "Pet")} (pet)".strip()
+        loot_rows.append([pet_label, fmt_pct(pet.get("chance", 0.005)), 1])
     # Return rows
     return loot_rows
 
@@ -775,8 +644,6 @@ def gen_bosses() -> str:
     for boss in sorted(bosses.values(), key=lambda x: x.get("combat_level_required", 0)):
         hp = boss.get("hp", "—")
         xp = boss.get("xp_rewards", {})
-        cs = boss.get("combat_stats", {})
-        ds = boss.get("defensive_stats", {})
         loot_rows = _boss_loot_rows(boss)
         sections.append(section_template.format(
             name=f"{boss.get('emoji', '')} {boss['display_name']}".strip(),
@@ -784,14 +651,6 @@ def gen_bosses() -> str:
             hp=f"{hp:,}" if isinstance(hp, int) else hp,
             duration=boss.get("duration_minutes", "—"),
             description=boss.get("description", ""),
-            attack_level=cs.get("attack_level", "—"),
-            strength_level=cs.get("strength_level", "—"),
-            defense_level=cs.get("defense_level", "—"),
-            attack_bonus=cs.get("attack_bonus", "—"),
-            strength_bonus=cs.get("strength_bonus", "—"),
-            atk_def=ds.get("attack_defense", "—"),
-            range_def=ds.get("ranged_defense", "—"),
-            magic_def=ds.get("magic_defense", "—"),
             xp_rewards=", ".join(f"{title(sk)} {v:,}" for sk, v in xp.items()) if xp else "—",
             loot_table=table(["Item", "Chance", "Qty"], loot_rows) if loot_rows else "_No loot defined._",
         ))
@@ -827,12 +686,12 @@ def _enemy_drop_rows(enemy: dict) -> list[list]:
     drop_rows = []
     for drop in enemy.get("always_drops", []):
         qty = drop.get("quantity", drop.get("quantity_min", 1))
-        drop_rows.append([item_link(drop["item"]), "100%", qty])
+        drop_rows.append([title(drop["item"]), "100%", qty])
     for drop in enemy.get("drop_table", []):
         qty_min = drop.get("quantity_min", 1)
         qty_max = drop.get("quantity_max", qty_min)
         qty_str = str(qty_min) if qty_min == qty_max else f"{qty_min}–{qty_max}"
-        drop_rows.append([item_link(drop["item"]), fmt_pct(drop["chance"]), qty_str])
+        drop_rows.append([title(drop["item"]), fmt_pct(drop["chance"]), qty_str])
     return drop_rows
 
 
@@ -921,140 +780,6 @@ def gen_pets() -> str:
     ]
     return get_template("miscellaneous/pets").format(
         pet_table=table(["Pet", "Source", "Bonus", "Description"], rows),
-    )
-
-
-def gen_workers() -> str:
-    # Worker tier stats (mirrored from WorkerTier enum)
-    tiers = [
-        ("Long Laborer", 8,  0.5,  5_000,  4.0,  "Uncapped (2 min/item)"),
-        ("Apprentice",   8,  1.0,  10_000, 8.0,  "480 items"),
-        ("Journeyman",   6,  1.25, 20_000, 7.5,  "360 items"),
-        ("Master",       4,  2.0,  50_000, 8.0,  "240 items"),
-    ]
-    tier_rows = [
-        [name, f"{dur}h", f"{eff:.2f}×", f"{cost:,}", f"{gather:.1f}×", craft]
-        for name, dur, eff, cost, gather, craft in tiers
-    ]
-    tier_table = table(
-        ["Tier", "Session Duration", "Efficiency", "Hire Cost", "Gathering Output", "Crafting Output"],
-        tier_rows,
-    )
-
-    # Allowed skills (mirrors WorkerSkillsScreen: GATHERING minus FARMING, all CRAFTING_SKILLS, Prayer)
-    gathering_skills = ["Mining", "Fishing", "Woodcutting", "Agility", "Thieving"]
-    crafting_skills  = ["Smithing", "Cooking", "Fletching", "Crafting", "Firemaking", "Runecrafting", "Herblore", "Construction"]
-    skill_rows = (
-        [["Gathering", s] for s in gathering_skills] +
-        [["Crafting",  s] for s in crafting_skills] +
-        [["Support",   "Prayer"]]
-    )
-    skill_table = table(["Category", "Skill"], skill_rows)
-
-    # Inn upgrade XP bonuses (tier 0–3: +0%, +10%, +20%, +30%)
-    inn_rows = [[tier, f"×{1.0 + tier * 0.10:.2f}"] for tier in range(4)]
-    inn_bonus_table = table(["Inn Tier", "Worker XP Multiplier"], inn_rows)
-
-    return get_template("town/workers").format(
-        tier_table=tier_table,
-        skill_table=skill_table,
-        inn_bonus_table=inn_bonus_table,
-    )
-
-
-def gen_guilds() -> str:
-    guild_quests = load("guild_quests.json")
-    assert isinstance(guild_quests, dict)
-
-    # Reputation thresholds (mirrored from GuildRepository.REP_THRESHOLDS)
-    rep_thresholds = [500, 1_500, 4_000, 9_000, 20_000, 40_000, 75_000, 140_000, 250_000, 450_000]
-    rep_rows = [[lvl, f"{rep_thresholds[lvl - 1]:,}"] for lvl in range(1, 11)]
-    rep_table = table(["Guild Level", "Reputation Required"], rep_rows)
-
-    # Guild Hall reduction table (tier 0-3)
-    reduction_rows = [
-        [0, "No reduction (100%)"],
-        [1, "10% fewer required (90%)"],
-        [2, "20% fewer required (80%)"],
-        [3, "30% fewer required (70%)"],
-    ]
-    reduction_table = table(["Guild Hall Tier", "Quest Requirement"], reduction_rows)
-
-    # One section per guild, ordered to match ALL_GUILDS
-    guild_order = [
-        "mining", "fishing", "woodcutting", "farming", "firemaking", "agility",
-        "smithing", "cooking", "fletching", "crafting", "runecrafting", "herblore",
-        "warriors", "archers", "mages", "prayer", "mercantile",
-    ]
-    guild_section_tpl = get_template("town/guild_section")
-    sections = []
-    for guild in guild_order:
-        quests = sorted(
-            [q for q in guild_quests.values() if q["guild"] == guild],
-            key=lambda q: q["guild_level_required"],
-        )
-        rows = []
-        for q in quests:
-            r = q["rewards"]
-            reward_parts = []
-            if r.get("coins"):
-                reward_parts.append(f"{r['coins']:,} coins")
-            if r.get("xp"):
-                reward_parts.append(f"{r['xp']:,} XP")
-            if r.get("reputation"):
-                reward_parts.append(f"{r['reputation']:,} rep")
-            for item, qty in r.get("items", {}).items():
-                reward_parts.append(f"{qty}x {title(item)}")
-            rows.append([
-                q["name"],
-                q["guild_level_required"],
-                title(q.get("target", "")),
-                f"{q['amount']:,}",
-                ", ".join(reward_parts),
-            ])
-        quest_table = table(["Quest", "Guild Level", "Target", "Amount", "Rewards"], rows)
-        sections.append(guild_section_tpl.format(
-            guild_name=title(guild),
-            quest_table=quest_table,
-        ))
-
-    return get_template("town/guilds").format(
-        rep_table=rep_table,
-        reduction_table=reduction_table,
-        guild_sections="\n\n".join(sections),
-    )
-
-
-def gen_buildings() -> str:
-    # Building tiers mirrored from TownBuildingDef / TownRepository
-    def building_table(tiers: list, bonus_col: str, bonuses: list[str]) -> str:
-        rows = []
-        rows.append([0, "—", "—", "—", "No bonus"])
-        for i, (con_lvl, coins, mats, bonus) in enumerate(tiers, start=1):
-            mat_str = ", ".join(f"{qty:,}x {title(item)}" for item, qty in mats.items())
-            rows.append([i, con_lvl, f"{coins:,}", mat_str, bonus])
-        return table(["Tier", "Construction Level", "Coin Cost", "Materials", bonus_col], rows)
-
-    inn_tiers = [
-        (20,   50_000,  {"plank": 200, "oak_plank": 100, "iron_nail": 500},        "Worker XP x1.10"),
-        (45,  250_000,  {"oak_plank": 500, "willow_plank": 200, "steel_nail": 1500}, "Worker XP x1.20"),
-        (70, 1_000_000, {"willow_plank": 1000, "maple_plank": 1000, "mithril_nail": 3000}, "Worker XP x1.30"),
-    ]
-    guild_hall_tiers = [
-        (25,    75_000, {"oak_plank": 300, "iron_nail": 600},                          "Quest req. -10%"),
-        (50,   350_000, {"willow_plank": 600, "steel_nail": 1500},                     "Quest req. -20%"),
-        (75, 1_500_000, {"maple_plank": 1500, "yew_plank": 500, "mithril_nail": 3000}, "Quest req. -30%"),
-    ]
-    church_tiers = [
-        (30,   100_000, {"oak_plank": 200, "carved_stone": 400, "steel_nail": 500},        "Blessing 30h"),
-        (55,   500_000, {"willow_plank": 500, "stone_block": 600, "steel_nail": 1500},     "Blessing 36h"),
-        (80, 2_000_000, {"yew_plank": 800, "stone_block": 1000, "mithril_nail": 3000},     "Blessing 48h"),
-    ]
-
-    return get_template("town/buildings").format(
-        inn_table=building_table(inn_tiers, "Bonus", []),
-        guild_hall_table=building_table(guild_hall_tiers, "Bonus", []),
-        church_table=building_table(church_tiers, "Bonus", []),
     )
 
 
