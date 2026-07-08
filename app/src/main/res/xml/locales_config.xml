@@ -7,5 +7,4 @@
     <locale android:name="tr"/>
     <locale android:name="it"/>
     <locale android:name="nl"/>
-    <locale android:name="ru"/>
 </locale-config>
