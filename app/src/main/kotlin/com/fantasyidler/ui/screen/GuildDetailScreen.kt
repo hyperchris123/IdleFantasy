@@ -97,9 +97,10 @@ fun GuildDetailScreen(
 
         Column(Modifier.fillMaxSize().padding(padding)) {
             GuildRepHeader(
-                level       = state.guildLevel,
-                repInLevel  = state.repInLevel,
-                repForLevel = state.repForLevel,
+                level                    = state.guildLevel,
+                repInLevel               = state.repInLevel,
+                repForLevel              = state.repForLevel,
+                allCurrentLevelQuestsDone = state.allCurrentLevelQuestsDone,
             )
 
             TabRow(selectedTabIndex = selectedTab) {
@@ -138,7 +139,12 @@ fun GuildDetailScreen(
 }
 
 @Composable
-private fun GuildRepHeader(level: Int, repInLevel: Long, repForLevel: Long) {
+private fun GuildRepHeader(
+    level: Int,
+    repInLevel: Long,
+    repForLevel: Long,
+    allCurrentLevelQuestsDone: Boolean,
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -164,6 +170,14 @@ private fun GuildRepHeader(level: Int, repInLevel: Long, repForLevel: Long) {
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
+            if (allCurrentLevelQuestsDone && repInLevel < repForLevel) {
+                Spacer(Modifier.height(4.dp))
+                Text(
+                    text  = stringResource(R.string.guild_do_dailies_hint),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = GoldPrimary,
+                )
+            }
         }
     }
     HorizontalDivider()

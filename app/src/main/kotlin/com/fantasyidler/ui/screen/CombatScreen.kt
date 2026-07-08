@@ -64,10 +64,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import kotlin.math.roundToInt
 import com.fantasyidler.BuildConfig
 import com.fantasyidler.R
 import com.fantasyidler.simulator.CombatSimulator
 import com.fantasyidler.data.json.BossData
+import com.fantasyidler.data.json.CookingRecipe
 import com.fantasyidler.data.json.DungeonData
 import com.fantasyidler.data.json.EnemyData
 import com.fantasyidler.data.json.EquipmentData
@@ -81,7 +83,9 @@ import com.fantasyidler.data.model.Skills
 import com.fantasyidler.ui.theme.GoldPrimary
 import com.fantasyidler.ui.viewmodel.CombatSessionResult
 import com.fantasyidler.ui.viewmodel.CombatViewModel
+import com.fantasyidler.ui.viewmodel.InventoryViewModel
 import com.fantasyidler.ui.viewmodel.combatLevelFrom
+import com.fantasyidler.ui.viewmodel.slotDisplayName
 import com.fantasyidler.ui.viewmodel.xpProgressFraction
 import com.fantasyidler.util.GameStrings
 import com.fantasyidler.util.formatCoins
@@ -94,9 +98,12 @@ import kotlinx.serialization.json.Json
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CombatScreen(
-    viewModel: CombatViewModel = hiltViewModel(),
+    viewModel:    CombatViewModel    = hiltViewModel(),
+    inventoryVm:  InventoryViewModel = hiltViewModel(),
 ) {
     val state            by viewModel.uiState.collectAsState()
+    val invState         by inventoryVm.uiState.collectAsState()
+    val context           = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(state.snackbarMessage) {
@@ -134,7 +141,7 @@ fun CombatScreen(
 
         val combatSession = state.combatSession
         if (combatSession != null) {
-            val pagerState = rememberPagerState(pageCount = { 2 })
+            val pagerState = rememberPagerState(pageCount = { 3 })
             val scope = rememberCoroutineScope()
             Column(Modifier.padding(padding).fillMaxSize()) {
                 TabRow(selectedTabIndex = pagerState.currentPage) {
@@ -147,6 +154,11 @@ fun CombatScreen(
                         selected = pagerState.currentPage == 1,
                         onClick  = { scope.launch { pagerState.animateScrollToPage(1) } },
                         text     = { Text(stringResource(R.string.label_dungeons_tab)) },
+                    )
+                    Tab(
+                        selected = pagerState.currentPage == 2,
+                        onClick  = { scope.launch { pagerState.animateScrollToPage(2) } },
+                        text     = { Text(stringResource(R.string.label_equipment)) },
                     )
                 }
                 HorizontalPager(state = pagerState, modifier = Modifier.weight(1f)) { page ->
@@ -166,7 +178,7 @@ fun CombatScreen(
                             onAbandon      = viewModel::abandonSession,
                             onDebugFinish  = viewModel::debugFinishSession,
                         )
-                        else -> CombatSelectionList(
+                        1 -> CombatSelectionList(
                             dungeons         = viewModel.dungeonList,
                             bosses           = viewModel.bossList,
                             skillLevels      = state.skillLevels,
@@ -176,11 +188,25 @@ fun CombatScreen(
                             onDungeon        = viewModel::selectDungeon,
                             onBoss           = viewModel::selectBoss,
                         )
+                        else -> CombatGearTab(
+                            equipped       = invState.equipped,
+                            inventory      = invState.inventory,
+                            equippedFood   = invState.equippedFood,
+                            foodHealValues = inventoryVm.foodHealValues,
+                            cookingRecipes = inventoryVm.cookingRecipes,
+                            allEquipment   = inventoryVm.allEquipment,
+                            context        = context,
+                            onSlotTap      = inventoryVm::openSlotPicker,
+                            onUnequip      = inventoryVm::unequip,
+                            onEquipBest    = inventoryVm::equipBestGear,
+                            onEquipFood    = inventoryVm::equipFood,
+                            onUnequipFood  = inventoryVm::unequipFood,
+                        )
                     }
                 }
             }
         } else {
-            val pagerState = rememberPagerState(pageCount = { 2 })
+            val pagerState = rememberPagerState(pageCount = { 3 })
             val scope = rememberCoroutineScope()
             Column(Modifier.padding(padding).fillMaxSize()) {
                 TabRow(selectedTabIndex = pagerState.currentPage) {
@@ -192,6 +218,11 @@ fun CombatScreen(
                     Tab(
                         selected = pagerState.currentPage == 1,
                         onClick  = { scope.launch { pagerState.animateScrollToPage(1) } },
+                        text     = { Text(stringResource(R.string.label_equipment)) },
+                    )
+                    Tab(
+                        selected = pagerState.currentPage == 2,
+                        onClick  = { scope.launch { pagerState.animateScrollToPage(2) } },
                         text     = { Text(stringResource(R.string.label_skills)) },
                     )
                 }
@@ -207,6 +238,20 @@ fun CombatScreen(
                             onDungeon        = viewModel::selectDungeon,
                             onBoss           = viewModel::selectBoss,
                         )
+                        1 -> CombatGearTab(
+                            equipped       = invState.equipped,
+                            inventory      = invState.inventory,
+                            equippedFood   = invState.equippedFood,
+                            foodHealValues = inventoryVm.foodHealValues,
+                            cookingRecipes = inventoryVm.cookingRecipes,
+                            allEquipment   = inventoryVm.allEquipment,
+                            context        = context,
+                            onSlotTap      = inventoryVm::openSlotPicker,
+                            onUnequip      = inventoryVm::unequip,
+                            onEquipBest    = inventoryVm::equipBestGear,
+                            onEquipFood    = inventoryVm::equipFood,
+                            onUnequipFood  = inventoryVm::unequipFood,
+                        )
                         else -> CombatSkillsTab(
                             skillLevels        = state.skillLevels,
                             skillXp            = state.skillXp,
@@ -217,6 +262,24 @@ fun CombatScreen(
                     }
                 }
             }
+        }
+    }
+
+    // Gear equip-picker sheet
+    invState.pickingSlot?.let { slot ->
+        val gearSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+        ModalBottomSheet(
+            onDismissRequest = inventoryVm::dismissSlotPicker,
+            sheetState       = gearSheetState,
+            dragHandle       = { BottomSheetDefaults.DragHandle() },
+        ) {
+            EquipPickerSheet(
+                slot       = slot,
+                candidates = invState.candidatesFor(slot, inventoryVm.allEquipment),
+                context    = context,
+                onEquip    = { itemKey -> inventoryVm.equip(itemKey, slot) },
+                onDismiss  = inventoryVm::dismissSlotPicker,
+            )
         }
     }
 
@@ -347,6 +410,87 @@ private fun CombatSelectionList(
                 boss     = boss,
                 unlocked = combatLvl >= boss.combatLevelRequired,
                 onTap    = { onBoss(boss) },
+            )
+        }
+        item { Spacer(Modifier.height(16.dp)) }
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Combat gear tab
+// ---------------------------------------------------------------------------
+
+@Composable
+private fun CombatGearTab(
+    equipped: Map<String, String?>,
+    inventory: Map<String, Int>,
+    equippedFood: Map<String, Int>,
+    foodHealValues: Map<String, Int>,
+    cookingRecipes: Map<String, CookingRecipe>,
+    allEquipment: Map<String, EquipmentData>,
+    context: android.content.Context,
+    onSlotTap: (String) -> Unit,
+    onUnequip: (String) -> Unit,
+    onEquipBest: () -> Unit,
+    onEquipFood: (String) -> Unit,
+    onUnequipFood: (String) -> Unit,
+) {
+    val cookedItemKeys = remember(cookingRecipes) {
+        cookingRecipes.values.map { it.cookedItem }.toSet()
+    }
+    val foodInInventory = remember(inventory, cookedItemKeys) {
+        inventory.filterKeys { it in cookedItemKeys }.entries.toList()
+    }
+
+    LazyColumn(modifier = Modifier.fillMaxSize()) {
+        item { SlotSectionHeader(stringResource(R.string.profile_food_dungeon)) }
+        if (foodInInventory.isEmpty()) {
+            item {
+                Text(
+                    text     = stringResource(R.string.profile_no_food),
+                    style    = MaterialTheme.typography.bodySmall,
+                    color    = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                )
+            }
+        } else {
+            items(foodInInventory, key = { "food_${it.key}" }) { (key, qty) ->
+                FoodRow(
+                    itemKey    = key,
+                    qty        = qty,
+                    healValue  = foodHealValues[key] ?: 0,
+                    isEquipped = key in equippedFood,
+                    context    = context,
+                    onEquip    = { onEquipFood(key) },
+                    onUnequip  = { onUnequipFood(key) },
+                )
+            }
+        }
+        item {
+            Button(
+                onClick  = onEquipBest,
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp),
+            ) {
+                Text(stringResource(R.string.profile_equip_best))
+            }
+        }
+        item { SlotSectionHeader(stringResource(R.string.profile_weapons)) }
+        items(EquipSlot.WEAPON_SLOTS) { slot ->
+            EquipSlotRow(
+                slotName  = slotDisplayName(slot),
+                itemKey   = equipped[slot],
+                xpLabel   = weaponXpLabel(allEquipment[equipped[slot]]?.combatStyle, context),
+                onTap     = { onSlotTap(slot) },
+                onUnequip = { onUnequip(slot) },
+            )
+        }
+        item { SlotSectionHeader(stringResource(R.string.profile_combat_gear)) }
+        items(EquipSlot.ARMOR_SLOTS) { slot ->
+            EquipSlotRow(
+                slotName  = slotDisplayName(slot),
+                itemKey   = equipped[slot],
+                onTap     = { onSlotTap(slot) },
+                onUnequip = { onUnequip(slot) },
             )
         }
         item { Spacer(Modifier.height(16.dp)) }
@@ -1605,6 +1749,7 @@ private fun CombatResultSheet(
             for (skill in orderedSkills) {
                 val xp = result.xpPerSkill[skill] ?: continue
                 if (xp <= 0L) continue
+                val bonus = result.xpBlessingBonusBySkill[skill] ?: 0L
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(vertical = 2.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -1613,12 +1758,22 @@ private fun CombatResultSheet(
                         text  = GameStrings.skillName(context, skill),
                         style = MaterialTheme.typography.bodyMedium,
                     )
-                    Text(
-                        text       = "+${xp.formatXp()} ${stringResource(R.string.label_xp)}",
-                        style      = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.SemiBold,
-                        color      = GoldPrimary,
-                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text       = "+${xp.formatXp()} ${stringResource(R.string.label_xp)}",
+                            style      = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.SemiBold,
+                            color      = GoldPrimary,
+                        )
+                        if (bonus > 0L) {
+                            Spacer(Modifier.width(4.dp))
+                            Text(
+                                text  = "(+${bonus.formatXp()})",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = GoldPrimary,
+                            )
+                        }
+                    }
                 }
             }
             Spacer(Modifier.height(12.dp))
@@ -1639,6 +1794,13 @@ private fun CombatResultSheet(
                     style      = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.SemiBold,
                     color      = GoldPrimary,
+                )
+            }
+            if (result.coinBlessingBonus > 0L) {
+                Text(
+                    text  = stringResource(R.string.church_blessing_bonus, result.coinBlessingBonus.formatCoins()),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = GoldPrimary,
                 )
             }
             Spacer(Modifier.height(12.dp))

@@ -107,6 +107,7 @@ import java.util.Locale
 @Composable
 fun SkillsScreen(
     onNavigateToFarming: () -> Unit = {},
+    onNavigateToMercantile: () -> Unit = {},
     viewModel: SkillsViewModel       = hiltViewModel(),
     craftingViewModel: CraftingViewModel = hiltViewModel(),
     expeditionsViewModel: ExpeditionsViewModel = hiltViewModel(),
@@ -163,10 +164,11 @@ fun SkillsScreen(
                     ExpeditionsScreen(viewModel = expeditionsViewModel, showTitle = false)
                 } else {
                     SkillsTabContent(
-                        state               = state,
-                        viewModel           = viewModel,
-                        context             = context,
-                        onNavigateToFarming = onNavigateToFarming,
+                        state                  = state,
+                        viewModel              = viewModel,
+                        context                = context,
+                        onNavigateToFarming    = onNavigateToFarming,
+                        onNavigateToMercantile = onNavigateToMercantile,
                     )
                 }
             }
@@ -283,6 +285,10 @@ fun SkillsScreen(
                         },
                     )
                 }
+                SheetState.Mercantile -> {
+                    viewModel.dismissSheet()
+                    onNavigateToMercantile()
+                }
                 SheetState.ComingSoon -> ComingSoonSheet()
             }
         }
@@ -299,6 +305,7 @@ private fun SkillsTabContent(
     viewModel: SkillsViewModel,
     context: android.content.Context,
     onNavigateToFarming: () -> Unit,
+    onNavigateToMercantile: () -> Unit = {},
 ) {
     LazyColumn(modifier = Modifier.fillMaxSize()) {
         state.activeSession?.let { session ->
@@ -348,14 +355,17 @@ private fun SkillsTabContent(
             )
         }
 
-        item { SectionHeader(stringResource(R.string.label_prayer)) }
-        item {
+        item { SectionHeader(stringResource(R.string.label_support_skills)) }
+        items(Skills.SUPPORT) { key ->
             SkillRow(
-                skillKey = Skills.PRAYER,
-                level    = state.skillLevels[Skills.PRAYER] ?: 1,
-                xp       = state.skillXp[Skills.PRAYER] ?: 0L,
-                isActive = state.activeSession?.skillName == Skills.PRAYER && state.activeSession?.completed == false,
-                onClick  = { viewModel.onSkillTapped(Skills.PRAYER) },
+                skillKey = key,
+                level    = state.skillLevels[key] ?: 1,
+                xp       = state.skillXp[key] ?: 0L,
+                isActive = state.activeSession?.skillName == key && state.activeSession?.completed == false,
+                onClick  = {
+                    if (key == Skills.MERCANTILE) onNavigateToMercantile()
+                    else viewModel.onSkillTapped(key)
+                },
             )
         }
     }

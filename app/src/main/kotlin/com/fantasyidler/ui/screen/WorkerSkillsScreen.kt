@@ -289,6 +289,7 @@ fun WorkerSkillsScreen(
                         onDismiss  = viewModel::dismissSheet,
                     )
                 }
+                SheetState.Mercantile -> {}
                 SheetState.ComingSoon -> ComingSoonSheet()
             }
         }

@@ -22,6 +22,7 @@ data class GuildSummary(
     val repForLevel: Long,
     val claimableQuestCount: Int,
     val claimableDailyCount: Int,
+    val hasDailiesAvailable: Boolean,
 )
 
 data class GuildHallUiState(
@@ -45,10 +46,11 @@ class GuildHallViewModel @Inject constructor(
 
         val flags: PlayerFlags = json.decodeFromString(player.flags)
         val progressMap = progressList.associateBy { it.questId }
+        val completedQuestIds = progressList.filter { it.completed }.map { it.questId }.toSet()
 
         val summaries = GuildRepository.ALL_GUILDS.map { guild ->
             val rep   = flags.guildReputation[guild] ?: 0L
-            val level = GuildRepository.guildLevelFromRep(rep)
+            val level = guildRepo.guildLevel(guild, rep, completedQuestIds)
             val (repInLevel, repForLevel) = repProgressForLevel(rep, level)
 
             val claimableQuests = gameData.guildQuests.values
@@ -58,8 +60,9 @@ class GuildHallViewModel @Inject constructor(
                     row != null && !row.completed && row.progress >= quest.amount
                 }
 
-            val claimableDailies = guildRepo.getGuildDailiesWithProgress(guild, flags)
-                .count { it.progress >= it.template.amount && !it.claimed }
+            val dailies = guildRepo.getGuildDailiesWithProgress(guild, flags)
+            val claimableDailies = dailies.count { it.progress >= it.template.amount && !it.claimed }
+            val hasDailiesAvailable = dailies.isNotEmpty() && dailies.any { !it.claimed }
 
             GuildSummary(
                 guildKey            = guild,
@@ -69,6 +72,7 @@ class GuildHallViewModel @Inject constructor(
                 repForLevel         = repForLevel,
                 claimableQuestCount = claimableQuests,
                 claimableDailyCount = claimableDailies,
+                hasDailiesAvailable = hasDailiesAvailable,
             )
         }
 

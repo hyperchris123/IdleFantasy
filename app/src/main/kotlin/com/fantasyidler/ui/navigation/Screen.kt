@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material.icons.filled.ShowChart
 import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Explore
 import androidx.compose.material.icons.outlined.Home
@@ -95,6 +96,12 @@ sealed class Screen(
         icon     = Icons.Filled.Group,
     )
 
+    object Church : Screen(
+        route    = "church",
+        labelRes = R.string.church_title,
+        icon     = Icons.Filled.Star,
+    )
+
     object GuildDetail : Screen(
         route    = "guild_detail/{guild}",
         labelRes = R.string.guild_hall_title,
@@ -102,6 +109,12 @@ sealed class Screen(
     ) {
         fun createRoute(guild: String) = "guild_detail/$guild"
     }
+
+    object Mercantile : Screen(
+        route    = "mercantile",
+        labelRes = R.string.skill_mercantile,
+        icon     = Icons.Filled.ShoppingCart,
+    )
 
     object Expeditions : Screen(
         route        = "expeditions",

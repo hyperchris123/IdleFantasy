@@ -31,12 +31,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.fantasyidler.notification.SessionNotificationManager
+import com.fantasyidler.ui.screen.ChurchScreen
 import com.fantasyidler.ui.screen.CombatScreen
 import com.fantasyidler.ui.screen.FarmingScreen
 import com.fantasyidler.ui.screen.GuildDetailScreen
 import com.fantasyidler.ui.screen.GuildHallScreen
 import com.fantasyidler.ui.screen.HomeScreen
 import com.fantasyidler.ui.screen.InnScreen
+import com.fantasyidler.ui.screen.MercantileScreen
 import com.fantasyidler.ui.screen.OnboardingScreen
 import com.fantasyidler.ui.screen.ProfileScreen
 import com.fantasyidler.ui.screen.QuestsScreen
@@ -79,8 +81,8 @@ fun AppNavigation(
     val currentDestination = backStackEntry?.destination
 
     val tabSubScreens: Map<String, Set<String>> = mapOf(
-        "home"   to setOf("shop", "settings", "inn", "worker_skills", "guild_hall", "guild_detail/{guild}"),
-        "skills" to setOf("farming"),
+        "home"   to setOf("shop", "settings", "inn", "worker_skills", "guild_hall", "guild_detail/{guild}", "church"),
+        "skills" to setOf("farming", "mercantile"),
     )
 
     Scaffold(
@@ -148,10 +150,16 @@ fun AppNavigation(
             modifier         = Modifier.padding(innerPadding),
         ) {
             composable(Screen.Skills.route)   {
-                SkillsScreen(onNavigateToFarming = { navController.navigate(Screen.Farming.route) })
+                SkillsScreen(
+                    onNavigateToFarming    = { navController.navigate(Screen.Farming.route) },
+                    onNavigateToMercantile = { navController.navigate(Screen.Mercantile.route) },
+                )
             }
             composable(Screen.Farming.route) { entry ->
                 FarmingScreen(onBack = { if (navController.currentBackStackEntry == entry) navController.popBackStack() })
+            }
+            composable(Screen.Mercantile.route) { entry ->
+                MercantileScreen(onBack = { if (navController.currentBackStackEntry == entry) navController.popBackStack() })
             }
             composable(Screen.Combat.route)   { CombatScreen() }
             composable(Screen.Home.route)     {
@@ -161,6 +169,7 @@ fun AppNavigation(
                     onNavigateToInn          = { navController.navigate(Screen.Inn.route) },
                     onNavigateToWorkerSkills = { navController.navigate(Screen.WorkerSkills.route) },
                     onNavigateToGuildHall    = { navController.navigate(Screen.GuildHall.route) },
+                    onNavigateToChurch       = { navController.navigate(Screen.Church.route) },
                 )
             }
             composable(Screen.Quests.route)   { QuestsScreen() }
@@ -194,6 +203,11 @@ fun AppNavigation(
             }
             composable(Screen.GuildDetail.route) { entry ->
                 GuildDetailScreen(
+                    onBack = { if (navController.currentBackStackEntry == entry) navController.popBackStack() },
+                )
+            }
+            composable(Screen.Church.route) { entry ->
+                ChurchScreen(
                     onBack = { if (navController.currentBackStackEntry == entry) navController.popBackStack() },
                 )
             }

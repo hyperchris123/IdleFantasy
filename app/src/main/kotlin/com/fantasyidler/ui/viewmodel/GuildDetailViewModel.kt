@@ -33,6 +33,7 @@ data class GuildDetailUiState(
     val quests: List<GuildQuestWithProgress> = emptyList(),
     val dailies: List<GuildDailyWithProgress> = emptyList(),
     val nextResetMs: Long = 0L,
+    val allCurrentLevelQuestsDone: Boolean = false,
     val snackbarMessage: String? = null,
 )
 
@@ -65,7 +66,8 @@ class GuildDetailViewModel @Inject constructor(
 
         val flags: PlayerFlags = json.decodeFromString(player.flags)
         val rep   = flags.guildReputation[guild] ?: 0L
-        val level = GuildRepository.guildLevelFromRep(rep)
+        val completedQuestIds = progressList.filter { it.completed }.map { it.questId }.toSet()
+        val level = guildRepo.guildLevel(guild, rep, completedQuestIds)
         val (repInLevel, repForLevel) = repProgressForLevel(rep, level)
 
         val progressMap = progressList.associateBy { it.questId }
@@ -83,15 +85,20 @@ class GuildDetailViewModel @Inject constructor(
 
         val dailies = guildRepo.getGuildDailiesWithProgress(guild, flags)
 
+        val allCurrentLevelQuestsDone = level >= 1 && gameData.guildQuests.values
+            .filter { it.guild == guild && it.guildLevelRequired == level }
+            .all { it.id in completedQuestIds }
+
         extra.copy(
-            isLoading   = false,
-            guildKey    = guild,
-            guildLevel  = level,
-            guildRep    = rep,
-            repInLevel  = repInLevel,
-            repForLevel = repForLevel,
-            quests      = quests,
-            dailies     = dailies,
+            isLoading                = false,
+            guildKey                 = guild,
+            guildLevel               = level,
+            guildRep                 = rep,
+            repInLevel               = repInLevel,
+            repForLevel              = repForLevel,
+            quests                   = quests,
+            dailies                  = dailies,
+            allCurrentLevelQuestsDone = allCurrentLevelQuestsDone,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), GuildDetailUiState(guildKey = guild))
 

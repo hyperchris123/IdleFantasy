@@ -58,7 +58,7 @@
       {"item": "tree_seed", "chance": 0.02}
     ]
   },
-  "note_chance_per_frame": 0.015,
+  "note_chance_per_frame": 0.003,
   "note_threshold": 5,
   "note_texts": [
     "The trees here whisper in a language older than any known tongue.",

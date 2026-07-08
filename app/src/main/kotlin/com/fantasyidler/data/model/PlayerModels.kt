@@ -58,6 +58,16 @@ data class PlayerFlags(
     @SerialName("skilling_dungeon_notes") val skillingDungeonNotes: Map<String, Int> = emptyMap(),
     /** Combat dungeon keys that have been unlocked via lore completion. */
     @SerialName("unlocked_dungeons") val unlockedDungeons: List<String> = emptyList(),
+    /** Key of the active church blessing, or empty if none. */
+    @SerialName("active_blessing_key") val activeBlessingKey: String = "",
+    /** Epoch ms when the active blessing expires; 0 = not active. */
+    @SerialName("active_blessing_expires_at") val activeBlessingExpiresAt: Long = 0L,
+    /** Consecutive expedition runs with no note drop per skilling dungeon key; resets to 0 on any note. */
+    @SerialName("expedition_pity_runs") val expeditionPityRuns: Map<String, Int> = emptyMap(),
+    /** Tree URI string for the automatic backup destination folder; empty = disabled. */
+    @SerialName("backup_folder_uri") val backupFolderUri: String = "",
+    /** Automatic backup frequency: ""|"hourly"|"daily"|"weekly". */
+    @SerialName("backup_frequency") val backupFrequency: String = "",
 )
 
 /** A session to be started when the current one completes. */
@@ -225,12 +235,14 @@ object Skills {
     const val RANGED    = "ranged"
     const val MAGIC     = "magic"
     const val HITPOINTS = "hitpoints"
-    const val PRAYER    = "prayer"
+    const val PRAYER      = "prayer"
+    const val MERCANTILE  = "mercantile"
 
     val GATHERING = listOf(MINING, FISHING, WOODCUTTING, FARMING, FIREMAKING, AGILITY)
     val CRAFTING_SKILLS = listOf(SMITHING, COOKING, FLETCHING, CRAFTING, RUNECRAFTING, HERBLORE)
     val COMBAT = listOf(ATTACK, STRENGTH, DEFENSE, RANGED, MAGIC, HITPOINTS, PRAYER)
-    val ALL = GATHERING + CRAFTING_SKILLS + COMBAT
+    val SUPPORT = listOf(PRAYER, MERCANTILE)
+    val ALL = GATHERING + CRAFTING_SKILLS + COMBAT + listOf(MERCANTILE)
 
     val DEFAULT_LEVELS: Map<String, Int> = ALL.associateWith { 1 }
     val DEFAULT_XP: Map<String, Long> = ALL.associateWith { 0L }

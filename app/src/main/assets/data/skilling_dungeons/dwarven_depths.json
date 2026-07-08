@@ -47,7 +47,7 @@
       {"item": "runite_ore", "chance": 0.45}
     ]
   },
-  "note_chance_per_frame": 0.015,
+  "note_chance_per_frame": 0.003,
   "note_threshold": 5,
   "note_texts": [
     "Ancient rune-carved walls pulse faintly. The dwarves who built this place are long gone.",

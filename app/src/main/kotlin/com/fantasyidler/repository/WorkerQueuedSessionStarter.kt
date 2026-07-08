@@ -231,6 +231,7 @@ class WorkerQueuedSessionStarter @Inject constructor(
                     weaponStrBonus    = totalStrBonus,
                     equippedFood      = availableFood,
                     foodHealValues    = gameData.foodHealValues,
+                    blessingDefBonus  = ChurchRepository.defBonus(flags),
                 )
                 startSession(action, bossFrames, durationMs, efficiencyMultiplier)
             }
@@ -263,6 +264,7 @@ class WorkerQueuedSessionStarter @Inject constructor(
                     playerStrength      = levels[Skills.STRENGTH]  ?: 1,
                     playerDefence       = (levels[Skills.DEFENSE]  ?: 1) + totalDefBonus,
                     playerHp            = levels[Skills.HITPOINTS] ?: 1,
+                    blessingDefBonus    = ChurchRepository.defBonus(flags),
                     weaponAttackBonus   = totalAtkBonus,
                     weaponStrengthBonus = totalStrBonus,
                     combatStyle         = combatStyle,

@@ -16,7 +16,7 @@
         "raw_trout": 50,
         "log": 30
       },
-      "reputation": 600
+      "reputation": 250
     }
   },
   "mining_guild_2": {
@@ -36,7 +36,7 @@
         "raw_salmon": 80,
         "oak_log": 40
       },
-      "reputation": 1200
+      "reputation": 500
     }
   },
   "mining_guild_3": {
@@ -56,7 +56,7 @@
         "raw_tuna": 100,
         "willow_log": 50
       },
-      "reputation": 3000
+      "reputation": 1250
     }
   },
   "mining_guild_4": {
@@ -76,7 +76,7 @@
         "iron_bar": 50,
         "ruby": 2
       },
-      "reputation": 6000
+      "reputation": 2500
     }
   },
   "mining_guild_5": {
@@ -96,7 +96,7 @@
         "raw_lobster": 80,
         "maple_log": 50
       },
-      "reputation": 12000
+      "reputation": 5500
     }
   },
   "mining_guild_6": {
@@ -116,7 +116,7 @@
         "steel_bar": 40,
         "raw_swordfish": 60
       },
-      "reputation": 22000
+      "reputation": 10000
     }
   },
   "mining_guild_7": {
@@ -137,7 +137,7 @@
         "raw_monkfish": 80,
         "yew_log": 30
       },
-      "reputation": 38000
+      "reputation": 17500
     }
   },
   "mining_guild_8": {
@@ -158,7 +158,7 @@
         "raw_shark": 60,
         "magic_log": 20
       },
-      "reputation": 70000
+      "reputation": 32500
     }
   },
   "mining_guild_9": {
@@ -179,7 +179,7 @@
         "raw_manta_ray": 40,
         "redwood_log": 15
       },
-      "reputation": 120000
+      "reputation": 55000
     }
   },
   "mining_guild_10": {
@@ -198,9 +198,10 @@
       "items": {
         "runite_bar": 40,
         "raw_sea_turtle": 20,
-        "diamond": 3
+        "diamond": 3,
+        "mining_guild_cape": 1
       },
-      "reputation": 200000
+      "reputation": 100000
     }
   },
   "fishing_guild_1": {
@@ -220,7 +221,7 @@
         "copper_ore": 60,
         "log": 40
       },
-      "reputation": 600
+      "reputation": 250
     }
   },
   "fishing_guild_2": {
@@ -240,7 +241,7 @@
         "iron_ore": 80,
         "oak_log": 30
       },
-      "reputation": 1200
+      "reputation": 500
     }
   },
   "fishing_guild_3": {
@@ -260,7 +261,7 @@
         "coal": 100,
         "willow_log": 40
       },
-      "reputation": 3000
+      "reputation": 1250
     }
   },
   "fishing_guild_4": {
@@ -280,7 +281,7 @@
         "silver_ore": 60,
         "emerald": 2
       },
-      "reputation": 6000
+      "reputation": 2500
     }
   },
   "fishing_guild_5": {
@@ -300,7 +301,7 @@
         "mithril_ore": 80,
         "maple_log": 40
       },
-      "reputation": 12000
+      "reputation": 5500
     }
   },
   "fishing_guild_6": {
@@ -320,7 +321,7 @@
         "gold_ore": 50,
         "sapphire": 5
       },
-      "reputation": 22000
+      "reputation": 10000
     }
   },
   "fishing_guild_7": {
@@ -340,7 +341,7 @@
         "adamantite_ore": 60,
         "yew_log": 30
       },
-      "reputation": 38000
+      "reputation": 17500
     }
   },
   "fishing_guild_8": {
@@ -361,7 +362,7 @@
         "magic_log": 20,
         "ruby": 3
       },
-      "reputation": 70000
+      "reputation": 32500
     }
   },
   "fishing_guild_9": {
@@ -382,7 +383,7 @@
         "redwood_log": 15,
         "diamond": 2
       },
-      "reputation": 120000
+      "reputation": 55000
     }
   },
   "fishing_guild_10": {
@@ -401,9 +402,10 @@
       "items": {
         "runite_ore": 60,
         "diamond": 4,
-        "redwood_log": 25
+        "redwood_log": 25,
+        "fishing_guild_cape": 1
       },
-      "reputation": 200000
+      "reputation": 100000
     }
   },
   "woodcutting_guild_1": {
@@ -423,7 +425,7 @@
         "raw_trout": 50,
         "copper_ore": 40
       },
-      "reputation": 600
+      "reputation": 250
     }
   },
   "woodcutting_guild_2": {
@@ -443,7 +445,7 @@
         "raw_salmon": 60,
         "iron_ore": 50
       },
-      "reputation": 1200
+      "reputation": 500
     }
   },
   "woodcutting_guild_3": {
@@ -463,7 +465,7 @@
         "raw_tuna": 80,
         "coal": 80
       },
-      "reputation": 3000
+      "reputation": 1250
     }
   },
   "woodcutting_guild_4": {
@@ -483,7 +485,7 @@
         "raw_lobster": 60,
         "mithril_ore": 50
       },
-      "reputation": 6000
+      "reputation": 2500
     }
   },
   "woodcutting_guild_5": {
@@ -503,7 +505,7 @@
         "raw_swordfish": 60,
         "gold_ore": 40
       },
-      "reputation": 12000
+      "reputation": 5500
     }
   },
   "woodcutting_guild_6": {
@@ -523,7 +525,7 @@
         "raw_monkfish": 60,
         "adamantite_ore": 40
       },
-      "reputation": 22000
+      "reputation": 10000
     }
   },
   "woodcutting_guild_7": {
@@ -543,7 +545,7 @@
         "raw_shark": 50,
         "platinum_ore": 30
       },
-      "reputation": 38000
+      "reputation": 17500
     }
   },
   "woodcutting_guild_8": {
@@ -563,7 +565,7 @@
         "raw_manta_ray": 40,
         "runite_ore": 30
       },
-      "reputation": 70000
+      "reputation": 32500
     }
   },
   "woodcutting_guild_9": {
@@ -583,7 +585,7 @@
         "raw_sea_turtle": 20,
         "diamond": 2
       },
-      "reputation": 120000
+      "reputation": 55000
     }
   },
   "woodcutting_guild_10": {
@@ -602,9 +604,10 @@
       "items": {
         "runite_ore": 50,
         "diamond": 4,
-        "raw_sea_turtle": 30
+        "raw_sea_turtle": 30,
+        "woodcutting_guild_cape": 1
       },
-      "reputation": 200000
+      "reputation": 100000
     }
   },
   "farming_guild_1": {
@@ -624,7 +627,7 @@
         "raw_trout": 60,
         "copper_ore": 50
       },
-      "reputation": 600
+      "reputation": 250
     }
   },
   "farming_guild_2": {
@@ -644,7 +647,7 @@
         "raw_salmon": 60,
         "iron_ore": 60
       },
-      "reputation": 1200
+      "reputation": 500
     }
   },
   "farming_guild_3": {
@@ -665,7 +668,7 @@
         "coal": 80,
         "oak_log": 40
       },
-      "reputation": 3000
+      "reputation": 1250
     }
   },
   "farming_guild_4": {
@@ -685,7 +688,7 @@
         "raw_lobster": 60,
         "mithril_ore": 60
       },
-      "reputation": 6000
+      "reputation": 2500
     }
   },
   "farming_guild_5": {
@@ -705,7 +708,7 @@
         "raw_swordfish": 60,
         "adamantite_ore": 40
       },
-      "reputation": 12000
+      "reputation": 5500
     }
   },
   "farming_guild_6": {
@@ -725,7 +728,7 @@
         "raw_monkfish": 60,
         "yew_log": 30
       },
-      "reputation": 22000
+      "reputation": 10000
     }
   },
   "farming_guild_7": {
@@ -745,7 +748,7 @@
         "raw_shark": 50,
         "magic_log": 20
       },
-      "reputation": 38000
+      "reputation": 17500
     }
   },
   "farming_guild_8": {
@@ -766,7 +769,7 @@
         "runite_ore": 30,
         "redwood_log": 15
       },
-      "reputation": 70000
+      "reputation": 32500
     }
   },
   "farming_guild_9": {
@@ -787,7 +790,7 @@
         "diamond": 2,
         "runite_ore": 40
       },
-      "reputation": 120000
+      "reputation": 55000
     }
   },
   "farming_guild_10": {
@@ -806,9 +809,10 @@
       "items": {
         "runite_ore": 50,
         "redwood_log": 25,
-        "diamond": 4
+        "diamond": 4,
+        "farming_guild_cape": 1
       },
-      "reputation": 200000
+      "reputation": 100000
     }
   },
   "firemaking_guild_1": {
@@ -828,7 +832,7 @@
         "log": 80,
         "raw_trout": 40
       },
-      "reputation": 600
+      "reputation": 250
     }
   },
   "firemaking_guild_2": {
@@ -848,7 +852,7 @@
         "oak_log": 100,
         "raw_salmon": 40
       },
-      "reputation": 1200
+      "reputation": 500
     }
   },
   "firemaking_guild_3": {
@@ -868,7 +872,7 @@
         "willow_log": 120,
         "raw_tuna": 60
       },
-      "reputation": 3000
+      "reputation": 1250
     }
   },
   "firemaking_guild_4": {
@@ -888,7 +892,7 @@
         "maple_log": 100,
         "raw_lobster": 50
       },
-      "reputation": 6000
+      "reputation": 2500
     }
   },
   "firemaking_guild_5": {
@@ -908,7 +912,7 @@
         "yew_log": 80,
         "raw_swordfish": 50
       },
-      "reputation": 12000
+      "reputation": 5500
     }
   },
   "firemaking_guild_6": {
@@ -928,7 +932,7 @@
         "magic_log": 60,
         "raw_monkfish": 50
       },
-      "reputation": 22000
+      "reputation": 10000
     }
   },
   "firemaking_guild_7": {
@@ -948,7 +952,7 @@
         "redwood_log": 60,
         "raw_shark": 40
       },
-      "reputation": 38000
+      "reputation": 17500
     }
   },
   "firemaking_guild_8": {
@@ -968,7 +972,7 @@
         "runite_ore": 30,
         "raw_manta_ray": 30
       },
-      "reputation": 70000
+      "reputation": 32500
     }
   },
   "firemaking_guild_9": {
@@ -988,7 +992,7 @@
         "diamond": 3,
         "raw_sea_turtle": 20
       },
-      "reputation": 120000
+      "reputation": 55000
     }
   },
   "firemaking_guild_10": {
@@ -1007,9 +1011,10 @@
       "items": {
         "redwood_log": 150,
         "diamond": 5,
-        "runite_ore": 40
+        "runite_ore": 40,
+        "firemaking_guild_cape": 1
       },
-      "reputation": 200000
+      "reputation": 100000
     }
   },
   "agility_guild_1": {
@@ -1029,7 +1034,7 @@
         "raw_trout": 60,
         "copper_ore": 50
       },
-      "reputation": 600
+      "reputation": 250
     }
   },
   "agility_guild_2": {
@@ -1049,7 +1054,7 @@
         "raw_salmon": 60,
         "iron_ore": 60
       },
-      "reputation": 1200
+      "reputation": 500
     }
   },
   "agility_guild_3": {
@@ -1070,7 +1075,7 @@
         "coal": 80,
         "oak_log": 40
       },
-      "reputation": 3000
+      "reputation": 1250
     }
   },
   "agility_guild_4": {
@@ -1090,7 +1095,7 @@
         "raw_lobster": 60,
         "mithril_ore": 50
       },
-      "reputation": 6000
+      "reputation": 2500
     }
   },
   "agility_guild_5": {
@@ -1110,7 +1115,7 @@
         "raw_swordfish": 60,
         "adamantite_ore": 40
       },
-      "reputation": 12000
+      "reputation": 5500
     }
   },
   "agility_guild_6": {
@@ -1131,7 +1136,7 @@
         "yew_log": 30,
         "gold_ore": 30
       },
-      "reputation": 22000
+      "reputation": 10000
     }
   },
   "agility_guild_7": {
@@ -1152,7 +1157,7 @@
         "platinum_ore": 30,
         "magic_log": 20
       },
-      "reputation": 38000
+      "reputation": 17500
     }
   },
   "agility_guild_8": {
@@ -1172,7 +1177,7 @@
         "raw_manta_ray": 40,
         "runite_ore": 30
       },
-      "reputation": 70000
+      "reputation": 32500
     }
   },
   "agility_guild_9": {
@@ -1193,7 +1198,7 @@
         "diamond": 2,
         "redwood_log": 20
       },
-      "reputation": 120000
+      "reputation": 55000
     }
   },
   "agility_guild_10": {
@@ -1212,9 +1217,10 @@
       "items": {
         "diamond": 5,
         "runite_ore": 50,
-        "raw_sea_turtle": 30
+        "raw_sea_turtle": 30,
+        "agility_guild_cape": 1
       },
-      "reputation": 200000
+      "reputation": 100000
     }
   },
   "smithing_guild_1": {
@@ -1234,7 +1240,7 @@
         "copper_ore": 100,
         "tin_ore": 100
       },
-      "reputation": 600
+      "reputation": 250
     }
   },
   "smithing_guild_2": {
@@ -1254,7 +1260,7 @@
         "iron_ore": 250,
         "coal": 100
       },
-      "reputation": 1200
+      "reputation": 500
     }
   },
   "smithing_guild_3": {
@@ -1274,7 +1280,7 @@
         "iron_ore": 300,
         "coal": 200
       },
-      "reputation": 3000
+      "reputation": 1250
     }
   },
   "smithing_guild_4": {
@@ -1294,7 +1300,7 @@
         "mithril_ore": 200,
         "coal": 300
       },
-      "reputation": 6000
+      "reputation": 2500
     }
   },
   "smithing_guild_5": {
@@ -1314,7 +1320,7 @@
         "adamantite_ore": 180,
         "coal": 400
       },
-      "reputation": 12000
+      "reputation": 5500
     }
   },
   "smithing_guild_6": {
@@ -1334,7 +1340,7 @@
         "platinum_ore": 150,
         "coal": 400
       },
-      "reputation": 22000
+      "reputation": 10000
     }
   },
   "smithing_guild_7": {
@@ -1354,7 +1360,7 @@
         "runite_ore": 120,
         "coal": 400
       },
-      "reputation": 38000
+      "reputation": 17500
     }
   },
   "smithing_guild_8": {
@@ -1375,7 +1381,7 @@
         "coal": 600,
         "raw_shark": 30
       },
-      "reputation": 70000
+      "reputation": 32500
     }
   },
   "smithing_guild_9": {
@@ -1396,7 +1402,7 @@
         "runite_ore": 50,
         "diamond": 3
       },
-      "reputation": 120000
+      "reputation": 55000
     }
   },
   "smithing_guild_10": {
@@ -1415,9 +1421,10 @@
       "items": {
         "runite_ore": 250,
         "diamond": 5,
-        "raw_manta_ray": 30
+        "raw_manta_ray": 30,
+        "smithing_guild_cape": 1
       },
-      "reputation": 200000
+      "reputation": 100000
     }
   },
   "cooking_guild_1": {
@@ -1437,7 +1444,7 @@
         "raw_chicken": 350,
         "copper_ore": 40
       },
-      "reputation": 600
+      "reputation": 250
     }
   },
   "cooking_guild_2": {
@@ -1457,7 +1464,7 @@
         "raw_trout": 350,
         "iron_ore": 50
       },
-      "reputation": 1200
+      "reputation": 500
     }
   },
   "cooking_guild_3": {
@@ -1477,7 +1484,7 @@
         "raw_beef": 900,
         "coal": 60
       },
-      "reputation": 3000
+      "reputation": 1250
     }
   },
   "cooking_guild_4": {
@@ -1497,7 +1504,7 @@
         "raw_lobster": 300,
         "mithril_ore": 40
       },
-      "reputation": 6000
+      "reputation": 2500
     }
   },
   "cooking_guild_5": {
@@ -1517,7 +1524,7 @@
         "raw_swordfish": 250,
         "adamantite_ore": 30
       },
-      "reputation": 12000
+      "reputation": 5500
     }
   },
   "cooking_guild_6": {
@@ -1537,7 +1544,7 @@
         "raw_monkfish": 250,
         "gold_ore": 40
       },
-      "reputation": 22000
+      "reputation": 10000
     }
   },
   "cooking_guild_7": {
@@ -1557,7 +1564,7 @@
         "raw_shark": 200,
         "platinum_ore": 25
       },
-      "reputation": 38000
+      "reputation": 17500
     }
   },
   "cooking_guild_8": {
@@ -1577,7 +1584,7 @@
         "raw_mutton": 2800,
         "runite_ore": 25
       },
-      "reputation": 70000
+      "reputation": 32500
     }
   },
   "cooking_guild_9": {
@@ -1597,7 +1604,7 @@
         "raw_sea_turtle": 100,
         "diamond": 2
       },
-      "reputation": 120000
+      "reputation": 55000
     }
   },
   "cooking_guild_10": {
@@ -1616,9 +1623,10 @@
       "items": {
         "raw_sea_turtle": 250,
         "diamond": 5,
-        "runite_ore": 40
+        "runite_ore": 40,
+        "cooking_guild_cape": 1
       },
-      "reputation": 200000
+      "reputation": 100000
     }
   },
   "fletching_guild_1": {
@@ -1638,7 +1646,7 @@
         "log": 100,
         "copper_ore": 40
       },
-      "reputation": 600
+      "reputation": 250
     }
   },
   "fletching_guild_2": {
@@ -1658,7 +1666,7 @@
         "log": 120,
         "iron_ore": 60
       },
-      "reputation": 1200
+      "reputation": 500
     }
   },
   "fletching_guild_3": {
@@ -1678,7 +1686,7 @@
         "oak_log": 100,
         "coal": 80
       },
-      "reputation": 3000
+      "reputation": 1250
     }
   },
   "fletching_guild_4": {
@@ -1698,7 +1706,7 @@
         "willow_log": 100,
         "mithril_ore": 50
       },
-      "reputation": 6000
+      "reputation": 2500
     }
   },
   "fletching_guild_5": {
@@ -1718,7 +1726,7 @@
         "maple_log": 80,
         "adamantite_ore": 40
       },
-      "reputation": 12000
+      "reputation": 5500
     }
   },
   "fletching_guild_6": {
@@ -1738,7 +1746,7 @@
         "yew_log": 60,
         "platinum_ore": 30
       },
-      "reputation": 22000
+      "reputation": 10000
     }
   },
   "fletching_guild_7": {
@@ -1758,7 +1766,7 @@
         "magic_log": 50,
         "runite_ore": 30
       },
-      "reputation": 38000
+      "reputation": 17500
     }
   },
   "fletching_guild_8": {
@@ -1778,7 +1786,7 @@
         "yew_log": 120,
         "raw_shark": 30
       },
-      "reputation": 70000
+      "reputation": 32500
     }
   },
   "fletching_guild_9": {
@@ -1798,7 +1806,7 @@
         "magic_log": 100,
         "diamond": 2
       },
-      "reputation": 120000
+      "reputation": 55000
     }
   },
   "fletching_guild_10": {
@@ -1817,9 +1825,10 @@
       "items": {
         "runite_ore": 50,
         "magic_log": 80,
-        "diamond": 4
+        "diamond": 4,
+        "fletching_guild_cape": 1
       },
-      "reputation": 200000
+      "reputation": 100000
     }
   },
   "crafting_guild_1": {
@@ -1839,7 +1848,7 @@
         "silver_ore": 120,
         "raw_trout": 40
       },
-      "reputation": 600
+      "reputation": 250
     }
   },
   "crafting_guild_2": {
@@ -1859,7 +1868,7 @@
         "gold_ore": 120,
         "raw_salmon": 50
       },
-      "reputation": 1200
+      "reputation": 500
     }
   },
   "crafting_guild_3": {
@@ -1880,7 +1889,7 @@
         "sapphire": 100,
         "raw_tuna": 60
       },
-      "reputation": 3000
+      "reputation": 1250
     }
   },
   "crafting_guild_4": {
@@ -1901,7 +1910,7 @@
         "emerald": 100,
         "raw_lobster": 40
       },
-      "reputation": 6000
+      "reputation": 2500
     }
   },
   "crafting_guild_5": {
@@ -1922,7 +1931,7 @@
         "ruby": 100,
         "raw_swordfish": 40
       },
-      "reputation": 12000
+      "reputation": 5500
     }
   },
   "crafting_guild_6": {
@@ -1943,7 +1952,7 @@
         "diamond": 80,
         "raw_monkfish": 40
       },
-      "reputation": 22000
+      "reputation": 10000
     }
   },
   "crafting_guild_7": {
@@ -1963,7 +1972,7 @@
         "platinum_ore": 120,
         "raw_shark": 40
       },
-      "reputation": 38000
+      "reputation": 17500
     }
   },
   "crafting_guild_8": {
@@ -1983,7 +1992,7 @@
         "platinum_ore": 150,
         "raw_manta_ray": 30
       },
-      "reputation": 70000
+      "reputation": 32500
     }
   },
   "crafting_guild_9": {
@@ -2004,7 +2013,7 @@
         "diamond": 100,
         "raw_sea_turtle": 20
       },
-      "reputation": 120000
+      "reputation": 55000
     }
   },
   "crafting_guild_10": {
@@ -2023,9 +2032,10 @@
       "items": {
         "diamond": 150,
         "runite_ore": 40,
-        "raw_sea_turtle": 30
+        "raw_sea_turtle": 30,
+        "crafting_guild_cape": 1
       },
-      "reputation": 200000
+      "reputation": 100000
     }
   },
   "runecrafting_guild_1": {
@@ -2045,7 +2055,7 @@
         "rune_essence": 600,
         "raw_trout": 40
       },
-      "reputation": 600
+      "reputation": 250
     }
   },
   "runecrafting_guild_2": {
@@ -2065,7 +2075,7 @@
         "rune_essence": 600,
         "raw_salmon": 40
       },
-      "reputation": 1200
+      "reputation": 500
     }
   },
   "runecrafting_guild_3": {
@@ -2085,7 +2095,7 @@
         "rune_essence": 700,
         "raw_tuna": 60
       },
-      "reputation": 3000
+      "reputation": 1250
     }
   },
   "runecrafting_guild_4": {
@@ -2105,7 +2115,7 @@
         "rune_essence": 700,
         "raw_lobster": 50
       },
-      "reputation": 6000
+      "reputation": 2500
     }
   },
   "runecrafting_guild_5": {
@@ -2125,7 +2135,7 @@
         "rune_essence": 600,
         "raw_swordfish": 50
       },
-      "reputation": 12000
+      "reputation": 5500
     }
   },
   "runecrafting_guild_6": {
@@ -2145,7 +2155,7 @@
         "rune_essence": 600,
         "raw_monkfish": 50
       },
-      "reputation": 22000
+      "reputation": 10000
     }
   },
   "runecrafting_guild_7": {
@@ -2165,7 +2175,7 @@
         "rune_essence": 600,
         "raw_shark": 40
       },
-      "reputation": 38000
+      "reputation": 17500
     }
   },
   "runecrafting_guild_8": {
@@ -2185,7 +2195,7 @@
         "rune_essence": 1200,
         "raw_manta_ray": 30
       },
-      "reputation": 70000
+      "reputation": 32500
     }
   },
   "runecrafting_guild_9": {
@@ -2206,7 +2216,7 @@
         "diamond": 2,
         "raw_sea_turtle": 20
       },
-      "reputation": 120000
+      "reputation": 55000
     }
   },
   "runecrafting_guild_10": {
@@ -2225,9 +2235,10 @@
       "items": {
         "rune_essence": 5000,
         "diamond": 5,
-        "runite_ore": 40
+        "runite_ore": 40,
+        "runecrafting_guild_cape": 1
       },
-      "reputation": 200000
+      "reputation": 100000
     }
   },
   "herblore_guild_1": {
@@ -2247,7 +2258,7 @@
         "potato": 120,
         "raw_trout": 40
       },
-      "reputation": 600
+      "reputation": 250
     }
   },
   "herblore_guild_2": {
@@ -2268,7 +2279,7 @@
         "raw_salmon": 50,
         "iron_ore": 50
       },
-      "reputation": 1200
+      "reputation": 500
     }
   },
   "herblore_guild_3": {
@@ -2289,7 +2300,7 @@
         "raw_tuna": 60,
         "coal": 60
       },
-      "reputation": 3000
+      "reputation": 1250
     }
   },
   "herblore_guild_4": {
@@ -2309,7 +2320,7 @@
         "raw_lobster": 50,
         "mithril_ore": 40
       },
-      "reputation": 6000
+      "reputation": 2500
     }
   },
   "herblore_guild_5": {
@@ -2329,7 +2340,7 @@
         "raw_swordfish": 50,
         "adamantite_ore": 30
       },
-      "reputation": 12000
+      "reputation": 5500
     }
   },
   "herblore_guild_6": {
@@ -2349,7 +2360,7 @@
         "raw_monkfish": 50,
         "gold_ore": 40
       },
-      "reputation": 22000
+      "reputation": 10000
     }
   },
   "herblore_guild_7": {
@@ -2369,7 +2380,7 @@
         "raw_shark": 40,
         "platinum_ore": 25
       },
-      "reputation": 38000
+      "reputation": 17500
     }
   },
   "herblore_guild_8": {
@@ -2389,7 +2400,7 @@
         "raw_manta_ray": 30,
         "runite_ore": 25
       },
-      "reputation": 70000
+      "reputation": 32500
     }
   },
   "herblore_guild_9": {
@@ -2410,7 +2421,7 @@
         "diamond": 2,
         "runite_ore": 30
       },
-      "reputation": 120000
+      "reputation": 55000
     }
   },
   "herblore_guild_10": {
@@ -2429,9 +2440,10 @@
       "items": {
         "diamond": 5,
         "runite_ore": 50,
-        "raw_sea_turtle": 30
+        "raw_sea_turtle": 30,
+        "herblore_guild_cape": 1
       },
-      "reputation": 200000
+      "reputation": 100000
     }
   },
   "warriors_guild_1": {
@@ -2452,7 +2464,7 @@
         "raw_trout": 50,
         "log": 40
       },
-      "reputation": 600
+      "reputation": 250
     }
   },
   "warriors_guild_2": {
@@ -2473,7 +2485,7 @@
         "raw_salmon": 60,
         "oak_log": 30
       },
-      "reputation": 1200
+      "reputation": 500
     }
   },
   "warriors_guild_3": {
@@ -2494,7 +2506,7 @@
         "raw_tuna": 80,
         "willow_log": 40
       },
-      "reputation": 3000
+      "reputation": 1250
     }
   },
   "warriors_guild_4": {
@@ -2515,7 +2527,7 @@
         "raw_lobster": 60,
         "maple_log": 40
       },
-      "reputation": 6000
+      "reputation": 2500
     }
   },
   "warriors_guild_5": {
@@ -2536,7 +2548,7 @@
         "raw_swordfish": 60,
         "yew_log": 25
       },
-      "reputation": 12000
+      "reputation": 5500
     }
   },
   "warriors_guild_6": {
@@ -2557,7 +2569,7 @@
         "raw_monkfish": 60,
         "magic_log": 20
       },
-      "reputation": 22000
+      "reputation": 10000
     }
   },
   "warriors_guild_7": {
@@ -2578,7 +2590,7 @@
         "raw_shark": 50,
         "redwood_log": 15
       },
-      "reputation": 38000
+      "reputation": 17500
     }
   },
   "warriors_guild_8": {
@@ -2599,7 +2611,7 @@
         "raw_manta_ray": 40,
         "emerald": 5
       },
-      "reputation": 70000
+      "reputation": 32500
     }
   },
   "warriors_guild_9": {
@@ -2620,7 +2632,7 @@
         "raw_sea_turtle": 20,
         "ruby": 5
       },
-      "reputation": 120000
+      "reputation": 55000
     }
   },
   "warriors_guild_10": {
@@ -2639,9 +2651,10 @@
       "items": {
         "runite_ore": 80,
         "diamond": 5,
-        "raw_sea_turtle": 30
+        "raw_sea_turtle": 30,
+        "warriors_guild_cape": 1
       },
-      "reputation": 200000
+      "reputation": 100000
     }
   },
   "archers_guild_1": {
@@ -2662,7 +2675,7 @@
         "raw_trout": 50,
         "copper_ore": 40
       },
-      "reputation": 600
+      "reputation": 250
     }
   },
   "archers_guild_2": {
@@ -2683,7 +2696,7 @@
         "raw_salmon": 60,
         "iron_ore": 50
       },
-      "reputation": 1200
+      "reputation": 500
     }
   },
   "archers_guild_3": {
@@ -2704,7 +2717,7 @@
         "raw_tuna": 80,
         "coal": 80
       },
-      "reputation": 3000
+      "reputation": 1250
     }
   },
   "archers_guild_4": {
@@ -2725,7 +2738,7 @@
         "raw_lobster": 60,
         "mithril_ore": 40
       },
-      "reputation": 6000
+      "reputation": 2500
     }
   },
   "archers_guild_5": {
@@ -2746,7 +2759,7 @@
         "raw_swordfish": 60,
         "adamantite_ore": 30
       },
-      "reputation": 12000
+      "reputation": 5500
     }
   },
   "archers_guild_6": {
@@ -2767,7 +2780,7 @@
         "raw_monkfish": 60,
         "platinum_ore": 25
       },
-      "reputation": 22000
+      "reputation": 10000
     }
   },
   "archers_guild_7": {
@@ -2788,7 +2801,7 @@
         "raw_shark": 50,
         "sapphire": 10
       },
-      "reputation": 38000
+      "reputation": 17500
     }
   },
   "archers_guild_8": {
@@ -2809,7 +2822,7 @@
         "raw_manta_ray": 40,
         "emerald": 5
       },
-      "reputation": 70000
+      "reputation": 32500
     }
   },
   "archers_guild_9": {
@@ -2830,7 +2843,7 @@
         "raw_sea_turtle": 20,
         "ruby": 5
       },
-      "reputation": 120000
+      "reputation": 55000
     }
   },
   "archers_guild_10": {
@@ -2849,9 +2862,10 @@
       "items": {
         "magic_log": 60,
         "diamond": 5,
-        "raw_sea_turtle": 30
+        "raw_sea_turtle": 30,
+        "archers_guild_cape": 1
       },
-      "reputation": 200000
+      "reputation": 100000
     }
   },
   "mages_guild_1": {
@@ -2872,7 +2886,7 @@
         "raw_trout": 50,
         "copper_ore": 40
       },
-      "reputation": 600
+      "reputation": 250
     }
   },
   "mages_guild_2": {
@@ -2893,7 +2907,7 @@
         "raw_salmon": 60,
         "iron_ore": 40
       },
-      "reputation": 1200
+      "reputation": 500
     }
   },
   "mages_guild_3": {
@@ -2914,7 +2928,7 @@
         "raw_tuna": 80,
         "coal": 60
       },
-      "reputation": 3000
+      "reputation": 1250
     }
   },
   "mages_guild_4": {
@@ -2935,7 +2949,7 @@
         "raw_lobster": 60,
         "mithril_ore": 40
       },
-      "reputation": 6000
+      "reputation": 2500
     }
   },
   "mages_guild_5": {
@@ -2956,7 +2970,7 @@
         "raw_swordfish": 60,
         "gold_ore": 30
       },
-      "reputation": 12000
+      "reputation": 5500
     }
   },
   "mages_guild_6": {
@@ -2977,7 +2991,7 @@
         "raw_monkfish": 60,
         "adamantite_ore": 30
       },
-      "reputation": 22000
+      "reputation": 10000
     }
   },
   "mages_guild_7": {
@@ -2998,7 +3012,7 @@
         "raw_shark": 50,
         "platinum_ore": 25
       },
-      "reputation": 38000
+      "reputation": 17500
     }
   },
   "mages_guild_8": {
@@ -3019,7 +3033,7 @@
         "raw_manta_ray": 40,
         "runite_ore": 25
       },
-      "reputation": 70000
+      "reputation": 32500
     }
   },
   "mages_guild_9": {
@@ -3040,7 +3054,7 @@
         "raw_sea_turtle": 20,
         "diamond": 2
       },
-      "reputation": 120000
+      "reputation": 55000
     }
   },
   "mages_guild_10": {
@@ -3059,9 +3073,10 @@
       "items": {
         "blood_rune": 2000,
         "diamond": 5,
-        "raw_sea_turtle": 30
+        "raw_sea_turtle": 30,
+        "mages_guild_cape": 1
       },
-      "reputation": 200000
+      "reputation": 100000
     }
   },
   "prayer_guild_1": {
@@ -3082,7 +3097,7 @@
         "copper_ore": 50,
         "log": 40
       },
-      "reputation": 600
+      "reputation": 250
     }
   },
   "prayer_guild_2": {
@@ -3103,7 +3118,7 @@
         "iron_ore": 60,
         "oak_log": 30
       },
-      "reputation": 1200
+      "reputation": 500
     }
   },
   "prayer_guild_3": {
@@ -3124,7 +3139,7 @@
         "coal": 80,
         "willow_log": 40
       },
-      "reputation": 3000
+      "reputation": 1250
     }
   },
   "prayer_guild_4": {
@@ -3145,7 +3160,7 @@
         "mithril_ore": 50,
         "maple_log": 30
       },
-      "reputation": 6000
+      "reputation": 2500
     }
   },
   "prayer_guild_5": {
@@ -3166,7 +3181,7 @@
         "adamantite_ore": 40,
         "yew_log": 25
       },
-      "reputation": 12000
+      "reputation": 5500
     }
   },
   "prayer_guild_6": {
@@ -3187,7 +3202,7 @@
         "gold_ore": 40,
         "magic_log": 20
       },
-      "reputation": 22000
+      "reputation": 10000
     }
   },
   "prayer_guild_7": {
@@ -3208,7 +3223,7 @@
         "platinum_ore": 30,
         "redwood_log": 15
       },
-      "reputation": 38000
+      "reputation": 17500
     }
   },
   "prayer_guild_8": {
@@ -3229,7 +3244,7 @@
         "runite_ore": 30,
         "emerald": 5
       },
-      "reputation": 70000
+      "reputation": 32500
     }
   },
   "prayer_guild_9": {
@@ -3250,7 +3265,7 @@
         "diamond": 2,
         "runite_ore": 40
       },
-      "reputation": 120000
+      "reputation": 55000
     }
   },
   "prayer_guild_10": {
@@ -3269,9 +3284,182 @@
       "items": {
         "diamond": 5,
         "runite_ore": 60,
-        "raw_sea_turtle": 30
+        "raw_sea_turtle": 30,
+        "prayer_guild_cape": 1
       },
-      "reputation": 200000
+      "reputation": 100000
+    }
+  },
+  "mercantile_guild_1": {
+    "id": "mercantile_guild_1",
+    "guild": "mercantile",
+    "guild_level_required": 0,
+    "name": "First Trade",
+    "type": "trade",
+    "target": "",
+    "amount": 1,
+    "description": "Complete 1 trade route for the Merchants Guild.",
+    "rewards": {
+      "coins": 3000,
+      "xp": 5000,
+      "xp_skill": "mercantile",
+      "items": {},
+      "reputation": 250
+    }
+  },
+  "mercantile_guild_2": {
+    "id": "mercantile_guild_2",
+    "guild": "mercantile",
+    "guild_level_required": 1,
+    "name": "Budding Merchant",
+    "type": "trade",
+    "target": "",
+    "amount": 5,
+    "description": "Complete 5 trade routes for the Merchants Guild.",
+    "rewards": {
+      "coins": 10000,
+      "xp": 15000,
+      "xp_skill": "mercantile",
+      "items": {},
+      "reputation": 500
+    }
+  },
+  "mercantile_guild_3": {
+    "id": "mercantile_guild_3",
+    "guild": "mercantile",
+    "guild_level_required": 2,
+    "name": "River Trader",
+    "type": "trade",
+    "target": "",
+    "amount": 10,
+    "description": "Complete 10 trade routes for the Merchants Guild.",
+    "rewards": {
+      "coins": 25000,
+      "xp": 40000,
+      "xp_skill": "mercantile",
+      "items": {},
+      "reputation": 1250
+    }
+  },
+  "mercantile_guild_4": {
+    "id": "mercantile_guild_4",
+    "guild": "mercantile",
+    "guild_level_required": 3,
+    "name": "Caravan Master",
+    "type": "trade",
+    "target": "",
+    "amount": 20,
+    "description": "Complete 20 trade routes for the Merchants Guild.",
+    "rewards": {
+      "coins": 60000,
+      "xp": 90000,
+      "xp_skill": "mercantile",
+      "items": {},
+      "reputation": 2500
+    }
+  },
+  "mercantile_guild_5": {
+    "id": "mercantile_guild_5",
+    "guild": "mercantile",
+    "guild_level_required": 4,
+    "name": "Port Authority",
+    "type": "trade",
+    "target": "",
+    "amount": 40,
+    "description": "Complete 40 trade routes for the Merchants Guild.",
+    "rewards": {
+      "coins": 150000,
+      "xp": 200000,
+      "xp_skill": "mercantile",
+      "items": {},
+      "reputation": 5500
+    }
+  },
+  "mercantile_guild_6": {
+    "id": "mercantile_guild_6",
+    "guild": "mercantile",
+    "guild_level_required": 5,
+    "name": "Merchant Prince",
+    "type": "trade",
+    "target": "",
+    "amount": 75,
+    "description": "Complete 75 trade routes for the Merchants Guild.",
+    "rewards": {
+      "coins": 400000,
+      "xp": 500000,
+      "xp_skill": "mercantile",
+      "items": {},
+      "reputation": 10000
+    }
+  },
+  "mercantile_guild_7": {
+    "id": "mercantile_guild_7",
+    "guild": "mercantile",
+    "guild_level_required": 6,
+    "name": "Trade Baron",
+    "type": "trade",
+    "target": "",
+    "amount": 120,
+    "description": "Complete 120 trade routes for the Merchants Guild.",
+    "rewards": {
+      "coins": 800000,
+      "xp": 1000000,
+      "xp_skill": "mercantile",
+      "items": {},
+      "reputation": 17500
+    }
+  },
+  "mercantile_guild_8": {
+    "id": "mercantile_guild_8",
+    "guild": "mercantile",
+    "guild_level_required": 7,
+    "name": "Grand Merchant",
+    "type": "trade",
+    "target": "",
+    "amount": 200,
+    "description": "Complete 200 trade routes for the Merchants Guild.",
+    "rewards": {
+      "coins": 2000000,
+      "xp": 2500000,
+      "xp_skill": "mercantile",
+      "items": {},
+      "reputation": 32500
+    }
+  },
+  "mercantile_guild_9": {
+    "id": "mercantile_guild_9",
+    "guild": "mercantile",
+    "guild_level_required": 8,
+    "name": "Legendary Trader",
+    "type": "trade",
+    "target": "",
+    "amount": 350,
+    "description": "Complete 350 trade routes for the Merchants Guild.",
+    "rewards": {
+      "coins": 5000000,
+      "xp": 6000000,
+      "xp_skill": "mercantile",
+      "items": {},
+      "reputation": 55000
+    }
+  },
+  "mercantile_guild_10": {
+    "id": "mercantile_guild_10",
+    "guild": "mercantile",
+    "guild_level_required": 9,
+    "name": "Exchange Master",
+    "type": "trade",
+    "target": "",
+    "amount": 500,
+    "description": "Prove your mastery \u2014 complete 500 trade routes for the Merchants Guild.",
+    "rewards": {
+      "coins": 10000000,
+      "xp": 12000000,
+      "xp_skill": "mercantile",
+      "items": {
+        "mercantile_guild_cape": 1
+      },
+      "reputation": 100000
     }
   }
 }

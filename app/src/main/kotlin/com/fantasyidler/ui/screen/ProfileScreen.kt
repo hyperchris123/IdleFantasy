@@ -63,7 +63,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.fantasyidler.R
-import com.fantasyidler.data.json.CookingRecipe
 import com.fantasyidler.data.json.SkillingDungeonData
 import com.fantasyidler.data.model.EquipSlot
 import com.fantasyidler.ui.theme.GoldPrimary
@@ -199,18 +198,10 @@ fun ProfileScreen(
                     0 -> SkillsTab(state.skillLevels, state.skillXp, context)
                     1 -> InventoryTab(state.inventory, context, viewModel::categoryFor)
                     2 -> EquipmentTab(
-                        equipped       = state.equipped,
-                        inventory      = state.inventory,
-                        equippedFood   = state.equippedFood,
-                        foodHealValues = viewModel.foodHealValues,
-                        cookingRecipes = viewModel.cookingRecipes,
-                        allEquipment   = viewModel.allEquipment,
-                        context        = context,
-                        onSlotTap      = viewModel::openSlotPicker,
-                        onUnequip      = viewModel::unequip,
-                        onEquipBest    = viewModel::equipBestGear,
-                        onEquipFood    = viewModel::equipFood,
-                        onUnequipFood  = viewModel::unequipFood,
+                        equipped  = state.equipped,
+                        context   = context,
+                        onSlotTap = viewModel::openSlotPicker,
+                        onUnequip = viewModel::unequip,
                     )
                     3 -> PetsTab(
                         allPets     = viewModel.allPets,
@@ -648,93 +639,26 @@ private fun PetRow(pet: com.fantasyidler.data.json.PetData, owned: Boolean) {
 @Composable
 private fun EquipmentTab(
     equipped: Map<String, String?>,
-    inventory: Map<String, Int>,
-    equippedFood: Map<String, Int>,
-    foodHealValues: Map<String, Int>,
-    cookingRecipes: Map<String, CookingRecipe>,
-    allEquipment: Map<String, com.fantasyidler.data.json.EquipmentData>,
     context: android.content.Context,
     onSlotTap: (String) -> Unit,
     onUnequip: (String) -> Unit,
-    onEquipBest: () -> Unit,
-    onEquipFood: (String) -> Unit,
-    onUnequipFood: (String) -> Unit,
 ) {
-    val cookedItemKeys = remember(cookingRecipes) {
-        cookingRecipes.values.map { it.cookedItem }.toSet()
-    }
-    val foodInInventory = remember(inventory, cookedItemKeys) {
-        inventory.filterKeys { it in cookedItemKeys }.entries.toList()
-    }
-
     LazyColumn(modifier = Modifier.fillMaxSize()) {
-        item {
-            Button(
-                onClick  = onEquipBest,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
-            ) {
-                Text(stringResource(R.string.profile_equip_best))
-            }
-        }
-        item { SlotSectionHeader(stringResource(R.string.profile_weapons)) }
-        items(EquipSlot.WEAPON_SLOTS) { slot ->
-            EquipSlotRow(
-                slotName   = slotDisplayName(slot),
-                itemKey    = equipped[slot],
-                xpLabel    = weaponXpLabel(allEquipment[equipped[slot]]?.combatStyle, context),
-                onTap      = { onSlotTap(slot) },
-                onUnequip  = { onUnequip(slot) },
-            )
-        }
-        item { SlotSectionHeader(stringResource(R.string.profile_combat_gear)) }
-        items(EquipSlot.ARMOR_SLOTS) { slot ->
-            EquipSlotRow(
-                slotName   = slotDisplayName(slot),
-                itemKey    = equipped[slot],
-                onTap      = { onSlotTap(slot) },
-                onUnequip  = { onUnequip(slot) },
-            )
-        }
         item { SlotSectionHeader(stringResource(R.string.profile_gathering_tools)) }
         items(EquipSlot.TOOL_SLOTS) { slot ->
             EquipSlotRow(
-                slotName   = slotDisplayName(slot),
-                itemKey    = equipped[slot],
-                onTap      = { onSlotTap(slot) },
-                onUnequip  = { onUnequip(slot) },
+                slotName  = slotDisplayName(slot),
+                itemKey   = equipped[slot],
+                onTap     = { onSlotTap(slot) },
+                onUnequip = { onUnequip(slot) },
             )
-        }
-        item { SlotSectionHeader(stringResource(R.string.profile_food_dungeon)) }
-        if (foodInInventory.isEmpty()) {
-            item {
-                Text(
-                    text     = stringResource(R.string.profile_no_food),
-                    style    = MaterialTheme.typography.bodySmall,
-                    color    = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                )
-            }
-        } else {
-            items(foodInInventory, key = { "food_${it.key}" }) { (key, qty) ->
-                FoodRow(
-                    itemKey    = key,
-                    qty        = qty,
-                    healValue  = foodHealValues[key] ?: 0,
-                    isEquipped = key in equippedFood,
-                    context    = context,
-                    onEquip    = { onEquipFood(key) },
-                    onUnequip  = { onUnequipFood(key) },
-                )
-            }
         }
         item { Spacer(Modifier.height(16.dp)) }
     }
 }
 
 @Composable
-private fun FoodRow(
+internal fun FoodRow(
     itemKey: String,
     qty: Int,
     healValue: Int,
@@ -775,7 +699,7 @@ private fun FoodRow(
 }
 
 @Composable
-private fun SlotSectionHeader(title: String) {
+internal fun SlotSectionHeader(title: String) {
     Column {
         HorizontalDivider()
         Text(
@@ -788,7 +712,7 @@ private fun SlotSectionHeader(title: String) {
 }
 
 @Composable
-private fun EquipSlotRow(
+internal fun EquipSlotRow(
     slotName: String,
     itemKey: String?,
     xpLabel: String? = null,
@@ -845,7 +769,7 @@ private fun EquipSlotRow(
 // ---------------------------------------------------------------------------
 
 @Composable
-private fun EquipPickerSheet(
+internal fun EquipPickerSheet(
     slot: String,
     candidates: List<com.fantasyidler.data.json.EquipmentData>,
     context: android.content.Context,
@@ -926,7 +850,7 @@ private fun EquipPickerSheet(
     }
 }
 
-private fun weaponXpLabel(combatStyle: String?, context: android.content.Context): String? = when (combatStyle) {
+internal fun weaponXpLabel(combatStyle: String?, context: android.content.Context): String? = when (combatStyle) {
     "attack"   -> context.getString(R.string.profile_stat_atk)
     "strength" -> context.getString(R.string.profile_stat_str)
     "ranged"   -> context.getString(R.string.profile_stat_ranged)
@@ -934,7 +858,7 @@ private fun weaponXpLabel(combatStyle: String?, context: android.content.Context
     else       -> null
 }
 
-private fun buildEquipDetail(item: com.fantasyidler.data.json.EquipmentData, context: android.content.Context): String {
+internal fun buildEquipDetail(item: com.fantasyidler.data.json.EquipmentData, context: android.content.Context): String {
     val parts = mutableListOf<String>()
     item.miningEfficiency?.let      { parts.add("${context.getString(R.string.profile_stat_mining)} ×${"%.2f".format(it)}") }
     item.woodcuttingEfficiency?.let { parts.add("${context.getString(R.string.profile_stat_wc)} ×${"%.2f".format(it)}") }
