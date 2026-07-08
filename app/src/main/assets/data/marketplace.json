@@ -303,8 +303,8 @@
         "stock": "unlimited",
         "mercantile_level_required": 99
       },
-      "tormented_bracelet": {
-        "display_name": "Tormented Bracelet",
+      "tormented_necklace": {
+        "display_name": "Tormented Necklace",
         "description": "Provides exceptional magic bonuses. Requires Mercantile level 99 to purchase.",
         "price": 3000000,
         "stock": "unlimited",
