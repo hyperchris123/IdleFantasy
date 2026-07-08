@@ -273,7 +273,7 @@ class HomeViewModel @Inject constructor(
             var pendingExpeditionSummary: SessionSummary? = null
 
             val gatheringSkills = setOf(Skills.MINING, Skills.WOODCUTTING, Skills.FISHING, Skills.AGILITY)
-            val craftingSkills  = setOf(Skills.SMITHING, Skills.COOKING, Skills.FLETCHING, Skills.CRAFTING, Skills.HERBLORE, Skills.FIREMAKING, Skills.RUNECRAFTING)
+            val craftingSkills  = setOf(Skills.SMITHING, Skills.COOKING, Skills.FLETCHING, Skills.CRAFTING, Skills.HERBLORE, Skills.FIREMAKING, Skills.RUNECRAFTING, Skills.CONSTRUCTION)
 
             for (session in sessions) {
                 val frames: List<SessionFrame> = json.decodeFromString(session.frames)
@@ -490,6 +490,10 @@ class HomeViewModel @Inject constructor(
                                 questRepo.recordCrafting(session.skillName, regular)
                                 playerRepo.recordDailyCrafting(regular)
                                 guildRepo.recordGuildCrafting(session.skillName, regular)
+                            }
+                            Skills.THIEVING    -> {
+                                val successCount = frames.count { it.success }
+                                questRepo.recordThieving(session.activityKey, successCount, regular.filterKeys { it != "coins" })
                             }
                             Skills.PRAYER      -> {
                                 val buried = frames.sumOf { it.kills }
@@ -1029,9 +1033,10 @@ fun playerSessionMaterials(
         Skills.COOKING      -> gameData.cookingRecipes[activityKey]?.let { mapOf(it.rawItem to qty) }
         Skills.FLETCHING    -> gameData.fletchingRecipes[activityKey]?.materials?.mapValues { it.value * qty }
         Skills.CRAFTING     -> gameData.craftingRecipes[activityKey]?.materials?.mapValues { it.value * qty }
-        Skills.HERBLORE     -> gameData.herbloreRecipes[activityKey]?.materials?.mapValues { it.value * qty }
-        Skills.FIREMAKING   -> mapOf(activityKey to qty)
-        else                -> null
+        Skills.HERBLORE      -> gameData.herbloreRecipes[activityKey]?.materials?.mapValues { it.value * qty }
+        Skills.FIREMAKING    -> mapOf(activityKey to qty)
+        Skills.CONSTRUCTION  -> gameData.constructionRecipes[activityKey]?.materials?.mapValues { it.value * qty }
+        else                 -> null
     }
 }
 

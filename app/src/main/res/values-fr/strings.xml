@@ -347,6 +347,7 @@
     <string name="home_up_next">À venir (%1$d/3)</string>
     <!-- Translator note: %1$s = formatted duration string (e.g. "2h 15m") -->
     <string name="home_queue_ends_in">La file d’attente se termine dans %1$s</string>
+    <string name="queue_item_qty">×%1$d</string>
     <!-- Translator note: %1$d = number of sessions to collect -->
     <plurals name="plural_collect_sessions">
         <!-- No need to include %1$d, it’s in “la” -->
@@ -557,7 +558,7 @@
     <string name="qty_max">Max</string>
 
     <!-- ===== Combat difficulty ratings ===== -->
-    <string name="combat_difficulty_likely">Ça a l’air faisable</string>
+    <string name="combat_difficulty_likely">You\'ve got this</string>
     <string name="combat_difficulty_risky">Risqué dans la configuration actuelle</string>
     <string name="combat_difficulty_unlikely">Risque de mourir</string>
 
@@ -987,7 +988,7 @@
     <string name="bone_altar_tap">Appuyer pour Enterrer</string>
     <string name="bone_altar_change_bone">Changer</string>
     <string name="bone_altar_combo_count">Combo ×%d</string>
-    <string name="bone_altar_bonus_active">+50% bonus XP !</string>
+    <string name="bone_altar_bonus_active">+50%% bonus XP !</string>
     <string name="bone_altar_session_xp">+%s XP cette session</string>
     <string name="bone_altar_buried_count">%d enterrés</string>
     <string name="bone_altar_no_bones">Aucun os dans l\'inventaire</string>
@@ -1029,6 +1030,9 @@
     <string name="item_yew_wardrobe_name">Armoire en If</string>
     <string name="item_magic_throne_name">Trône Magique</string>
     <string name="town_upgrade_section_title">Bâtiment de Ville</string>
+    <string name="town_building_inn_name">Hôtel</string>
+    <string name="town_building_guild_hall_name">Salle de la guilde</string>
+    <string name="town_building_church_name">Église</string>
     <string name="town_building_current_tier">Niveau %1$d / 3</string>
     <string name="town_building_maxed_label">Entièrement Amélioré</string>
     <string name="town_upgrade_next_label">Prochaine Amélioration</string>

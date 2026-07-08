@@ -1059,6 +1059,9 @@
     <string name="item_maple_dresser_name">Кленовый Комод</string>
     <string name="item_yew_wardrobe_name">Тисовый Гардероб</string>
     <string name="item_magic_throne_name">Магический Трон</string>
+    <string name="town_building_inn_name">Inn</string>
+    <string name="town_building_guild_hall_name">Guild Hall</string>
+    <string name="town_building_church_name">Church</string>
     <string name="town_upgrade_section_title">Городское Здание</string>
     <string name="town_building_current_tier">Уровень %1$d / 3</string>
     <string name="town_building_maxed_label">Полностью Улучшено</string>
@@ -1081,6 +1084,7 @@
     <string name="achievement_town_first_upgrade_desc">Улучшите любое здание города впервые</string>
     <string name="achievement_town_all_tier1_name">Улучшатель Города</string>
     <string name="achievement_town_all_tier1_desc">Улучшите все три здания минимум до 1-го уровня</string>
+    <string name="skill_mining_qty_estimate">~%1$d руды/сессия</string>
     <string name="achievement_town_one_maxed_name">Мастер Строитель</string>
     <string name="achievement_town_one_maxed_desc">Улучшите любое здание до максимального уровня</string>
     <string name="achievement_town_all_maxed_name">Легендарный Город</string>

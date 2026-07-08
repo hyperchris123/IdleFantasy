@@ -11,6 +11,14 @@
     <!-- Translator note: %1$s = localised skill name (e.g. "Mining") -->
     <string name="notif_session_complete_body">Votre session %1$s est terminée. Appuyez ici pour récupérer vos récompenses.</string>
 
+        <!-- ===== Buff alerts ===== -->
+    <string name="notif_channel_buffs_name">Bonus Alerte</string>
+    <string name="notif_channel_buffs_desc">Notifications lorsque vos bonus actifs expirent</string>
+    <string name="notif_xp_boost_expired_title">XP Boost a expiré</string>
+    <string name="notif_xp_boost_expired_body">Votre bonus de 2x XP a expiré. Rendez-vous sur la boutique pour le réactiver.</string>
+    <string name="notif_blessing_expired_title">La bénédiction a expiré</string>
+    <string name="notif_blessing_expired_body">La bénédiction de votre église s\'est finie. Rendez-vous à l\'église pour la renouveler.</string>
+
     <!-- ===== Farming ready ===== -->
     <string name="notif_farming_ready_title">La récolte est prête !</string>
     <!-- Translator note: %1$s = localised crop name (e.g. "Wheat"). Adjust grammar as needed for your language. -->

@@ -34,6 +34,7 @@ class PlayerRepository @Inject constructor(
     private val farmingPatchDao: FarmingPatchDao,
     private val json: Json,
     private val dailyQuestRepo: DailyQuestRepository,
+    private val buffNotifScheduler: BuffNotificationScheduler,
 ) {
     /**
      * Emits the raw [Player] entity whenever the DB row changes.
@@ -484,6 +485,8 @@ class PlayerRepository @Inject constructor(
                 flags = json.encode<PlayerFlags>(flags.copy(xpBoostExpiresAt = newExpiry)),
             )
         )
+        buffNotifScheduler.cancelXpBoostExpiry()
+        buffNotifScheduler.scheduleXpBoostExpiry(newExpiry)
         return true
     }
 
