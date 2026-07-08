@@ -35,13 +35,14 @@ data class InnUiState(
     val isLoading: Boolean = true,
     val coins: Long = 0L,
     val hiredWorker: HiredWorker? = null,
+    val hiredWorker2: HiredWorker? = null,
     val longLaborerName: String = "",
     val apprenticeName: String = "",
     val journeymanName: String = "",
     val masterName: String = "",
     val dailyFoods: List<DailyFoodItem> = emptyList(),
     val snackbarMessage: String? = null,
-    val navigateToWorkerSkills: Boolean = false,
+    val navigateToWorkerSkillsSlot: Int = 0,
 )
 
 @HiltViewModel
@@ -66,6 +67,7 @@ class InnViewModel @Inject constructor(
                 isLoading        = false,
                 coins            = player.coins,
                 hiredWorker      = flags.hiredWorker,
+                hiredWorker2     = flags.hiredWorker2,
                 longLaborerName  = workerName(WorkerTier.LONG_LABORER),
                 apprenticeName   = workerName(WorkerTier.APPRENTICE),
                 journeymanName   = workerName(WorkerTier.JOURNEYMAN),
@@ -77,8 +79,10 @@ class InnViewModel @Inject constructor(
     fun hire(tier: WorkerTier) {
         viewModelScope.launch {
             val flags = playerRepo.getFlags()
+            val slot = if (tier == WorkerTier.LONG_LABORER) 1 else 2
 
-            if (flags.hiredWorker != null) {
+            val slotOccupied = if (slot == 1) flags.hiredWorker != null else flags.hiredWorker2 != null
+            if (slotOccupied) {
                 _extra.update { it.copy(snackbarMessage = context.getString(R.string.inn_worker_already_hired)) }
                 return@launch
             }
@@ -87,9 +91,11 @@ class InnViewModel @Inject constructor(
                 _extra.update { it.copy(snackbarMessage = context.getString(R.string.inn_not_enough_coins)) }
                 return@launch
             }
-            sessionRepo.deleteAllWorkerSessions()
-            playerRepo.updateFlags(flags.copy(hiredWorker = HiredWorker(tier, name)))
-            _extra.update { it.copy(navigateToWorkerSkills = true) }
+            sessionRepo.deleteAllWorkerSessions(slot)
+            val newFlags = if (slot == 1) flags.copy(hiredWorker = HiredWorker(tier, name))
+                           else flags.copy(hiredWorker2 = HiredWorker(tier, name))
+            playerRepo.updateFlags(newFlags)
+            _extra.update { it.copy(navigateToWorkerSkillsSlot = slot) }
         }
     }
 
@@ -105,7 +111,7 @@ class InnViewModel @Inject constructor(
         }
     }
 
-    fun navigationHandled() = _extra.update { it.copy(navigateToWorkerSkills = false) }
+    fun navigationHandled() = _extra.update { it.copy(navigateToWorkerSkillsSlot = 0) }
     fun snackbarConsumed() = _extra.update { it.copy(snackbarMessage = null) }
 
     private fun workerName(tier: WorkerTier): String {
