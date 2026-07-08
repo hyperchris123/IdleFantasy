@@ -249,6 +249,7 @@
     <string name="label_shop_desc">Buy equipment and sell loot</string>
     <string name="label_no_session_hint">Head to Skills or Combat to start training.</string>
     <string name="label_recent_activity">Recent Activity</string>
+    <string name="settings_recent_activity">Recent Activity Log</string>
     <string name="settings_recent_activity_desc">Show Recent Activity button in the home screen header</string>
     <string name="label_no_sessions_yet">No sessions completed yet.</string>
 

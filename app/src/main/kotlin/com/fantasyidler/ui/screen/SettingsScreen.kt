@@ -314,7 +314,7 @@ fun SettingsScreen(
             )
 
             SettingsRow(
-                title    = "Recent Activity Log",
+                title    = stringResource(R.string.settings_recent_activity),
                 subtitle = stringResource(R.string.settings_recent_activity_desc),
                 trailing = {
                     Switch(
