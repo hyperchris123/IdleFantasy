@@ -39,6 +39,8 @@ data class PlayerFlags(
     @SerialName("daily_quest_claimed") val dailyQuestClaimed: List<String> = emptyList(),
     /** Epoch ms when today's daily quests were generated (used to detect 6am rollover). */
     @SerialName("daily_quest_generated_at") val dailyQuestGeneratedAt: Long = 0L,
+    /** Currently hired worker, or null if none. */
+    @SerialName("hired_worker") val hiredWorker: HiredWorker? = null,
 )
 
 /** A session to be started when the current one completes. */
@@ -51,6 +53,56 @@ data class QueuedAction(
     val qty: Int = 0,
     /** Pre-computed session duration in ms, used to display accurate queue end time. */
     @SerialName("estimated_duration_ms") val estimatedDurationMs: Long = 0L,
+)
+
+// ---------------------------------------------------------------------------
+// Worker system
+// ---------------------------------------------------------------------------
+
+@Serializable
+enum class WorkerTier {
+    LONG_LABORER, APPRENTICE, JOURNEYMAN, MASTER;
+
+    val durationMs: Long get() = when (this) {
+        LONG_LABORER -> 8L * 60 * 60_000L
+        APPRENTICE   -> 8L * 60 * 60_000L
+        JOURNEYMAN   -> 6L * 60 * 60_000L
+        MASTER       -> 4L * 60 * 60_000L
+    }
+
+    val efficiencyMultiplier: Float get() = when (this) {
+        LONG_LABORER -> 1.0f
+        APPRENTICE   -> 1.0f
+        JOURNEYMAN   -> 1.25f
+        MASTER       -> 2.0f
+    }
+
+    val hireCost: Long get() = when (this) {
+        LONG_LABORER -> 10_000L
+        APPRENTICE   -> 20_000L
+        JOURNEYMAN   -> 50_000L
+        MASTER       -> 200_000L
+    }
+
+    /** Maximum qty for crafting/prayer/runecrafting sessions; LONG_LABORER is uncapped. */
+    val maxCraftQty: Int get() = when (this) {
+        LONG_LABORER -> Int.MAX_VALUE
+        APPRENTICE   -> 480
+        JOURNEYMAN   -> 360
+        MASTER       -> 240
+    }
+
+    /** Combined multiplier applied to gathering/combat loot and XP at collect time.
+     *  = (session hours) × efficiencyMultiplier */
+    val combinedGatheringMultiplier: Float get() =
+        (durationMs / (60L * 60_000L)).toFloat() * efficiencyMultiplier
+}
+
+@Serializable
+data class HiredWorker(
+    @SerialName("tier") val tier: WorkerTier,
+    @SerialName("daily_name") val dailyName: String,
+    @SerialName("session_queue") val sessionQueue: List<QueuedAction> = emptyList(),
 )
 
 @Serializable

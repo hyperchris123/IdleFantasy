@@ -19,7 +19,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.foundation.background
 import androidx.compose.material3.Button
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.CircularProgressIndicator
@@ -63,6 +65,7 @@ import com.fantasyidler.ui.theme.GoldPrimary
 import com.fantasyidler.ui.viewmodel.Achievement
 import com.fantasyidler.ui.viewmodel.AchievementsViewModel
 import com.fantasyidler.ui.viewmodel.DISPLAY_SKILL_ORDER
+import com.fantasyidler.ui.viewmodel.InventoryCategory
 import com.fantasyidler.ui.viewmodel.InventoryViewModel
 import com.fantasyidler.ui.viewmodel.slotDisplayName
 import com.fantasyidler.ui.viewmodel.xpProgressFraction
@@ -186,7 +189,7 @@ fun ProfileScreen(
 
             when (selectedTab) {
                 0 -> SkillsTab(state.skillLevels, state.skillXp, context)
-                1 -> InventoryTab(state.inventory, context)
+                1 -> InventoryTab(state.inventory, context, viewModel::categoryFor)
                 2 -> EquipmentTab(
                     equipped       = state.equipped,
                     inventory      = state.inventory,
@@ -346,27 +349,84 @@ private fun ProfileSkillRow(name: String, level: Int, xp: Long) {
 private fun InventoryTab(
     inventory: Map<String, Int>,
     context: android.content.Context,
+    categoryFor: (String) -> InventoryCategory,
 ) {
-    if (inventory.isEmpty()) {
-        Box(
-            modifier         = Modifier.fillMaxSize().padding(32.dp),
-            contentAlignment = Alignment.Center,
+    var sortAlpha by remember { mutableStateOf(false) }
+
+    val groups: List<Pair<InventoryCategory, List<Map.Entry<String, Int>>>> =
+        remember(inventory, sortAlpha) {
+            val grouped = inventory.entries.groupBy { categoryFor(it.key) }
+            InventoryCategory.values().mapNotNull { cat ->
+                val items = grouped[cat] ?: return@mapNotNull null
+                val sorted = if (sortAlpha)
+                    items.sortedBy { GameStrings.itemName(context, it.key) }
+                else
+                    items.sortedByDescending { it.value }
+                cat to sorted
+            }
+        }
+
+    Column(modifier = Modifier.fillMaxSize()) {
+        Row(
+            modifier              = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            Text(
-                text  = stringResource(R.string.label_empty),
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            FilterChip(
+                selected = !sortAlpha,
+                onClick  = { sortAlpha = false },
+                label    = { Text(stringResource(R.string.inventory_sort_quantity), style = MaterialTheme.typography.labelSmall) },
+            )
+            FilterChip(
+                selected = sortAlpha,
+                onClick  = { sortAlpha = true },
+                label    = { Text(stringResource(R.string.inventory_sort_az), style = MaterialTheme.typography.labelSmall) },
             )
         }
-        return
-    }
-    LazyColumn(modifier = Modifier.fillMaxSize()) {
-        items(inventory.entries.toList()) { (key, qty) ->
-            InventoryRow(name = GameStrings.itemName(context, key), qty = qty)
+        if (groups.isEmpty()) {
+            Box(
+                modifier         = Modifier.fillMaxSize().padding(32.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    text  = stringResource(R.string.label_empty),
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        } else {
+            LazyColumn(modifier = Modifier.fillMaxSize()) {
+                for ((cat, catItems) in groups) {
+                    item(key = cat.name) {
+                        Text(
+                            text     = categoryLabel(cat),
+                            style    = MaterialTheme.typography.labelSmall,
+                            color    = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(MaterialTheme.colorScheme.surfaceVariant)
+                                .padding(horizontal = 16.dp, vertical = 6.dp),
+                        )
+                    }
+                    items(catItems, key = { it.key }) { entry ->
+                        InventoryRow(name = GameStrings.itemName(context, entry.key), qty = entry.value)
+                    }
+                }
+                item { Spacer(Modifier.height(16.dp)) }
+            }
         }
-        item { Spacer(Modifier.height(16.dp)) }
     }
 }
+
+@Composable
+private fun categoryLabel(cat: InventoryCategory): String = stringResource(when (cat) {
+    InventoryCategory.WEAPONS   -> R.string.inventory_cat_weapons
+    InventoryCategory.ARMOUR    -> R.string.inventory_cat_armour
+    InventoryCategory.TOOLS     -> R.string.inventory_cat_tools
+    InventoryCategory.FOOD      -> R.string.inventory_cat_food
+    InventoryCategory.POTIONS   -> R.string.inventory_cat_potions
+    InventoryCategory.MATERIALS -> R.string.inventory_cat_materials
+    InventoryCategory.OTHER     -> R.string.inventory_cat_other
+})
 
 @Composable
 private fun InventoryRow(name: String, qty: Int) {

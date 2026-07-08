@@ -40,4 +40,12 @@ data class SkillSession(
     /** Sub-activity key, e.g. ore type "iron_ore" or dungeon "dark_cave" */
     @ColumnInfo(name = "activity_key")
     val activityKey: String = "",
+
+    /** True when this session belongs to the hired worker (not the player). */
+    @ColumnInfo(name = "is_worker_session", defaultValue = "0")
+    val isWorkerSession: Boolean = false,
+
+    /** Multiplier applied to XP and items at collect time (>1.0 for worker sessions). */
+    @ColumnInfo(name = "efficiency_multiplier", defaultValue = "1.0")
+    val efficiencyMultiplier: Float = 1.0f,
 )

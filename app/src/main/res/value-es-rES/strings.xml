@@ -147,7 +147,7 @@
     <!-- Translator note: %1$s = formatted XP amount -->
     <string name="format_xp_per_action">%1$s XP por acción</string>
     <!-- Translator note: %1$d = patch number -->
-    <string name="format_patch_number">Patch %1$d</string>
+    <string name="format_patch_number">Parcela %1$d</string>
     <!-- Translator note: %1$d = wins, %2$d = losses -->
     <string name="format_arena_record">%1$d victorias / %2$d losses</string>
     <!-- Translator note: %1$s = skill display name, %2$d = level number -->
@@ -167,8 +167,8 @@
         <item quantity="other">%1$d level ups</item>
     </plurals>
     <plurals name="plural_items">
-        <item quantity="one">%1$d item</item>
-        <item quantity="other">%1$d items</item>
+        <item quantity="one">%1$d objeto</item>
+        <item quantity="other">%1$d objetos</item>
     </plurals>
     <plurals name="plural_minutes">
         <item quantity="one">%1$d minuto</item>
@@ -183,8 +183,8 @@
         <item quantity="other">%1$d parcelas</item>
     </plurals>
     <plurals name="plural_kills">
-        <item quantity="one">%1$d kill</item>
-        <item quantity="other">%1$d kills</item>
+        <item quantity="one">%1$d muerte</item>
+        <item quantity="other">%1$d muertes</item>
     </plurals>
     <plurals name="plural_quests_completed">
         <item quantity="one">%1$d Misión completada</item>
@@ -259,7 +259,7 @@
     <string name="settings_general_header">General</string>
     <string name="settings_tutorial_title">Tutorial</string>
     <string name="settings_tutorial_desc">Mostrar la introducción de nuevo</string>
-    <string name="settings_reopen">Reopen</string>
+    <string name="settings_reopen">Reabrir</string>
     <string name="settings_foss_desc">Idle Fantasy is free and open source software.</string>
     <string name="settings_reset_title">Reiniciar progreso</string>
     <string name="settings_reset_desc">Borra todas las habilidades, objetos, misiones y monedas.</string>
@@ -289,10 +289,12 @@
     <string name="settings_theme_dark">Dark</string>
     <string name="settings_theme_light">Light</string>
     <string name="settings_theme_system">System</string>
-    <string name="settings_language_desc">Override the app display language</string>
-    <string name="settings_lang_english">English</string>
-    <string name="settings_lang_deutsch">Deutsch</string>
-    <string name="settings_lang_system">System</string>
+    <string name="settings_language_desc">Sobrescribir el idioma de la aplicación</string>
+    <string name="settings_lang_english">Ingles</string>
+    <string name="settings_lang_deutsch">Alemán</string>
+    <string name="settings_lang_español">Español</string>
+    <string name="settings_lang_español_españa">Español (España)</string>
+    <string name="settings_lang_system">Sístema</string>
     <string name="settings_save_data">Save Data</string>
     <string name="settings_export">Export Save</string>
     <string name="settings_export_desc">Save your progress to a file</string>
@@ -302,7 +304,7 @@
     <string name="settings_import_btn">Import</string>
     <string name="settings_source_code">Source Code</string>
     <string name="settings_source_url">github.com/tristinbaker/IdleFantasy</string>
-    <string name="settings_source_open">Open</string>
+    <string name="settings_source_open">Abrir</string>
     <string name="settings_exported_ok">Save exported</string>
     <string name="settings_imported_ok">Save imported successfully</string>
     <string name="settings_imported_fail">Failed to import — invalid file</string>
@@ -328,7 +330,7 @@
 
     <!-- ===== CombatScreen ===== -->
     <string name="combat_level_label">Combat Lvl</string>
-    <string name="combat_log_label">Combat Log</string>
+    <string name="combat_log_label">Diario de combate</string>
     <string name="combat_solo_bosses">Solo Bosses</string>
     <string name="combat_atk">ATK</string>
     <string name="combat_str">STR</string>
@@ -356,7 +358,7 @@
     <!-- Translator note: %1$d = minutes -->
     <string name="combat_duration_min">%1$d min</string>
     <string name="combat_xp_on_victory">XP on victory</string>
-    <string name="combat_you_died">Has muerto!</string>
+    <string name="combat_you_died">¡Has muerto!</string>
     <string name="combat_died_reward">Recibiste el 10% de las recompensas.</string>
     <!-- Translator note: %1$d = gear bonus value -->
     <string name="combat_gear_bonus">+%1$d gear</string>
@@ -391,7 +393,7 @@
     <!-- Translator note: %1$d = session duration in minutes -->
     <string name="skills_session_duration">Sesion: %1$dm</string>
     <string name="skills_only_craftable">Solo se puede fabricar</string>
-    <string name="skills_filter_all">All</string>
+    <string name="skills_filter_all">Todo</string>
     <string name="skills_add_to_queue">Agregar a la fila de actividades</string>
     <string name="skills_add_queue_short">Agregar a la fila</string>
     <!-- Translator note: %1$d = level required, %2$s = XP per action -->
@@ -473,9 +475,9 @@
     <string name="character_create_title">Crea tu personaje</string>
     <string name="character_edit_title">Editar personaje</string>
     <string name="character_name_label">Nombre del personaje</string>
-    <string name="character_gender">Gender</string>
-    <string name="character_gender_male">Male</string>
-    <string name="character_gender_female">Female</string>
+    <string name="character_gender">Género</string>
+    <string name="character_gender_male">Hombre</string>
+    <string name="character_gender_female">Mujer</string>
     <string name="character_gender_other">Otro</string>
     <string name="character_race">Raza</string>
     <string name="character_race_human">Human</string>
