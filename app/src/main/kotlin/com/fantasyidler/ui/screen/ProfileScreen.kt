@@ -947,7 +947,7 @@ private fun EquipmentTab(
         item { SlotSectionHeader(stringResource(R.string.profile_gathering_tools)) }
         items(EquipSlot.TOOL_SLOTS) { slot ->
             EquipSlotRow(
-                slotName  = slotDisplayName(context, slot),
+                slotName  = slotDisplayName(slot),
                 itemKey   = equipped[slot],
                 onTap     = { onSlotTap(slot) },
                 onUnequip = { onUnequip(slot) },
@@ -1083,7 +1083,7 @@ internal fun EquipPickerSheet(
     ) {
         item {
             Text(
-                text     = stringResource(R.string.profile_choose_slot, slotDisplayName(context, slot)),
+                text     = stringResource(R.string.profile_choose_slot, slotDisplayName(slot)),
                 style    = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
             )

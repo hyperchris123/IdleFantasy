@@ -51,8 +51,6 @@ import com.fantasyidler.data.model.WorkerTier
 import com.fantasyidler.ui.theme.GoldPrimary
 import com.fantasyidler.ui.viewmodel.DailyFoodItem
 import com.fantasyidler.ui.viewmodel.InnViewModel
-import androidx.compose.ui.platform.LocalContext
-import com.fantasyidler.util.GameStrings
 import com.fantasyidler.util.formatCoins
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -290,7 +288,7 @@ private fun FoodRow(
     ) {
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text  = GameStrings.itemName(LocalContext.current, food.key),
+                text  = food.displayName,
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.SemiBold,
             )
@@ -330,7 +328,7 @@ private fun BuyFoodDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(GameStrings.itemName(LocalContext.current, food.key)) },
+        title = { Text(food.displayName) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 Text(

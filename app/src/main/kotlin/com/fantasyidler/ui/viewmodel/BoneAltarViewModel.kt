@@ -121,11 +121,9 @@ class BoneAltarViewModel @Inject constructor(
             mutex.withLock {
                 val result = playerRepo.buryBoneAtomic(boneKey, effectiveXp)
                 if (result.xpGained > 0L) {
-                    if (!bone.isAsh) {
-                        questRepo.recordBuried(1)
-                        guildRepo.recordGuildPrayer(1)
-                    }
+                    questRepo.recordBuried(1)
                     playerRepo.recordDailyPrayer(1)
+                    guildRepo.recordGuildPrayer(1)
                     _extra.update { it.copy(
                         sessionXp       = it.sessionXp + result.xpGained,
                         totalBuried     = it.totalBuried + 1,
