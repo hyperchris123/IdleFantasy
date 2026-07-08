@@ -387,6 +387,18 @@
     <string name="profile_no_pets">Evcil hayvan yok</string>
     <string name="profile_pet_collected">Toplandı</string>
     <string name="profile_pet_not_found">Henüz Bulunmadı</string>
+    <string-array name="profile_pet_happy_messages">
+        <item>%1$s mutlu!</item>
+        <item>%1$s kuyruğunu sallıyor!</item>
+        <item>%1$s sizi sevgiyle sürtüyor.</item>
+        <item>%1$s mutlu bir cıvıltı çıkarıyor!</item>
+        <item>%1$s küçük bir neşe dansı yapıyor!</item>
+        <item>%1$s size büyük bir gülümseme veriyor.</item>
+        <item>%1$s daha fazla sevgi istiyor!</item>
+        <item>%1$s çok sevinçli!</item>
+        <item>%1$s ilgiden hoşlanıyor!</item>
+        <item>%1$s senin için çalışmaya devam edeceğine söz veriyor.</item>
+    </string-array>
     <string name="profile_equip_best">En İyi Eşyayı Kuşan</string>
     <string name="profile_combat_gear">Savaş Ekipmanı</string>
     <string name="profile_gathering_tools">Toplama Araçları</string>
@@ -411,6 +423,7 @@
     <!-- ===== SkillsScreen ===== -->
     <!-- Translator note: %1$d = session duration in minutes -->
     <string name="skills_session_duration">Oturum: %1$dm</string>
+    <string name="skill_mining_qty_estimate">~%1$d cevher/oturum</string>
     <string name="skills_only_craftable">Sadece üretilebilir</string>
     <string name="skills_filter_all">Tümü</string>
     <string name="skills_add_to_queue">Oturum Kuyruğuna Ekle</string>

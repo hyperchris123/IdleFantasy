@@ -349,6 +349,10 @@ object SkillSimulator {
     fun estimateGatheringXp(xpPerAction: Int, efficiency: Float = 1f): Long =
         (xpPerAction * efficiency).toLong() * 60L
 
+    /** Estimated total item yield for a 60-frame gathering session. */
+    fun estimateGatheringQty(efficiency: Float = 1f): Int =
+        max(1, efficiency.roundToInt()) * 60
+
     /** Estimated total XP for a 60-frame agility session. */
     fun estimateAgilityXp(xpPerSuccess: Int, levelRequired: Int, currentAgilityLevel: Int): Long {
         val successRate = (0.80 + (currentAgilityLevel - levelRequired) * 0.02).coerceAtMost(0.95)
