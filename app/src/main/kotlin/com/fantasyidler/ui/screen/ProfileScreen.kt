@@ -610,31 +610,26 @@ private fun buildUnlockMilestones(skillKey: String, vm: InventoryViewModel, cont
         "mining" ->
             vm.ores.entries
                 .sortedBy { it.value.levelRequired }
-                .distinctBy { it.value.levelRequired }
                 .map { (key, ore) -> UnlockMilestone(ore.levelRequired, GameStrings.itemName(context, key)) }
 
         "fishing" ->
             vm.fish.entries
                 .sortedBy { it.value.levelRequired }
-                .distinctBy { it.value.levelRequired }
                 .map { (key, fish) -> UnlockMilestone(fish.levelRequired, GameStrings.itemName(context, key)) }
 
         "woodcutting" ->
             vm.trees.entries
                 .sortedBy { it.value.levelRequired }
-                .distinctBy { it.value.levelRequired }
                 .map { (key, tree) -> UnlockMilestone(tree.levelRequired, GameStrings.itemName(context, key)) }
 
         "farming" ->
             vm.crops.entries
                 .sortedBy { it.value.levelRequired }
-                .distinctBy { it.value.levelRequired }
                 .map { (key, crop) -> UnlockMilestone(crop.levelRequired, GameStrings.cropName(context, key)) }
 
         "firemaking" ->
             vm.logs.entries
                 .sortedBy { it.value.levelRequired }
-                .distinctBy { it.value.levelRequired }
                 .map { (key, log) -> UnlockMilestone(log.levelRequired, GameStrings.itemName(context, key)) }
 
         "agility" ->
@@ -647,25 +642,21 @@ private fun buildUnlockMilestones(skillKey: String, vm: InventoryViewModel, cont
         "smithing" ->
             vm.smithingRecipes.entries
                 .sortedBy { it.value.levelRequired }
-                .distinctBy { it.value.levelRequired }
                 .map { (key, recipe) -> UnlockMilestone(recipe.levelRequired, GameStrings.itemName(context, key)) }
 
         "cooking" ->
             vm.cookingRecipes.entries
                 .sortedBy { it.value.levelRequired }
-                .distinctBy { it.value.levelRequired }
                 .map { (key, recipe) -> UnlockMilestone(recipe.levelRequired, GameStrings.itemName(context, key)) }
 
         "fletching" ->
             vm.fletchingRecipes.entries
                 .sortedBy { it.value.levelRequired }
-                .distinctBy { it.value.levelRequired }
                 .map { (key, recipe) -> UnlockMilestone(recipe.levelRequired, GameStrings.itemName(context, key)) }
 
         "crafting" ->
             vm.craftingRecipes.entries
                 .sortedBy { it.value.levelRequired }
-                .distinctBy { it.value.levelRequired }
                 .map { (key, recipe) -> UnlockMilestone(recipe.levelRequired, GameStrings.itemName(context, key)) }
 
         "runecrafting" ->
@@ -676,21 +667,18 @@ private fun buildUnlockMilestones(skillKey: String, vm: InventoryViewModel, cont
         "herblore" ->
             vm.herbloreRecipes.entries
                 .sortedBy { it.value.levelRequired }
-                .distinctBy { it.value.levelRequired }
                 .map { (key, recipe) -> UnlockMilestone(recipe.levelRequired, GameStrings.itemName(context, key)) }
 
         "attack", "strength", "ranged", "magic" ->
             vm.allEquipment.entries
                 .filter { it.value.requirements.containsKey(skillKey) }
                 .sortedBy { it.value.requirements[skillKey] ?: 0 }
-                .distinctBy { it.value.requirements[skillKey] }
                 .map { (key, item) -> UnlockMilestone(item.requirements[skillKey]!!, GameStrings.itemName(context, key)) }
 
         "defense" ->
             vm.allEquipment.entries
                 .filter { it.value.requirements.containsKey("defense") }
                 .sortedBy { it.value.requirements["defense"] ?: 0 }
-                .distinctBy { it.value.requirements["defense"] }
                 .map { (key, item) -> UnlockMilestone(item.requirements["defense"]!!, GameStrings.itemName(context, key)) }
 
         "hitpoints" -> listOf(
@@ -712,13 +700,11 @@ private fun buildUnlockMilestones(skillKey: String, vm: InventoryViewModel, cont
         "thieving" ->
             vm.thievingNpcs.entries
                 .sortedBy { it.value.levelRequired }
-                .distinctBy { it.value.levelRequired }
                 .map { (key, npc) -> UnlockMilestone(npc.levelRequired, GameStrings.thievingNpcName(context, key)) }
 
         "construction" ->
             vm.constructionRecipes.entries
                 .sortedBy { it.value.levelRequired }
-                .distinctBy { it.value.levelRequired }
                 .map { (key, recipe) -> UnlockMilestone(recipe.levelRequired, GameStrings.itemName(context, key)) }
 
         "mercantile" ->

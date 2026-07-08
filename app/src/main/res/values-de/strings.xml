@@ -618,7 +618,7 @@
     <string name="worker_apprentice">Lehrling</string>
     <string name="worker_journeyman">Geselle</string>
     <string name="worker_master">Meister</string>
-    <string name="inn_long_laborer_desc">8h Sammeln, 0.5-fache Effizienz. Keine Beschränkung für Herstellung, Gebet und Runenherstellung. Fügt zur Warteschlange soviel Ihr wollt hinzu. Er ist langsam, sich aber für nichts zu schade.</string>
+    <string name="inn_long_laborer_desc">Ein Auftrag pro Einstellung, nach Einsammeln entlassen. 8h Sammeln, 0,5-fache Effizienz, unbegrenzte Handwerksmenge. Er ist langsam, aber er macht alles.</string>
     <string name="inn_apprentice_desc">8h Sammeln, 1-fache Effizienz. Herstellung, Gebet und Runenherstellung ist auf 480 Gegenstände pro Aktivität begrenzt.</string>
     <string name="inn_journeyman_desc">6h Sammeln, 1.25-fache Effizienz. Herstellung, Gebet und Runenherstellung ist auf 360 Gegenstände pro Aktivität begrenzt.</string>
     <string name="inn_master_desc">4h Sammeln, 2-fache Effizienz. Herstellung, Gebet und Runenherstellung ist auf 240 Gegenstände pro Aktivität begrenzt.</string>

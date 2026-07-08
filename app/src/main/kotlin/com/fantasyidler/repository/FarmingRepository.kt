@@ -127,8 +127,9 @@ class FarmingRepository @Inject constructor(
         }
 
         if (ashKey != null) {
-            playerRepo.updateFlags(flags.copy(
-                farmingFertilizer = flags.farmingFertilizer - patchNumber.toString()
+            val latestFlags = playerRepo.getFlags()
+            playerRepo.updateFlags(latestFlags.copy(
+                farmingFertilizer = latestFlags.farmingFertilizer - patchNumber.toString()
             ))
         }
 

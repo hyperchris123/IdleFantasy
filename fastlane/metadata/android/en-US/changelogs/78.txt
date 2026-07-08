@@ -1,0 +1,6 @@
+• Fix Inn worker description to clarify that workers are hired for one job and dismissed after that session is collected
+• Fix weekly farming quest (Season's Harvest) showing no progress when harvesting crops with fertilizer applied
+• Fix skill detail view on Profile page showing only one item per level; all items unlocked at the same level now appear
+• Fix queued combat and boss fights getting the full food supply restored when chained via Repeat Action
+• Fix expedition and carnival sessions showing a false XP projection in the action queue
+• Fix construction materials (carved stone, etc.) being sold by Sell Junk

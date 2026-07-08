@@ -666,7 +666,7 @@
     <string name="worker_apprentice">Apprendista</string>
     <string name="worker_journeyman">Artigiano</string>
     <string name="worker_master">Maestro</string>
-    <string name="inn_long_laborer_desc">8 ore di lavoro, 0.5x efficienza. Nessun limite di mestiere, preghiera, o incisione di rune. Accoda quanto vuoi. Non è veloce, ma è in grado di fare di tutto.</string>
+    <string name="inn_long_laborer_desc">Un lavoro per assunzione, congedato dopo la raccolta. 8 ore di raccolta, efficienza 0,5x, quantità di mestiere illimitata. Non è veloce, ma fa di tutto.</string>
     <string name="inn_apprentice_desc">8 ore di lavoro, 1x efficienza. Oreficeria, preghiera e incisione di rune limitati a 480 oggetti per sessione.</string>
     <string name="inn_journeyman_desc">6 ore di lavoro, 1.25x efficienza. Oreficeria, preghiera e incisione di rune limitati a 360 oggetti per sessione.</string>
     <string name="inn_master_desc">4 ore di lavoro, 2x efficienza. Oreficeria, preghiera e incisione di rune limitati a 240 oggetti per sessione.</string>

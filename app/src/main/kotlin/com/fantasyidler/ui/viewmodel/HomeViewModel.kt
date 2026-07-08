@@ -739,7 +739,8 @@ class HomeViewModel @Inject constructor(
                 skillDisplayName    = displayName,
                 qty                 = qty,
                 estimatedDurationMs = session.endsAt - session.startedAt,
-                estimatedXpGain     = (rawXpGain * xpQueueMult).toLong(),
+                estimatedXpGain     = if (session.skillName in listOf("carnival", "expedition")) 0L
+                                      else (rawXpGain * xpQueueMult).toLong(),
                 weaponSlot          = weaponSlot,
                 equippedSnapshot    = player?.equipped,
                 spellName           = flags.activeSpell,

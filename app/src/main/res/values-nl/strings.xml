@@ -657,7 +657,7 @@
     <string name="worker_apprentice">Leerling</string>
     <string name="worker_journeyman">Vakman</string>
     <string name="worker_master">Meester</string>
-    <string name="inn_long_laborer_desc">8u verzamelen, 0,5x efficiëntie. Geen limiet op Juwelier, Gebed of Runen limiet. Zet zoveel in de wachtrij als je wilt. Hij is traag, maar hij doet alles.</string>
+    <string name="inn_long_laborer_desc">Één klus per inhuur, ontslagen na het ophalen. 8u verzamelen, 0,5x efficiëntie, onbeperkte ambachtshoeveelheid. Hij is traag, maar hij doet alles.</string>
     <string name="inn_apprentice_desc">8u verzamelen, 1x efficiëntie. Juwelier, Gebed en Runen maken beperkt tot 480 items per sessie.</string>
     <string name="inn_journeyman_desc">6u verzamelen, 1,25x efficiëntie. Juwelier, Gebed en Runen maken beperkt tot 360 items per sessie.</string>
     <string name="inn_master_desc">4u verzamelen, 2x efficiëntie. Juwelier, Gebed en Runen maken beperkt tot 240 items per sessie.</string>
