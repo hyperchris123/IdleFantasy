@@ -2,7 +2,7 @@
 <resources>
     <!-- ===== Notification channel metadata ===== -->
     <string name="notif_channel_sessions_name">Aktivitätsbenachrichtigungen</string>
-    <string name="notif_channel_sessions_desc">Benachrichtigungen, wenn Eure Skill-Aktivitäten abgeschlossen sind</string>
+    <string name="notif_channel_sessions_desc">Benachrichtigungen, wenn Eure Fähigkeits-Aktivitäten abgeschlossen sind</string>
     <string name="notif_channel_farming_name">Landwirtschaftliche Meldungen</string>
     <string name="notif_channel_farming_desc">Benachrichtigungen, wenn Eure Pflanzen erntereif sind</string>
 
@@ -14,7 +14,7 @@
     <!-- ===== Farming ready ===== -->
     <string name="notif_farming_ready_title">Die Ernte ist reif!</string>
     <!-- Translator note: %1$s = localised crop name (e.g. "Wheat"). Adjust grammar as needed for your language. -->
-    <string name="notif_farming_ready_body">Euer %1$s ist erntereif.</string>
+    <string name="notif_farming_ready_body">%1$s ist erntereif.</string>
     <!-- Plural variant used when multiple patches are ready -->
     <!-- Translator note: %1$d = number of patches ready -->
     <string name="notif_farming_ready_body_multi">%1$d Äcker sind erntereif.</string>
