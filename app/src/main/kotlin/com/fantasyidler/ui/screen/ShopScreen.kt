@@ -37,16 +37,19 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import kotlinx.coroutines.launch
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.Alignment
@@ -117,22 +120,23 @@ fun ShopScreen(
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { padding ->
-        var subTab by remember { mutableIntStateOf(0) }
+        val pagerState = rememberPagerState(pageCount = { 2 })
+        val scope      = rememberCoroutineScope()
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding),
         ) {
-            TabRow(selectedTabIndex = subTab) {
+            TabRow(selectedTabIndex = pagerState.currentPage) {
                 Tab(
-                    selected = subTab == 0,
-                    onClick  = { subTab = 0 },
+                    selected = pagerState.currentPage == 0,
+                    onClick  = { scope.launch { pagerState.animateScrollToPage(0) } },
                     text     = { Text(stringResource(R.string.btn_buy)) },
                 )
                 Tab(
-                    selected = subTab == 1,
-                    onClick  = { subTab = 1 },
+                    selected = pagerState.currentPage == 1,
+                    onClick  = { scope.launch { pagerState.animateScrollToPage(1) } },
                     text     = { Text(stringResource(R.string.btn_sell)) },
                 )
             }
@@ -158,25 +162,27 @@ fun ShopScreen(
                 )
             }
 
-            when (subTab) {
-                0 -> BuyList(
-                    entries            = viewModel.buyEntries.filter { it.mercantileLevelRequired <= state.mercantileLevel },
-                    coins              = state.coins,
-                    xpBoostActive      = state.xpBoostActive,
-                    inventory          = state.inventory,
-                    discountedPriceFor = viewModel::discountedPrice,
-                    onBuy              = viewModel::openBuy,
-                )
-                else -> SellList(
-                    inventory          = state.inventory,
-                    equipped           = state.equipped,
-                    context            = context,
-                    priceFor           = viewModel::sellPriceFor,
-                    categoryFor        = viewModel::sellCategoryFor,
-                    onSell             = { key -> viewModel.openSell(key, GameStrings.itemName(context, key)) },
-                    onSellJunk         = viewModel::sellJunk,
-                    onSellOldEquipment = viewModel::sellOldEquipment,
-                )
+            HorizontalPager(state = pagerState, modifier = Modifier.weight(1f)) { page ->
+                when (page) {
+                    0 -> BuyList(
+                        entries            = viewModel.buyEntries.filter { it.mercantileLevelRequired <= state.mercantileLevel },
+                        coins              = state.coins,
+                        xpBoostActive      = state.xpBoostActive,
+                        inventory          = state.inventory,
+                        discountedPriceFor = viewModel::discountedPrice,
+                        onBuy              = viewModel::openBuy,
+                    )
+                    else -> SellList(
+                        inventory          = state.inventory,
+                        equipped           = state.equipped,
+                        context            = context,
+                        priceFor           = viewModel::sellPriceFor,
+                        categoryFor        = viewModel::sellCategoryFor,
+                        onSell             = { key -> viewModel.openSell(key, GameStrings.itemName(context, key)) },
+                        onSellJunk         = viewModel::sellJunk,
+                        onSellOldEquipment = viewModel::sellOldEquipment,
+                    )
+                }
             }
         }
     }

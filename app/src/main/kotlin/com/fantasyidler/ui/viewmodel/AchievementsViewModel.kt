@@ -7,6 +7,7 @@ import com.fantasyidler.R
 import com.fantasyidler.data.model.OwnedPet
 import com.fantasyidler.data.model.PlayerFlags
 import com.fantasyidler.data.model.Skills
+import com.fantasyidler.repository.GameDataRepository
 import com.fantasyidler.repository.PlayerRepository
 import com.fantasyidler.repository.QuestRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -38,6 +39,7 @@ class AchievementsViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val playerRepo: PlayerRepository,
     private val questRepo: QuestRepository,
+    private val gameData: GameDataRepository,
     private val json: Json,
 ) : ViewModel() {
 
@@ -84,7 +86,7 @@ class AchievementsViewModel @Inject constructor(
             ach("quest_5",   R.string.achievement_quest_5_name,   R.string.achievement_quest_5_desc,   "📜",  completedQuests >= 5),
             ach("quest_25",  R.string.achievement_quest_25_name,  R.string.achievement_quest_25_desc,  "📚",  completedQuests >= 25),
             ach("quest_50",  R.string.achievement_quest_50_name,  R.string.achievement_quest_50_desc,  "🏅",  completedQuests >= 50),
-            ach("quest_all", R.string.achievement_quest_all_name, R.string.achievement_quest_all_desc, "🏆",  completedQuests >= 103),
+            ach("quest_all", R.string.achievement_quest_all_name, R.string.achievement_quest_all_desc, "🏆",  completedQuests >= gameData.quests.size),
         )
 
         groups["Collection"] = listOf(
