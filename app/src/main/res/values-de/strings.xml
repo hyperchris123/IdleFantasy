@@ -563,5 +563,57 @@
     <string name="inn_worker_tier">%1$s worker</string>
     <string name="worker_skills_title_nav">Worker Skills</string>
 
+    <!-- ===== Combat difficulty ratings ===== -->
+    <string name="combat_difficulty_likely">Looks manageable</string>
+    <string name="combat_difficulty_risky">Risky with current setup</string>
+    <string name="combat_difficulty_unlikely">Likely to die</string>
+
+    <!-- ===== Achievements ===== -->
+    <string name="achievement_group_levelling">Levelling</string>
+    <string name="achievement_group_combat">Combat</string>
+    <string name="achievement_group_quests">Quests</string>
+    <string name="achievement_group_collection">Collection</string>
+    <string name="achievement_total_50_name">Adventurer</string>
+    <string name="achievement_total_50_desc">Reach total level 50</string>
+    <string name="achievement_total_100_name">Journeyman</string>
+    <string name="achievement_total_100_desc">Reach total level 100</string>
+    <string name="achievement_total_250_name">Seasoned</string>
+    <string name="achievement_total_250_desc">Reach total level 250</string>
+    <string name="achievement_total_500_name">Veteran</string>
+    <string name="achievement_total_500_desc">Reach total level 500</string>
+    <string name="achievement_total_750_name">Master</string>
+    <string name="achievement_total_750_desc">Reach total level 750</string>
+    <string name="achievement_total_1000_name">Legend</string>
+    <string name="achievement_total_1000_desc">Reach total level 1000</string>
+    <string name="achievement_total_1500_name">Champion</string>
+    <string name="achievement_total_1500_desc">Reach total level 1500</string>
+    <string name="achievement_skill_99_name">First Mastery</string>
+    <string name="achievement_skill_99_desc">Max any skill to level 99</string>
+    <string name="achievement_all_99_name">Completionist</string>
+    <string name="achievement_all_99_desc">Max all skills to level 99</string>
+    <string name="achievement_combat_10_name">Fighter</string>
+    <string name="achievement_combat_10_desc">Reach combat level 10</string>
+    <string name="achievement_combat_30_name">Warrior</string>
+    <string name="achievement_combat_30_desc">Reach combat level 30</string>
+    <string name="achievement_combat_50_name">Champion</string>
+    <string name="achievement_combat_50_desc">Reach combat level 50</string>
+    <string name="achievement_combat_75_name">Elite</string>
+    <string name="achievement_combat_75_desc">Reach combat level 75</string>
+    <string name="achievement_combat_99_name">Max Combat</string>
+    <string name="achievement_combat_99_desc">Reach combat level 99</string>
+    <string name="achievement_quest_1_name">Quester</string>
+    <string name="achievement_quest_1_desc">Complete 1 quest</string>
+    <string name="achievement_quest_5_name">Dedicated</string>
+    <string name="achievement_quest_5_desc">Complete 5 quests</string>
+    <string name="achievement_quest_25_name">Quest Hound</string>
+    <string name="achievement_quest_25_desc">Complete 25 quests</string>
+    <string name="achievement_quest_50_name">Quest Master</string>
+    <string name="achievement_quest_50_desc">Complete 50 quests</string>
+    <string name="achievement_quest_all_name">Quest Champion</string>
+    <string name="achievement_quest_all_desc">Complete all quests</string>
+    <string name="achievement_pet_first_name">Animal Friend</string>
+    <string name="achievement_pet_first_desc">Collect your first pet</string>
+    <string name="achievement_pet_all_name">Menagerie</string>
+    <string name="achievement_pet_all_desc">Collect all 7 pets</string>
 
 </resources>
