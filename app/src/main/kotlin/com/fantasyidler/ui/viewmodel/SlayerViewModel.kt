@@ -15,7 +15,6 @@ import com.fantasyidler.repository.PlayerRepository
 import com.fantasyidler.repository.QueuedSessionStarter
 import com.fantasyidler.repository.SlayerRepository
 import com.fantasyidler.util.GameStrings
-import com.fantasyidler.util.withAppLocale
 import android.content.Context
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -87,7 +86,7 @@ class SlayerViewModel @Inject constructor(
                 gameData.dungeons.entries
                     .filter { (_, d) -> d.enemySpawns.any { it.enemy == key } }
             } ?: emptyList()
-            val taskDungeons     = taskDungeonEntries.map { (key, _) -> GameStrings.dungeonName(context.withAppLocale(), key) }
+            val taskDungeons     = taskDungeonEntries.map { (key, _) -> GameStrings.dungeonName(context, key) }
             val taskDungeonKeys  = taskDungeonEntries.map { (k, _) -> k }
             val taskIsStuck = flags.activeSlayerTask?.enemyKey?.let { key ->
                 val dungeonKeys = gameData.dungeons.values

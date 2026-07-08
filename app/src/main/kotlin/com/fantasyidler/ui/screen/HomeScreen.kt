@@ -81,7 +81,6 @@ import com.fantasyidler.ui.viewmodel.totalLevelFrom
 import com.fantasyidler.util.GameStrings
 import com.fantasyidler.util.formatCoins
 import com.fantasyidler.util.formatXp
-import com.fantasyidler.simulator.XpTable
 import com.fantasyidler.util.formatDurationMs
 import com.fantasyidler.util.toCountdown
 import androidx.compose.ui.text.style.TextOverflow
@@ -679,13 +678,11 @@ fun HomeScreen(
                     }
                 }
                 HomeSessionCard(
-                    session        = session,
-                    context        = context,
-                    skillXp        = state.skillXp,
-                    sessionXpGain  = state.activeSessionXpGain,
-                    onRepeat       = viewModel::repeatActiveSession,
-                    onAbandon      = viewModel::abandonSession,
-                    onDebugFinish  = viewModel::debugFinishSession,
+                    session       = session,
+                    context       = context,
+                    onRepeat      = viewModel::repeatActiveSession,
+                    onAbandon     = viewModel::abandonSession,
+                    onDebugFinish = viewModel::debugFinishSession,
                 )
             } else {
                 Surface(
@@ -724,14 +721,11 @@ fun HomeScreen(
             // ── Queue card ───────────────────────────────────────────────
             if (state.sessionQueue.isNotEmpty()) {
                 QueueCard(
-                    queue               = state.sessionQueue,
-                    queueEndsAt         = state.queueEndsAt,
-                    context             = context,
-                    skillXp             = state.skillXp,
-                    activeSessionSkill  = state.activeSession?.skillName ?: "",
-                    activeSessionXpGain = state.activeSessionXpGain,
-                    onRemove            = viewModel::removeFromQueue,
-                    onMove              = viewModel::moveQueueItem,
+                    queue       = state.sessionQueue,
+                    queueEndsAt = state.queueEndsAt,
+                    context     = context,
+                    onRemove    = viewModel::removeFromQueue,
+                    onMove      = viewModel::moveQueueItem,
                 )
             }
 
@@ -752,8 +746,6 @@ fun HomeScreen(
                     session                  = workerSession,
                     pendingCollect           = state.workerPendingCollect1,
                     context                  = context,
-                    skillXp                  = state.skillXp,
-                    sessionXpGain            = state.workerSessionXpGain,
                     onCollect                = viewModel::collectWorkerSession,
                     onDismiss                = { viewModel.dismissWorker(1) },
                     onDebugFinish            = { viewModel.debugFinishWorkerSession(1) },
@@ -776,8 +768,6 @@ fun HomeScreen(
                     session                  = workerSession2,
                     pendingCollect           = state.workerPendingCollect2,
                     context                  = context,
-                    skillXp                  = state.skillXp,
-                    sessionXpGain            = state.workerSession2XpGain,
                     onCollect                = viewModel::collectWorkerSession,
                     onDismiss                = { viewModel.dismissWorker(2) },
                     onDebugFinish            = { viewModel.debugFinishWorkerSession(2) },
@@ -796,8 +786,6 @@ fun HomeScreen(
 private fun HomeSessionCard(
     session: SkillSession,
     context: android.content.Context,
-    skillXp: Map<String, Long>,
-    sessionXpGain: Long,
     onRepeat: () -> Unit,
     onAbandon: () -> Unit,
     onDebugFinish: () -> Unit,
@@ -860,30 +848,6 @@ private fun HomeSessionCard(
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSecondaryContainer,
                 )
-                val xpLineText = remember(session.skillName, skillXp, sessionXpGain) {
-                    if (sessionXpGain <= 0L) null
-                    else {
-                        val startXp    = skillXp[session.skillName] ?: 0L
-                        val endXp      = startXp + sessionXpGain
-                        val levelBefore = XpTable.levelForXp(startXp)
-                        val levelAfter  = XpTable.levelForXp(endXp)
-                        val levelGain   = levelAfter - levelBefore
-                        val pct         = (XpTable.progressFraction(endXp) * 100).toInt()
-                        buildString {
-                            append("+${sessionXpGain.formatXp()} XP  →  Lv $levelAfter")
-                            if (levelGain > 0) append(" (+$levelGain, $pct%)")
-                            else append(" ($pct%)")
-                        }
-                    }
-                }
-                if (xpLineText != null) {
-                    Spacer(Modifier.height(2.dp))
-                    Text(
-                        text  = xpLineText,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.7f),
-                    )
-                }
             }
 
             Spacer(Modifier.height(12.dp))
@@ -936,9 +900,6 @@ private fun QueueCard(
     queue: List<QueuedAction>,
     queueEndsAt: Long,
     context: android.content.Context,
-    skillXp: Map<String, Long>,
-    activeSessionSkill: String,
-    activeSessionXpGain: Long,
     onRemove: (Int) -> Unit,
     onMove: (Int, Int) -> Unit,
 ) {
@@ -954,28 +915,6 @@ private fun QueueCard(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             Spacer(Modifier.height(8.dp))
-            val queueProjections: List<String?> = remember(queue, skillXp, activeSessionSkill, activeSessionXpGain) {
-                val cumul = skillXp.toMutableMap()
-                if (activeSessionSkill.isNotEmpty() && activeSessionXpGain > 0L)
-                    cumul[activeSessionSkill] = (cumul[activeSessionSkill] ?: 0L) + activeSessionXpGain
-                queue.map { a ->
-                    if (a.estimatedXpGain <= 0L) null
-                    else {
-                        val startXp    = cumul[a.skillName] ?: 0L
-                        val endXp      = startXp + a.estimatedXpGain
-                        cumul[a.skillName] = endXp
-                        val levelBefore = XpTable.levelForXp(startXp)
-                        val levelAfter  = XpTable.levelForXp(endXp)
-                        val levelGain   = levelAfter - levelBefore
-                        val pct         = (XpTable.progressFraction(endXp) * 100).toInt()
-                        buildString {
-                            append("+${a.estimatedXpGain.formatXp()} XP  →  Lv $levelAfter")
-                            if (levelGain > 0) append(" (+$levelGain, $pct%)")
-                            else append(" ($pct%)")
-                        }
-                    }
-                }
-            }
             queue.forEachIndexed { index, action ->
                 if (index > 0) HorizontalDivider(
                     modifier = Modifier.padding(vertical = 4.dp),
@@ -1017,7 +956,6 @@ private fun QueueCard(
                                     else       -> null
                                 }
                             }
-                            action.outputQty > 0 -> stringResource(R.string.queue_item_qty_with_output, action.qty, action.outputQty)
                             action.qty > 0 -> stringResource(R.string.queue_item_qty, action.qty)
                             else -> null
                         }
@@ -1026,14 +964,6 @@ private fun QueueCard(
                                 text  = subtitle,
                                 style = MaterialTheme.typography.labelSmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                        }
-                        val projLine = queueProjections.getOrNull(index)
-                        if (projLine != null) {
-                            Text(
-                                text  = projLine,
-                                style = MaterialTheme.typography.labelSmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
                             )
                         }
                     }
@@ -1105,8 +1035,6 @@ private fun WorkerSessionCard(
     session: SkillSession?,
     pendingCollect: Boolean,
     context: android.content.Context,
-    skillXp: Map<String, Long>,
-    sessionXpGain: Long,
     onCollect: () -> Unit,
     onDismiss: () -> Unit,
     onDebugFinish: () -> Unit,
@@ -1206,30 +1134,6 @@ private fun WorkerSessionCard(
                         fontWeight = FontWeight.Bold,
                         color      = MaterialTheme.colorScheme.onSecondaryContainer,
                     )
-                    val xpLineText = remember(session.skillName, skillXp, sessionXpGain) {
-                        if (sessionXpGain <= 0L) null
-                        else {
-                            val startXp    = skillXp[session.skillName] ?: 0L
-                            val endXp      = startXp + sessionXpGain
-                            val levelBefore = XpTable.levelForXp(startXp)
-                            val levelAfter  = XpTable.levelForXp(endXp)
-                            val levelGain   = levelAfter - levelBefore
-                            val pct         = (XpTable.progressFraction(endXp) * 100).toInt()
-                            buildString {
-                                append("+${sessionXpGain.formatXp()} XP  →  Lv $levelAfter")
-                                if (levelGain > 0) append(" (+$levelGain, $pct%)")
-                                else append(" ($pct%)")
-                            }
-                        }
-                    }
-                    if (xpLineText != null) {
-                        Spacer(Modifier.height(2.dp))
-                        Text(
-                            text  = xpLineText,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.7f),
-                        )
-                    }
                 }
             } else {
                 Text(
